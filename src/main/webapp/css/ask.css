@@ -1,0 +1,151 @@
+h1, h2, h3, h3, h4, h5, h5, p, a,html {
+	font-family: 'PT Sans',sans-serif;
+	margin: 0px;
+}
+body{
+	margin: 0px;
+}
+
+.header{
+	background-color: #F7F7F7;	
+	padding: 10px;
+	border-bottom: solid 1.5px #B6B2B2;
+}
+.header h1, .header a{
+	display: inline;
+	text-decoration: none;
+	color: #686666;
+}
+
+#content{
+	margin:20px;
+}
+
+label{
+	display: block;
+}
+
+input[name=title]{
+	font-size: 17px;
+	width: 700px;
+}
+
+textarea{
+	font-size: 12px;
+	width: 700px;
+}
+
+input[type=submit]{
+	font-size: 15px;
+	background-color: #5DADE2;
+	color: white;
+	border-radius: 4px;
+	border: none;
+	padding: 10px;
+	cursor: pointer;
+}
+
+
+ul{
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+li.tag{
+	display: inline;
+	background-color: #F3F6F6;
+	padding: 5px;
+	border: solid 1px gray;
+	border-radius: 3px;
+	font-weight: 100;
+	font-style: italic;
+	font-size: 12px;
+}
+
+
+
+.answerArea .author{
+	border: solid 1px gray;
+	padding: 20px;
+	float: right;
+	margin-right: 50px;
+}
+
+.answerArea .vote{
+	text-align: center;
+	width: 10%;
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 20px;
+}
+
+.answerArea .answerContent{
+	display: inline-block;
+	width: 80%;
+}
+
+
+.answerArea .vote p{
+	font-size: 30px;
+	font-weight: 800;
+	color: #9B9494;
+	margin: -10px;
+}
+
+.answerArea .commentsArea hr, .answerArea .commentsArea .comment, .answerArea .commentsArea textarea,.answerArea .commentsArea input  {
+	margin-left: 25px;
+	font-size: 12px;
+}
+
+.answerArea .commentsArea input{
+	display: block;
+}
+
+.questionDelete{
+	float:right;
+}
+
+.questionWrapper h1{
+	display: inline;
+}
+.questionWrapper{
+	width: 70%;
+}
+
+.header .user{
+	float:right;
+	margin: 10px;
+}
+
+
+.questionSummary{
+	margin-top: 10px;
+}
+
+
+
+input[type=submit]:hover{
+	background-color: #4682aa;
+}
+
+
+
+button:hover{
+	background-color: #4682aa;
+}
+
+button{
+	font-size: 10px;
+	background-color: #5DADE2;
+	color: white;
+	border-radius: 4px;
+	border: none;
+	padding: 5px;
+	cursor: pointer;
+}
+
+
+textarea[name=text]{
+	display: block;
+}
