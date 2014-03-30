@@ -22,7 +22,7 @@ public class QuestionDAO {
         Versioned<Question> version = client.get("some_key");
 
         // modify the value
-        version.setObject(new Question());
+        // version.setObject(new Question());
 
         // update the value
         client.put("some_key", version);
