@@ -1,7 +1,11 @@
 package pt.inesc.ask.domain;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.google.appengine.repackaged.com.google.common.io.BaseEncoding;
 
 public class Answer {
     public String id;
@@ -9,41 +13,32 @@ public class Answer {
     public String text;
     public Boolean isQuestion;
     public int votes = 0;
-    public List<String> commentsIds;
+    public LinkedList<String> commentsIds;
     private final LinkedList<Comment> comments = new LinkedList<Comment>();
 
-    public Answer(String author, String text, Boolean isQuestion) {
-        this(author, text, isQuestion, text + author);
-    }
-
-
-    public LinkedList<Comment> getComments() {
-        return comments;
-    }
-
-    public Answer() {
-
-    }
-
-    public Answer(String author, String text, Boolean isQuestion, String id) {
-        super();
-        // TODO
-        /**
-         * m = hashlib.md5()
-         * m.update(text+author+answerID)
-         * self._id = "com_"+m.hexdigest()
-         */
-        this.id = id;
+    public Answer(String questionTitle, String author, String text, Boolean isQuestion) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest((questionTitle + author + text).getBytes());
+            this.id = BaseEncoding.base64().encode(digest);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
         this.author = author;
         this.text = text;
         this.isQuestion = isQuestion;
         this.commentsIds = new LinkedList<String>();
     }
 
+    public void addComment(Comment comment) {
+        if (comment != null)
+            comments.addLast(comment);
+    }
 
 
     public void addComment(String commentId) {
-        commentsIds.add(commentId);
+        commentsIds.addLast(commentId);
     }
 
     public Boolean removeComment(String commentId) {
@@ -61,40 +56,6 @@ public class Answer {
     }
 
 
-    public int getVotes() {
-        return votes;
-    }
-
-
-    public void setVotes(int votes) {
-        this.votes = votes;
-    }
-
-
-    public String getId() {
-        return id;
-    }
-
-
-    public String getAuthor() {
-        return author;
-    }
-
-
-    public String getText() {
-        return text;
-    }
-
-
-    public Boolean getIsQuestion() {
-        return isQuestion;
-    }
-
-
-    public List<String> getCommentsIds() {
-        return commentsIds;
-    }
-
 
     @Override
     public String toString() {
@@ -102,11 +63,63 @@ public class Answer {
                 + votes + ", commentsIds=" + commentsIds + "]";
     }
 
-
-    public void addComment(Comment comment) {
-        if (comment != null)
-            comments.addFirst(comment);
+    public String getId() {
+        return id;
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Boolean getIsQuestion() {
+        return isQuestion;
+    }
+
+    public void setIsQuestion(Boolean isQuestion) {
+        this.isQuestion = isQuestion;
+    }
+
+    public int getVotes() {
+        return votes;
+    }
+
+    public void setVotes(int votes) {
+        this.votes = votes;
+    }
+
+    public List<String> getCommentsIds() {
+        return commentsIds;
+    }
+
+    public void setCommentsIds(LinkedList<String> commentsIds) {
+        this.commentsIds = commentsIds;
+    }
+
+    public LinkedList<Comment> getComments() {
+        return comments;
+    }
+
+    public void cleanComments() {
+        comments.clear();
+    }
+
+
 
 
 

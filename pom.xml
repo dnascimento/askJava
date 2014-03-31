@@ -26,7 +26,7 @@
 		<appengine.target.version>1.9.1</appengine.target.version>
 		<version.org.jboss.spec.javax.servlet.api>1.0.0.Final</version.org.jboss.spec.javax.servlet.api>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>3.0.5.RELEASE</spring.version>
+		<spring.version>4.0.2.RELEASE</spring.version>
 	</properties>
 
 	<!-- local repo for voldemort -->
@@ -80,17 +80,17 @@
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
- 		<dependency>
-            <groupId>org.springframework</groupId>  
-            <artifactId>spring-beans</artifactId>  
-            <version>${spring.version}</version>  
-        </dependency>  
-        
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>r09</version>
+		</dependency>
+
 
 		<!-- Test Dependencies -->
 		<dependency>

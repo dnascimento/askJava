@@ -1,20 +1,28 @@
 package pt.inesc.ask.domain;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import com.google.appengine.repackaged.com.google.common.io.BaseEncoding;
+
 public class Comment {
     public String id;
-    String text;
-    String author;
+    public String text;
+    public String author;
 
-    public Comment() {
-
-    }
-
-    public Comment(String id, String text, String author) {
-        super();
-        this.id = id;
+    public Comment(String answerID, String text, String author) {
         this.text = text;
         this.author = author;
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest((answerID + author + text).getBytes());
+            this.id = BaseEncoding.base64().encode(digest);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public String getId() {
         return id;

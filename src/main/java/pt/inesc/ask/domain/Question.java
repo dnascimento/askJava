@@ -72,7 +72,6 @@ public class Question {
 
     public void addAnswer(String answerId) {
         answersIDs.addLast(answerId);
-
     }
 
 

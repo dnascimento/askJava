@@ -1,5 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <c:import url="header.jsp">
 	<c:param name="title" value="${questionData.title}"/>
@@ -19,12 +18,13 @@
 	<h3>Answers</h3>
 	<hr>
 	<c:forEach var="answer" items="${answers}">
+		<c:set var="answer" value="${answer}" scope="request"/>
 		<jsp:include page="answer.jsp"/>
 	</c:forEach>
-	<form:form  action="${questionData.title}/answer" method="post">
+	<div class="newAnswer">
 		<textarea name="text" cols="40" rows="5"></textarea>
-		<input type="submit" value="Answer"/>
-	</form:form >
+		<button>Answer</button>
+	</div>
 </div>
 <c:import url="footer.jsp"/>
 

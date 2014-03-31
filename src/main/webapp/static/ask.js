@@ -23,7 +23,7 @@ function load(){
 		if(comm.length){
 			commentID = $(comm).attr("comment-id");
 			url = "/comment"
-			data = {"answerID":answerID,commentID:commentID};
+			data = {"answerID":answerID,"commentID":commentID};
 		}else{
 			url = "/answer";
 			data = {"answerID":answerID};
@@ -46,17 +46,23 @@ function load(){
 		paragraph = $(this).siblings("p");
 		text = paragraph.text();
 		//open a textarea with that thext
-		paragraph.replaceWith("<textarea>"+text+"</textarea>");
+		paragraph.replaceWith("<textarea>"+text+"</textarea><br>");
 		$(this).removeClass().addClass("save");
 		$(this).text("Save");
 		$(".save").click(function(){updateAnswerOrComment(this)});
 	});
 
 	$(".newComment").click(function(){
-		$("<textarea></textarea>").insertBefore(this);
+		$("<textarea></textarea><br>").insertBefore(this);
 		$(this).removeClass().addClass("saveComment");
 		$(this).unbind( "click" );
 		$(this).click(function(){saveNewComment(this)});
+	});
+
+	$(".newAnswer button").click(function(){
+		questionTitle = getQuestionTitle();
+		text = $(".newAnswer textarea").val();
+		send("/answer",{'text':text},'post');
 	});
 }
 
@@ -99,24 +105,31 @@ function saveNewComment(elem){
 	text = $(elem).siblings("textarea").val();
 	questionTitle = getQuestionTitle();
 	// "/question/<questionTitle>/comment"
-	send("/comment",{"answerID":answerID,"text":text},'POST');
+	send("/comment",{"answerID":answerID,"text":text},'post');
 }
 
 
 function send(url,data,type){
 	questionTitle = getQuestionTitle();
+	if(type == "post"){
+		successFunction = function(data, textStatus, jqXHR ){			
+			$("html").html(data);
+			load();
+		};
+	}else{
+		successFunction = function(data, textStatus, jqXHR ){	
+			window.location.reload();
+		};
+	}
 	$.ajax({
 		url: "./"+questionTitle+url,
-		data: data,
+		data: JSON.stringify(data),
 		type: type,
+		contentType: 'application/json',
 		error: function(jqXHR, textStatus, errorThrown){
 			alert(errorThrown);
 		},
-		success: function(data, textStatus, jqXHR ){
-			$("html").html(data);
-			load();
-			//window.location.href = "./"+questionTitle;
-		}
+		success: successFunction
 	});
 }
 

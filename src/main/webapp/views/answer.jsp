@@ -8,15 +8,17 @@
 	<div class="answerContent">
 		<div>
 			<p>${answer.text}</p>
-			<c:if test="answer.isQuestion() == true">
+			<c:if test="${answer.isQuestion}">
 				<button class="edit">Edit Question</button>
 			</c:if>
-			<c:if test="answer.isQuestion() == false">
+			<c:if test="${not answer.isQuestion}">
 				<button class="delete">Delete</button>
 				<button class="edit">Edit</button>
 			</c:if>
 			<div class="author">
-				<a href="/user/${answer.author}"><h4>${answer.author}</h4></a>
+				<a href="/user/${answer.author}">
+					<h4>${answer.author}</h4>
+				</a>
 			</div>
 		</div>
 		<div class="commentsArea">
