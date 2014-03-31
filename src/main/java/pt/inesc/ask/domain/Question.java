@@ -1,26 +1,87 @@
 package pt.inesc.ask.domain;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class Question {
-    public final String id;
-    public final String title;
-    public final String[] tags;
-    public final String questionAnswerID;
-    public final List<String> answersIDs;
-    public final String question_id;
+    public String id;
+    public String title;
+    public String[] tags;
+    public String questionAnswerID;
+    public LinkedList<String> answersIDs;
 
-    public Question(String title, String[] tags) {
+
+    public Question(String title, String[] tags, String questionAnswerID) {
         super();
-        this.id = "quest_" + title;
+        this.id = title;
         this.title = title;
         this.tags = tags;
-        // TODO criar a answer e colocar o id
-        this.questionAnswerID = "answer";
         this.answersIDs = new LinkedList<String>();
-        this.question_id = "test";
+        this.answersIDs.addFirst(questionAnswerID);
     }
+
+
+    public String getId() {
+        return id;
+    }
+
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    public String[] getTags() {
+        return tags;
+    }
+
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
+
+
+    public String getQuestionAnswerID() {
+        return questionAnswerID;
+    }
+
+
+    public void setQuestionAnswerID(String questionAnswerID) {
+        this.questionAnswerID = questionAnswerID;
+    }
+
+
+    public LinkedList<String> getAnswersIDs() {
+        return answersIDs;
+    }
+
+
+    public void setAnswersIDs(LinkedList<String> answersIDs) {
+        this.answersIDs = answersIDs;
+    }
+
+
+    public void addAnswer(String answerId) {
+        answersIDs.addLast(answerId);
+
+    }
+
+
+    public boolean removeAnswer(String answerId) {
+        return answersIDs.remove(answerId);
+    }
+
+
+
 
 
 

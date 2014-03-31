@@ -6,7 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="/static/ask.css"/>
 	<script src="/static/jquery.js"></script>
 	<script src="/static/ask.js"></script>
-	<title><c:out value="${param.title}" /></title>
+	<title>${param.title}</title>
 </head>
 <body>
 	<div class="header">

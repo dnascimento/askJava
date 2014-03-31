@@ -4,11 +4,12 @@ import java.util.List;
 
 import pt.inesc.ask.domain.Question;
 
+
 public class AskService {
     private final long reqId = 0;
 
 
-    public void addNewQuestion(
+    public void addNewQuestionion(
             String title,
                 String text,
                 List<String> tags,
@@ -17,40 +18,48 @@ public class AskService {
 
     }
 
-    public Question getQuestion(String title, long rid) {
-        // return db.getQuestion("quest_" + title, rid);
+    public Question getQuestionion(String title, long rid) {
+        // return db.getQuestionion("Question_" + title, rid);
         return null;
 
     }
 
-    public void deleteQuestion(String title, long rid) {
-        // db.delete("quest_" + title, rid);
+    public void deleteQuestionion(String title, long rid) {
+        // db.delete("Question_" + title, rid);
     }
 
-    public List<Question> getQuestionList(int maxQuestion, long rid) {
+    public List<Question> getQuestionionList(int maxQuestionion, long rid) {
         return null;
     }
 
     // Answers
-    public void addAnswer(String questionTitle, String text, String author, long rid) {
+    public void addAnswer(String QuestionionTitle, String text, String author, long rid) {
 
     }
 
-    public void updateAnswer(String questionTitle, String answerID, String text, long rid) {
+    public void updateAnswer(
+            String QuestionionTitle,
+                String answerID,
+                String text,
+                long rid) {
 
     }
 
-    public void delAnswer(String questionTitle, String answerID, long rid) {
+    public void delAnswer(String QuestionionTitle, String answerID, long rid) {
 
     }
 
     // Comment
-    public void addComment(String questionTitle, String answerID, String author, long rid) {
+    public void addComment(
+            String QuestionionTitle,
+                String answerID,
+                String author,
+                long rid) {
 
     }
 
     public void deleteComment(
-            String questionTitle,
+            String QuestionionTitle,
                 String answerID,
                 String commentID,
                 long rid) {
@@ -58,7 +67,7 @@ public class AskService {
     }
 
     public void updateComment(
-            String questionTitle,
+            String QuestionionTitle,
                 String answerID,
                 String commentID,
                 String text,
@@ -67,11 +76,11 @@ public class AskService {
     }
 
     // Vote
-    public void voteUp(String questionTitle, String answerID, long rid) {
+    public void voteUp(String QuestionionTitle, String answerID, long rid) {
 
     }
 
-    public void voteDowm(String questionTitle, String answerID, long rid) {
+    public void voteDowm(String QuestionionTitle, String answerID, long rid) {
 
     }
 
