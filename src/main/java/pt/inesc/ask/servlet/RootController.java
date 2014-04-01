@@ -1,11 +1,11 @@
 package pt.inesc.ask.servlet;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import pt.inesc.ask.dao.VoldemortTestDAO;
 import pt.inesc.ask.domain.AskException;
 
 
@@ -26,49 +27,58 @@ public class RootController {
     String[] tags = new String[] { "nice", "fixe" };
     AskService s = new AskService();
 
-    @Autowired(required = true)
-    HttpServletRequest request;
+    @RequestMapping(value = "/voldemort", method = RequestMethod.GET)
+    public @ResponseBody
+    String voldemortTest() {
+        VoldemortTestDAO dao = new VoldemortTestDAO();
+        dao.put("test", "voldemort");
+        return dao.get("test");
+    }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
+        System.out.println("GET /test");
         return "hello";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(HttpServletRequest req, Model model) {
-        model.addAttribute("questionList", s.getListQuestions());
+    public String index(HttpServletRequest r, Model model) throws AskException {
+        System.out.println("GET / " + r.getHeader("Id"));
+        model.addAttribute("questionList", s.getListQuestions(r.getHeader("Id")));
         return "index";
     }
-
 
     @ExceptionHandler(Throwable.class)
     public @ResponseBody
     String handleAnyException(Throwable ex, HttpServletRequest request) {
-        // ModelAndView model = new ModelAndView("error");
-        // model.addObject("error", e);
         return ex.getMessage();
     }
 
     // ########## Question ################
 
     @RequestMapping(value = "/new-question", method = RequestMethod.GET)
-    public String getNewQuestion(Model model) {
+    public String getNewQuestion(HttpServletRequest r, Model model) {
+        System.out.println("ID" + r.getHeader("Id"));
+        System.out.println("GET /new-question");
         model.addAttribute("tags", tags);
         return "newQuestion";
     }
 
     @RequestMapping(value = "/new-question", method = RequestMethod.POST)
-    public String postNewQuestion(HttpServletRequest request, Model model) throws AskException {
-        String title = request.getParameter("title");
-        String text = request.getParameter("text");
-        String[] tags = request.getParameterValues("tags");
-        s.newQuestion(title, text, tags, "author");
+    public String postNewQuestion(HttpServletRequest r, Model model) throws AskException {
+        System.out.println("ID" + r.getHeader("Id"));
+        String title = r.getParameter("title");
+        String text = r.getParameter("text");
+        String[] tags = r.getParameterValues("tags");
+        s.newQuestion(title, text, Arrays.asList(tags), "author", r.getHeader("Id"));
         return "redirect:/question/" + title;
     }
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
-    public String getQuestion(@PathVariable String questionTitle, Model model) throws AskException {
-        Map<String, Object> attributes = s.getQuestionData(questionTitle);
+    public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
+        System.out.println("GET /question/" + questionTitle + " " + r.getHeader("Id"));
+
+        Map<String, Object> attributes = s.getQuestionData(questionTitle, r.getHeader("Id"));
         model.addAllAttributes(attributes);
         return "question";
     }
@@ -76,8 +86,8 @@ public class RootController {
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.DELETE)
     public @ResponseBody
-    String deleteQuestion(HttpServletRequest req, @PathVariable String questionTitle, Model model) throws AskException {
-        s.deleteQuestion(questionTitle);
+    String deleteQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
+        s.deleteQuestion(questionTitle, r.getHeader("Id"));
         return "success";
     }
 
@@ -86,63 +96,66 @@ public class RootController {
 
     // ########## Answers ##########
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.POST)
-    public String newAnswer(@PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        s.newAnswer(questionTitle, "author", p.get("text"));
+    public String newAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
+        s.newAnswer(questionTitle, "author", p.get("text"), r.getHeader("Id"));
         return "redirect:/question/" + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.PUT)
     public @ResponseBody
-    String updateAnswer(@PathVariable String questionTitle,
+    String updateAnswer(HttpServletRequest r, @PathVariable String questionTitle,
 
     @RequestBody Map<String, String> p) throws AskException {
-        s.updateAnswer(p.get("answerID"), p.get("text"));
+        s.updateAnswer(p.get("answerID"), p.get("text"), r.getHeader("Id"));
         return "success";
     }
 
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.DELETE)
     public @ResponseBody
-    String deleteAnswer(@PathVariable String questionTitle,
+    String deleteAnswer(HttpServletRequest r, @PathVariable String questionTitle,
 
     @RequestBody Map<String, String> p) throws AskException {
 
-        s.deleteAnswer(questionTitle, p.get("answerID"));
+        s.deleteAnswer(questionTitle, p.get("answerID"), r.getHeader("Id"));
         return "success";
     }
 
     // ############ comments #########################
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.POST)
-    public String newComment(@PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        s.newComment(questionTitle, p.get("answerID"), p.get("text"), "author");
+    public String newComment(
+            HttpServletRequest r,
+                @PathVariable String questionTitle,
+                @RequestBody Map<String, String> p) throws AskException {
+        s.newComment(questionTitle, p.get("answerID"), p.get("text"), "author", r.getHeader("Id"));
         return "redirect:/question/" + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.PUT)
     public @ResponseBody
-    String putComment(@PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
+    String putComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
 
-        s.updateComment(questionTitle, p.get("answerID"), p.get("commentID"), p.get("text"));
+        s.updateComment(questionTitle, p.get("answerID"), p.get("commentID"), p.get("text"), r.getHeader("Id"));
         return "success";
     }
 
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.DELETE)
     public @ResponseBody
-    String deleteComment(@PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
+    String deleteComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             IOException {
-        s.deleteComment(p.get("commentID"), p.get("answerID"));
+        s.deleteComment(p.get("commentID"), p.get("answerID"), r.getHeader("Id"));
         return "success";
     }
 
     // ######## Vote ##########
     @RequestMapping(value = "/question/{questionTitle}/up", method = RequestMethod.POST)
-    public String voteUp(@PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        s.voteUp(questionTitle, p.get("answerID"));
+    public String voteUp(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
+        s.voteUp(questionTitle, p.get("answerID"), r.getHeader("Id"));
         return "redirect:/question/" + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/down", method = RequestMethod.POST)
-    public String voteDown(@PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        s.voteDown(questionTitle, p.get("answerID"));
+    public String voteDown(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
+        s.voteDown(questionTitle, p.get("answerID"), r.getHeader("Id"));
         return "redirect:/question/" + questionTitle;
     }
 

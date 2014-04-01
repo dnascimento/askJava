@@ -3,7 +3,7 @@ package pt.inesc.ask.domain;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import com.google.appengine.repackaged.com.google.common.io.BaseEncoding;
+import com.google.common.io.BaseEncoding;
 
 public class Comment {
     public String id;
@@ -47,6 +47,47 @@ public class Comment {
     public void setAuthor(String author) {
         this.author = author;
     }
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((author == null) ? 0 : author.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((text == null) ? 0 : text.hashCode());
+        return result;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Comment other = (Comment) obj;
+        if (author == null) {
+            if (other.author != null)
+                return false;
+        } else if (!author.equals(other.author))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (text == null) {
+            if (other.text != null)
+                return false;
+        } else if (!text.equals(other.text))
+            return false;
+        return true;
+    }
+
+
 
 
 }
