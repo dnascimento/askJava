@@ -25,30 +25,30 @@ public class VolatilDAO
         Question q = new Question("onde estou", tags, a.id);
         Comment c = new Comment(a.id, "parvo", "maike");
         a.addComment(c.id);
-        save(a, "0");
-        save(q, "0");
-        save(c, "0");
+        save(a, 0L);
+        save(q, 0L);
+        save(c, 0L);
     }
 
     // Save
     @Override
-    public void save(Question quest, String rid) {
+    public void save(Question quest, long rid) {
         questions.put(quest.id, quest);
     }
 
     @Override
-    public void save(Answer answer, String rid) {
+    public void save(Answer answer, long rid) {
         answers.put(answer.id, answer);
     }
 
     @Override
-    public void save(Comment comment, String rid) {
+    public void save(Comment comment, long rid) {
         comments.put(comment.id, comment);
     }
 
     // Delete
     @Override
-    public void deleteQuestion(String questionId, String rid) throws AskException {
+    public void deleteQuestion(String questionId, long rid) throws AskException {
         Question q = questions.remove(questionId);
         if (q == null) {
             throw new AskException("Question not exists:" + questionId);
@@ -56,7 +56,7 @@ public class VolatilDAO
     }
 
     @Override
-    public void deleteAnswer(String answerId, String rid) throws AskException {
+    public void deleteAnswer(String answerId, long rid) throws AskException {
         Answer a = answers.remove(answerId);
         if (a == null) {
             throw new AskException("Answer not exists:" + answerId);
@@ -64,7 +64,7 @@ public class VolatilDAO
     }
 
     @Override
-    public void deleteComment(String commentId, String rid) throws AskException {
+    public void deleteComment(String commentId, long rid) throws AskException {
         Comment c = comments.remove(commentId);
         if (c == null) {
             throw new AskException("Comment not exists:" + commentId);
@@ -73,7 +73,7 @@ public class VolatilDAO
 
     // Gets
     @Override
-    public Question getQuestion(String questionTitle, String rid) throws AskException {
+    public Question getQuestion(String questionTitle, long rid) throws AskException {
         Question q = questions.get(questionTitle);
         if (q == null) {
             throw new AskException("Question not exists: " + questionTitle);
@@ -82,7 +82,7 @@ public class VolatilDAO
     }
 
     @Override
-    public Answer getAnswer(String answerId, String rid) throws AskException {
+    public Answer getAnswer(String answerId, long rid) throws AskException {
         Answer a = answers.get(answerId);
         if (a == null) {
             throw new AskException("Answer not exists: " + answerId);
@@ -91,7 +91,7 @@ public class VolatilDAO
     }
 
     @Override
-    public Comment getComment(String commentId, String rid) throws AskException {
+    public Comment getComment(String commentId, long rid) throws AskException {
         Comment c = comments.get(commentId);
         if (c == null) {
             throw new AskException("Comment not exists: " + commentId);
@@ -101,12 +101,12 @@ public class VolatilDAO
 
 
     @Override
-    public LinkedList<Question> getListQuestions(String rid) {
+    public LinkedList<Question> getListQuestions(long rid) {
         return new LinkedList<Question>(questions.values());
     }
 
     @Override
-    public void saveNew(Question quest, String rid) {
+    public void saveNew(Question quest, long rid) {
         save(quest, rid);
     }
 }

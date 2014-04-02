@@ -8,33 +8,29 @@ import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.proto.AskProto;
-import voldemort.client.ClientConfig;
-import voldemort.client.SocketStoreClientFactory;
-import voldemort.client.StoreClient;
-import voldemort.client.StoreClientFactory;
 import voldemort.versioning.Versioned;
 
 // Data access object: access to database and convertion
 public class VoldemortDAO
         implements DAO {
-    StoreClient<String, AskProto.Question> questions;
-    StoreClient<String, AskProto.Answer> answers;
-    StoreClient<String, AskProto.Comment> comments;
-    StoreClient<String, AskProto.Index> index;
+    VoldemortStore<AskProto.Question> questions;
+    VoldemortStore<AskProto.Answer> answers;
+    VoldemortStore<AskProto.Comment> comments;
+    VoldemortStore<AskProto.Index> index;
 
     public VoldemortDAO() {
         String bootstrapUrl = "tcp://localhost:6666";
-        StoreClientFactory factory = new SocketStoreClientFactory(new ClientConfig().setBootstrapUrls(bootstrapUrl));
-        questions = factory.getStoreClient("questionStore");
-        answers = factory.getStoreClient("answerStore");
-        comments = factory.getStoreClient("commentStore");
-        index = factory.getStoreClient("index");
+
+        questions = new VoldemortStore<AskProto.Question>("questionStore", bootstrapUrl);
+        answers = new VoldemortStore<AskProto.Answer>("answerStore", bootstrapUrl);
+        comments = new VoldemortStore<AskProto.Comment>("commentStore", bootstrapUrl);
+        index = new VoldemortStore<AskProto.Index>("index", bootstrapUrl);
     }
 
     // Save
     @Override
-    public void saveNew(Question quest, String rid) {
-        Versioned<AskProto.Index> versioned = index.get("index");
+    public void saveNew(Question quest, long rid) {
+        Versioned<AskProto.Index> versioned = index.get("index", rid);
         List<String> list;
         if (versioned == null) {
             list = new LinkedList<String>();
@@ -44,51 +40,51 @@ public class VoldemortDAO
             if (list.contains(quest.id))
                 return;
         }
-        index.put("index", AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.id).build());
+        index.put("index", AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.id).build(), rid);
         save(quest, rid);
     }
 
     @Override
-    public void save(Question quest, String rid) {
-        questions.put(quest.id, cast(quest));
+    public void save(Question quest, long rid) {
+        questions.put(quest.id, cast(quest), rid);
     }
 
     @Override
-    public void save(Answer answer, String rid) {
-        answers.put(answer.id, cast(answer));
+    public void save(Answer answer, long rid) {
+        answers.put(answer.id, cast(answer), rid);
     }
 
     @Override
-    public void save(Comment comment, String rid) {
-        comments.put(comment.id, cast(comment));
+    public void save(Comment comment, long rid) {
+        comments.put(comment.id, cast(comment), rid);
     }
 
     // Delete
     @Override
-    public void deleteQuestion(String questionId, String rid) throws AskException {
-        Versioned<AskProto.Index> indexList = index.get("index");
+    public void deleteQuestion(String questionId, long rid) throws AskException {
+        Versioned<AskProto.Index> indexList = index.get("index", rid);
         AskProto.Index indexMsg = indexList.getValue();
         List<String> list;
         list = indexMsg.getEntryList();
         list.remove(questionId);
-        index.put("index", AskProto.Index.newBuilder().addAllEntry(list).build());
-        boolean q = questions.delete(questionId);
+        index.put("index", AskProto.Index.newBuilder().addAllEntry(list).build(), rid);
+        boolean q = questions.delete(questionId, rid);
         if (q == false) {
             throw new AskException("Question not exists:" + questionId);
         }
     }
 
     @Override
-    public void deleteAnswer(String answerId, String rid) throws AskException {
-        boolean a = answers.delete(answerId);
+    public void deleteAnswer(String answerId, long rid) throws AskException {
+        boolean a = answers.delete(answerId, rid);
         if (a == false) {
             throw new AskException("Answer not exists:" + answerId);
         }
     }
 
     @Override
-    public void deleteComment(String commentId, String rid) throws AskException {
-        boolean c = comments.delete(commentId);
+    public void deleteComment(String commentId, long rid) throws AskException {
+        boolean c = comments.delete(commentId, rid);
         if (c == false) {
             throw new AskException("Comment not exists:" + commentId);
         }
@@ -96,8 +92,8 @@ public class VoldemortDAO
 
     // Gets
     @Override
-    public Question getQuestion(String questionId, String rid) throws AskException {
-        Versioned<AskProto.Question> q = questions.get(questionId);
+    public Question getQuestion(String questionId, long rid) throws AskException {
+        Versioned<AskProto.Question> q = questions.get(questionId, rid);
         if (q == null) {
             throw new AskException("Question not exists: " + questionId);
         }
@@ -105,8 +101,8 @@ public class VoldemortDAO
     }
 
     @Override
-    public Answer getAnswer(String answerId, String rid) throws AskException {
-        Versioned<AskProto.Answer> a = answers.get(answerId);
+    public Answer getAnswer(String answerId, long rid) throws AskException {
+        Versioned<AskProto.Answer> a = answers.get(answerId, rid);
         if (a == null) {
             throw new AskException("Answer not exists: " + answerId);
         }
@@ -114,8 +110,8 @@ public class VoldemortDAO
     }
 
     @Override
-    public Comment getComment(String commentId, String rid) throws AskException {
-        Versioned<AskProto.Comment> c = comments.get(commentId);
+    public Comment getComment(String commentId, long rid) throws AskException {
+        Versioned<AskProto.Comment> c = comments.get(commentId, rid);
         if (c == null) {
             throw new AskException("Comment not exists: " + commentId);
         }
@@ -124,8 +120,8 @@ public class VoldemortDAO
 
 
     @Override
-    public List<Question> getListQuestions(String rid) throws AskException {
-        Versioned<AskProto.Index> indexList = index.get("index");
+    public List<Question> getListQuestions(long rid) throws AskException {
+        Versioned<AskProto.Index> indexList = index.get("index", rid);
         if (indexList == null) {
             return new LinkedList<Question>();
         }

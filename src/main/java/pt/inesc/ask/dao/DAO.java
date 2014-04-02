@@ -11,27 +11,27 @@ import pt.inesc.ask.domain.Question;
 public interface DAO {
 
     // Save
-    public void save(Question quest, String rid);
+    public void save(Question quest, long rid);
 
-    public void save(Answer answer, String rid);
+    public void save(Answer answer, long rid);
 
-    public void save(Comment comment, String rid);
+    public void save(Comment comment, long rid);
 
     // Delete
-    public void deleteQuestion(String questionId, String rid) throws AskException;
+    public void deleteQuestion(String questionId, long rid) throws AskException;
 
-    public void deleteAnswer(String answerId, String rid) throws AskException;
+    public void deleteAnswer(String answerId, long rid) throws AskException;
 
-    public void deleteComment(String commentId, String rid) throws AskException;
+    public void deleteComment(String commentId, long rid) throws AskException;
 
     // Gets
-    public Question getQuestion(String questionTitle, String rid) throws AskException;
+    public Question getQuestion(String questionTitle, long rid) throws AskException;
 
-    public Answer getAnswer(String answerId, String rid) throws AskException;
+    public Answer getAnswer(String answerId, long rid) throws AskException;
 
-    public Comment getComment(String commentId, String rid) throws AskException;
+    public Comment getComment(String commentId, long rid) throws AskException;
 
-    public List<Question> getListQuestions(String rid) throws AskException;
+    public List<Question> getListQuestions(long rid) throws AskException;
 
-    void saveNew(Question quest, String rid);
+    void saveNew(Question quest, long rid);
 }
