@@ -13,18 +13,17 @@ import voldemort.versioning.Versioned;
 // Data access object: access to database and convertion
 public class VoldemortDAO
         implements DAO {
-    VoldemortStore<AskProto.Question> questions;
-    VoldemortStore<AskProto.Answer> answers;
-    VoldemortStore<AskProto.Comment> comments;
-    VoldemortStore<AskProto.Index> index;
+    VoldemortStore<String, AskProto.Question> questions;
+    VoldemortStore<String, AskProto.Answer> answers;
+    VoldemortStore<String, AskProto.Comment> comments;
+    VoldemortStore<String, AskProto.Index> index;
 
     public VoldemortDAO() {
         String bootstrapUrl = "tcp://localhost:6666";
-
-        questions = new VoldemortStore<AskProto.Question>("questionStore", bootstrapUrl);
-        answers = new VoldemortStore<AskProto.Answer>("answerStore", bootstrapUrl);
-        comments = new VoldemortStore<AskProto.Comment>("commentStore", bootstrapUrl);
-        index = new VoldemortStore<AskProto.Index>("index", bootstrapUrl);
+        questions = new VoldemortStore<String, AskProto.Question>("questionStore", bootstrapUrl);
+        answers = new VoldemortStore<String, AskProto.Answer>("answerStore", bootstrapUrl);
+        comments = new VoldemortStore<String, AskProto.Comment>("commentStore", bootstrapUrl);
+        index = new VoldemortStore<String, AskProto.Index>("index", bootstrapUrl);
     }
 
     // Save

@@ -8,15 +8,15 @@ import voldemort.client.protocol.RequestFormatType;
 import voldemort.versioning.Version;
 import voldemort.versioning.Versioned;
 
+import com.google.protobuf.Message;
+
 /**
- * Prototype of a Voldemort Storage which includes the RID into key.
- * There is a clear limitation of using String as Key. However, its a simple prototype
+ * Lazy creation voldemort store
  * 
  * @author darionascimento
- * @param <V>
  */
-public class VoldemortStore<V> {
-    private StoreClient<String, V> store;
+public class VoldemortStore<K, V extends Message> {
+    private StoreClient<K, V> store;
     private final String storeName;
     private final String bootstrapUrl;
 
@@ -32,21 +32,22 @@ public class VoldemortStore<V> {
         store = factory.getStoreClient(storeName);
     }
 
-    public Version put(String key, V value, long rid) {
+    public Version put(K key, V value, long rid) {
         if (store == null)
             init();
         return store.put(key, value, rid);
     }
 
-    public Versioned<V> get(String key, long rid) {
+    public Versioned<V> get(K key, long rid) {
         if (store == null)
             init();
         return store.get(key, rid);
     }
 
-    public boolean delete(String key, long rid) {
+    public boolean delete(K key, long rid) {
         if (store == null)
             init();
         return store.delete(key, rid);
     }
+
 }
