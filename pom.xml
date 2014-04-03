@@ -41,11 +41,11 @@
 	<!-- Dependencies -->
 	<dependencies>
 		<!-- Compile/runtime dependencies -->
-		 <dependency>
+		<!--  <dependency>
 			<groupId>com.voldemort</groupId>
 			<artifactId>voldemort</artifactId>
 			<version>3.0.0</version> 
-		</dependency> 
+		</dependency> -->
 	<!-- 	<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-api-1.0-sdk</artifactId>

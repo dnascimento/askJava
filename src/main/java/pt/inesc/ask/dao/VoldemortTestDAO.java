@@ -17,11 +17,11 @@ public class VoldemortTestDAO {
     }
 
     public void put(String key, String value) {
-        test.put(key, value);
+        test.put(key, value, 0L);
     }
 
     public String get(String key) {
-        Versioned<String> versions = test.get(key);
+        Versioned<String> versions = test.get(key, 0L);
         return versions.getValue();
     }
 

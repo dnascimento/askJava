@@ -35,18 +35,18 @@ public class VoldemortStore<V> {
     public Version put(String key, V value, long rid) {
         if (store == null)
             init();
-        return store.put(rid + key, value);
+        return store.put(key, value, rid);
     }
 
     public Versioned<V> get(String key, long rid) {
         if (store == null)
             init();
-        return store.get(rid + key);
+        return store.get(key, rid);
     }
 
     public boolean delete(String key, long rid) {
         if (store == null)
             init();
-        return store.delete(rid + key);
+        return store.delete(key, rid);
     }
 }
