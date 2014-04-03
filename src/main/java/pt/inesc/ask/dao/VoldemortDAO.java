@@ -63,10 +63,12 @@ public class VoldemortDAO
     public void deleteQuestion(String questionId, long rid) throws AskException {
         Versioned<AskProto.Index> indexList = index.get("index", rid);
         AskProto.Index indexMsg = indexList.getValue();
-        List<String> list;
-        list = indexMsg.getEntryList();
-        list.remove(questionId);
-        index.put("index", AskProto.Index.newBuilder().addAllEntry(list).build(), rid);
+        AskProto.Index.Builder b = AskProto.Index.newBuilder();
+        for (String e : indexMsg.getEntryList()) {
+            if (!e.equals(questionId))
+                b.addEntry(e);
+        }
+        index.put("index", b.build(), rid);
         boolean q = questions.delete(questionId, rid);
         if (q == false) {
             throw new AskException("Question not exists:" + questionId);

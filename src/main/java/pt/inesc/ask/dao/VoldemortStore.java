@@ -41,6 +41,7 @@ public class VoldemortStore<K, V extends Message> {
     public Versioned<V> get(K key, long rid) {
         if (store == null)
             init();
+        System.out.println("Get: " + key + " : " + rid);
         return store.get(key, rid);
     }
 

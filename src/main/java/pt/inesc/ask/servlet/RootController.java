@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,22 +42,22 @@ public class RootController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest r, Model model) throws AskException {
-        System.out.println("GET / " + Long.parseLong(r.getHeader("Id")));
-        model.addAttribute("questionList", s.getListQuestions(Long.parseLong(r.getHeader("Id"))));
+        System.out.println("GET / " + extractRid(r));
+        model.addAttribute("questionList", s.getListQuestions(extractRid(r)));
         return "index";
     }
 
-    @ExceptionHandler(Throwable.class)
-    public @ResponseBody
-    String handleAnyException(Throwable ex, HttpServletRequest request) {
-        return ex.getMessage();
-    }
+    // @ExceptionHandler(Throwable.class)
+    // public @ResponseBody
+    // String handleAnyException(Throwable ex, HttpServletRequest request) {
+    // return ex.getMessage();
+    // }
 
     // ########## Question ################
 
     @RequestMapping(value = "/new-question", method = RequestMethod.GET)
     public String getNewQuestion(HttpServletRequest r, Model model) {
-        System.out.println("ID" + Long.parseLong(r.getHeader("Id")));
+        System.out.println("ID" + extractRid(r));
         System.out.println("GET /new-question");
         model.addAttribute("tags", tags);
         return "newQuestion";
@@ -66,19 +65,19 @@ public class RootController {
 
     @RequestMapping(value = "/new-question", method = RequestMethod.POST)
     public String postNewQuestion(HttpServletRequest r, Model model) throws AskException {
-        System.out.println("ID" + Long.parseLong(r.getHeader("Id")));
+        System.out.println("ID" + extractRid(r));
         String title = r.getParameter("title");
         String text = r.getParameter("text");
         String[] tags = r.getParameterValues("tags");
-        s.newQuestion(title, text, Arrays.asList(tags), "author", Long.parseLong(r.getHeader("Id")));
+        s.newQuestion(title, text, Arrays.asList(tags), "author", extractRid(r));
         return "redirect:/question/" + title;
     }
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
     public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
-        System.out.println("GET /question/" + questionTitle + " " + Long.parseLong(r.getHeader("Id")));
+        System.out.println("GET /question/" + questionTitle + " " + extractRid(r));
 
-        Map<String, Object> attributes = s.getQuestionData(questionTitle, Long.parseLong(r.getHeader("Id")));
+        Map<String, Object> attributes = s.getQuestionData(questionTitle, extractRid(r));
         model.addAllAttributes(attributes);
         return "question";
     }
@@ -87,7 +86,7 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.DELETE)
     public @ResponseBody
     String deleteQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
-        s.deleteQuestion(questionTitle, Long.parseLong(r.getHeader("Id")));
+        s.deleteQuestion(questionTitle, extractRid(r));
         return "success";
     }
 
@@ -97,7 +96,7 @@ public class RootController {
     // ########## Answers ##########
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.POST)
     public String newAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        s.newAnswer(questionTitle, "author", p.get("text"), Long.parseLong(r.getHeader("Id")));
+        s.newAnswer(questionTitle, "author", p.get("text"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
@@ -106,7 +105,7 @@ public class RootController {
     String updateAnswer(HttpServletRequest r, @PathVariable String questionTitle,
 
     @RequestBody Map<String, String> p) throws AskException {
-        s.updateAnswer(p.get("answerID"), p.get("text"), Long.parseLong(r.getHeader("Id")));
+        s.updateAnswer(p.get("answerID"), p.get("text"), extractRid(r));
         return "success";
     }
 
@@ -116,7 +115,7 @@ public class RootController {
 
     @RequestBody Map<String, String> p) throws AskException {
 
-        s.deleteAnswer(questionTitle, p.get("answerID"), Long.parseLong(r.getHeader("Id")));
+        s.deleteAnswer(questionTitle, p.get("answerID"), extractRid(r));
         return "success";
     }
 
@@ -126,7 +125,7 @@ public class RootController {
             HttpServletRequest r,
                 @PathVariable String questionTitle,
                 @RequestBody Map<String, String> p) throws AskException {
-        s.newComment(questionTitle, p.get("answerID"), p.get("text"), "author", Long.parseLong(r.getHeader("Id")));
+        s.newComment(questionTitle, p.get("answerID"), p.get("text"), "author", extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
@@ -134,11 +133,7 @@ public class RootController {
     public @ResponseBody
     String putComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
 
-        s.updateComment(questionTitle,
-                        p.get("answerID"),
-                        p.get("commentID"),
-                        p.get("text"),
-                        Long.parseLong(r.getHeader("Id")));
+        s.updateComment(questionTitle, p.get("answerID"), p.get("commentID"), p.get("text"), extractRid(r));
         return "success";
     }
 
@@ -146,20 +141,20 @@ public class RootController {
     public @ResponseBody
     String deleteComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             IOException {
-        s.deleteComment(p.get("commentID"), p.get("answerID"), Long.parseLong(r.getHeader("Id")));
+        s.deleteComment(p.get("commentID"), p.get("answerID"), extractRid(r));
         return "success";
     }
 
     // ######## Vote ##########
     @RequestMapping(value = "/question/{questionTitle}/up", method = RequestMethod.POST)
     public String voteUp(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        s.voteUp(questionTitle, p.get("answerID"), Long.parseLong(r.getHeader("Id")));
+        s.voteUp(questionTitle, p.get("answerID"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/down", method = RequestMethod.POST)
     public String voteDown(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        s.voteDown(questionTitle, p.get("answerID"), Long.parseLong(r.getHeader("Id")));
+        s.voteDown(questionTitle, p.get("answerID"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
@@ -173,6 +168,15 @@ public class RootController {
     public String uploadPost(Model model) {
         // TODO
         return "upload";
+    }
+
+    private long extractRid(HttpServletRequest r) {
+        try {
+            return Long.parseLong(r.getHeader("Id"));
+        } catch (NumberFormatException e) {
+            // No rid from proxy, create stub using local clock
+            return System.currentTimeMillis();
+        }
     }
 
 

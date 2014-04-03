@@ -41,6 +41,17 @@ public class VoldemortTest {
         assertEquals(q, q2);
     }
 
+    @Test(expected = AskException.class)
+    public void deleteQuestion() throws AskException {
+        Question q = new Question("title", new LinkedList<String>(), "dario");
+        dao.save(q, 69L);
+        dao.deleteQuestion(q.id, 69L);
+        dao.getQuestion(q.id, 69L);
+    }
+
+
+
+
     @Test
     public void saveAnswer() throws AskException {
         Answer a = new Answer("title", "dario", "test", true);
