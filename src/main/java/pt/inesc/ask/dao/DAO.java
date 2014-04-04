@@ -6,23 +6,24 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import voldemort.versioning.Version;
 
 // Data access object: access to database and conversion
 public interface DAO {
 
     // Save
-    public void save(Question quest, long rid);
+    public Version save(Question quest, long rid);
 
-    public void save(Answer answer, long rid);
+    public Version save(Answer answer, long rid);
 
-    public void save(Comment comment, long rid);
+    public Version save(Comment comment, long rid);
 
     // Delete
-    public void deleteQuestion(String questionId, long rid) throws AskException;
+    public boolean deleteQuestion(String questionId, long rid);
 
-    public void deleteAnswer(String answerId, long rid) throws AskException;
+    public boolean deleteAnswer(String answerId, long rid);
 
-    public void deleteComment(String commentId, long rid) throws AskException;
+    public boolean deleteComment(String commentId, long rid);
 
     // Gets
     public Question getQuestion(String questionTitle, long rid) throws AskException;
@@ -33,5 +34,7 @@ public interface DAO {
 
     public List<Question> getListQuestions(long rid) throws AskException;
 
-    void saveNew(Question quest, long rid);
+    Version saveNew(Question quest, long rid) throws AskException;
+
+    void cleanIndex(long rid);
 }

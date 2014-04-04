@@ -5,15 +5,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 
+import pt.inesc.ask.proto.AskProto;
+
 import com.google.common.io.BaseEncoding;
 
 public class Answer {
-    public String id;
-    public String author;
-    public String text;
-    public Boolean isQuestion;
-    public int votes = 0;
-    public LinkedList<String> commentsIds;
+    AskProto.Answer data;
+    private String id;
+    // To display the comments
     private final LinkedList<Comment> comments = new LinkedList<Comment>();
 
     public Answer(String questionTitle, String author, String text, Boolean isQuestion) {
@@ -25,51 +24,91 @@ public class Answer {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        this.author = author;
-        this.text = text;
-        this.isQuestion = isQuestion;
-        this.commentsIds = new LinkedList<String>();
+        AskProto.Answer.Builder b = AskProto.Answer.newBuilder();
+        b.setAuthor(author).setText(text).setVotes(0).setIsQuestion(isQuestion);
+        data = b.build();
     }
 
-    public Answer(String id, String author, String text, Boolean isQuestion, int votes, LinkedList<String> commentsIds) {
+    public Answer(String id, AskProto.Answer data) {
         this.id = id;
-        this.author = author;
-        this.text = text;
-        this.isQuestion = isQuestion;
-        this.commentsIds = commentsIds;
-        this.votes = votes;
+        this.data = data;
     }
 
+    // To display
     public void addComment(Comment comment) {
         if (comment != null)
             comments.addLast(comment);
     }
 
-
+    // To list of comments
     public void addComment(String commentId) {
-        commentsIds.addLast(commentId);
+        AskProto.Answer.Builder b = AskProto.Answer.newBuilder();
+        b.setAuthor(data.getAuthor())
+         .setText(data.getText())
+         .setVotes(data.getVotes())
+         .setIsQuestion(data.getIsQuestion())
+         .addAllCommentIds(data.getCommentIdsList());
+        b.addCommentIds(commentId);
+        data = b.build();
     }
 
     public Boolean removeComment(String commentId) {
-        return commentsIds.remove(commentId);
+        List<String> oldList = data.getCommentIdsList();
+        boolean found = false;
+        AskProto.Answer.Builder b = AskProto.Answer.newBuilder();
+        b.setAuthor(data.getAuthor())
+         .setText(data.getText())
+         .setVotes(data.getVotes())
+         .setIsQuestion(data.getIsQuestion());
+
+        for (String e : oldList) {
+            if (e.equals(commentId)) {
+                found = true;
+            } else {
+                b.addCommentIds(e);
+            }
+        }
+        data = b.build();
+        return found;
     }
 
-    public void voteUp() {
-        this.votes++;
+    public void setText(String text) {
+        newData(data.getAuthor(), text, data.getVotes(), data.getIsQuestion(), data.getCommentIdsList());
+    }
 
+    private void vote(int votes) {
+        data.getVotes();
+        newData(data.getAuthor(),
+                data.getText(),
+                data.getVotes() + votes,
+                data.getIsQuestion(),
+                data.getCommentIdsList());
+    }
+
+    private void newData(String author, String text, int votes, boolean isQuestion, List<String> commentIds) {
+        AskProto.Answer.Builder b = AskProto.Answer.newBuilder();
+        b.setAuthor(author).setText(text).setVotes(votes).setIsQuestion(isQuestion).addAllCommentIds(commentIds);
+        data = b.build();
+    }
+
+
+
+
+
+    public void voteUp() {
+        vote(+1);
     }
 
     public void voteDown() {
-        this.votes--;
-
+        vote(-1);
     }
 
 
 
     @Override
     public String toString() {
-        return "Answer [id=" + id + ", author=" + author + ", text=" + text + ", isQuestion=" + isQuestion + ", votes="
-                + votes + ", commentsIds=" + commentsIds + "]";
+        return "Answer [id=" + id + ", author=" + getAuthor() + ", text=" + getText() + ", isQuestion="
+                + getIsQuestion() + ", votes=" + getVotes() + ", commentsIds=" + getCommentsIds() + "]";
     }
 
     public String getId() {
@@ -81,44 +120,30 @@ public class Answer {
     }
 
     public String getAuthor() {
-        return author;
+        return data.getAuthor();
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
 
     public String getText() {
-        return text;
+        return data.getText();
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
+
 
     public Boolean getIsQuestion() {
-        return isQuestion;
+        return data.getIsQuestion();
     }
 
-    public void setIsQuestion(Boolean isQuestion) {
-        this.isQuestion = isQuestion;
-    }
 
     public int getVotes() {
-        return votes;
-    }
-
-    public void setVotes(int votes) {
-        this.votes = votes;
+        return data.getVotes();
     }
 
     public List<String> getCommentsIds() {
-        return commentsIds;
+        return data.getCommentIdsList();
     }
 
-    public void setCommentsIds(LinkedList<String> commentsIds) {
-        this.commentsIds = commentsIds;
-    }
+
 
     public LinkedList<Comment> getComments() {
         return comments;
@@ -132,6 +157,11 @@ public class Answer {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        String author = getAuthor();
+        List<String> commentsIds = getCommentsIds();
+        Boolean isQuestion = getIsQuestion();
+        String text = getText();
+        int votes = getVotes();
         result = prime * result + ((author == null) ? 0 : author.hashCode());
         result = prime * result + ((comments == null) ? 0 : comments.hashCode());
         result = prime * result + ((commentsIds == null) ? 0 : commentsIds.hashCode());
@@ -151,47 +181,28 @@ public class Answer {
         if (getClass() != obj.getClass())
             return false;
         Answer other = (Answer) obj;
-        if (author == null) {
-            if (other.author != null)
-                return false;
-        } else if (!author.equals(other.author))
+
+        if (!getAuthor().equals(other.getAuthor()))
             return false;
-        if (comments == null) {
-            if (other.comments != null)
-                return false;
-        } else if (!comments.equals(other.comments))
+        if (!comments.equals(other.comments))
             return false;
-        if (commentsIds == null) {
-            if (other.commentsIds != null)
-                return false;
-        } else if (!commentsIds.equals(other.commentsIds))
+        if (!getCommentsIds().equals(other.getCommentsIds()))
             return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
+        if (!id.equals(other.id))
             return false;
-        if (isQuestion == null) {
-            if (other.isQuestion != null)
-                return false;
-        } else if (!isQuestion.equals(other.isQuestion))
+
+        if (!getIsQuestion().equals(other.getIsQuestion()))
             return false;
-        if (text == null) {
-            if (other.text != null)
-                return false;
-        } else if (!text.equals(other.text))
+        if (!getText().equals(other.getText()))
             return false;
-        if (votes != other.votes)
+        if (getVotes() != other.getVotes())
             return false;
         return true;
     }
 
-
-
-
-
-
-
+    public AskProto.Answer getData() {
+        return data;
+    }
 
 
 }

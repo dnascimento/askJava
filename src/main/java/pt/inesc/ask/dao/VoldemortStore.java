@@ -35,12 +35,16 @@ public class VoldemortStore<K, V extends Message> {
     public Version put(K key, V value, long rid) {
         if (store == null)
             init();
+        if (key == null || value == null)
+            System.err.println("Put: NULL: key" + key + " value:" + value);
         return store.put(key, value, rid);
     }
 
     public Versioned<V> get(K key, long rid) {
         if (store == null)
             init();
+        if (key == null)
+            System.err.println("Get: NULL: key");
         System.out.println("Get: " + key + " : " + rid);
         return store.get(key, rid);
     }
@@ -48,6 +52,10 @@ public class VoldemortStore<K, V extends Message> {
     public boolean delete(K key, long rid) {
         if (store == null)
             init();
+        if (key == null) {
+            System.err.println("Delete: NULL: key");
+            return false;
+        }
         return store.delete(key, rid);
     }
 

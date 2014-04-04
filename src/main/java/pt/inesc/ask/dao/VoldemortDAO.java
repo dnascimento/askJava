@@ -8,6 +8,7 @@ import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.proto.AskProto;
+import voldemort.versioning.Version;
 import voldemort.versioning.Versioned;
 
 // Data access object: access to database and convertion
@@ -28,7 +29,7 @@ public class VoldemortDAO
 
     // Save
     @Override
-    public void saveNew(Question quest, long rid) {
+    public Version saveNew(Question quest, long rid) throws AskException {
         Versioned<AskProto.Index> versioned = index.get("index", rid);
         List<String> list;
         if (versioned == null) {
@@ -36,59 +37,68 @@ public class VoldemortDAO
         } else {
             AskProto.Index entry = versioned.getValue();
             list = entry.getEntryList();
-            if (list.contains(quest.id))
-                return;
+            if (list.contains(quest.getId())) {
+                throw new AskException("Save new question with known id" + quest.getId());
+            }
         }
-        index.put("index", AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.id).build(), rid);
-        save(quest, rid);
+        index.put("index", AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), rid);
+        return save(quest, rid);
     }
 
     @Override
-    public void save(Question quest, long rid) {
-        questions.put(quest.id, cast(quest), rid);
+    public Version save(Question quest, long rid) {
+        return questions.put(quest.getId(), cast(quest), rid);
     }
 
     @Override
-    public void save(Answer answer, long rid) {
-        answers.put(answer.id, cast(answer), rid);
+    public Version save(Answer answer, long rid) {
+        return answers.put(answer.getId(), cast(answer), rid);
     }
 
     @Override
-    public void save(Comment comment, long rid) {
-        comments.put(comment.id, cast(comment), rid);
+    public Version save(Comment comment, long rid) {
+        return comments.put(comment.getId(), cast(comment), rid);
     }
 
     // Delete
     @Override
-    public void deleteQuestion(String questionId, long rid) throws AskException {
+    public boolean deleteQuestion(String questionId, long rid) {
         Versioned<AskProto.Index> indexList = index.get("index", rid);
         AskProto.Index indexMsg = indexList.getValue();
         AskProto.Index.Builder b = AskProto.Index.newBuilder();
+        boolean found = false;
         for (String e : indexMsg.getEntryList()) {
-            if (!e.equals(questionId))
+            if (!e.equals(questionId)) {
                 b.addEntry(e);
+            } else {
+                found = true;
+            }
+        }
+        if (!found) {
+            System.err.println("Question not found in index");
         }
         index.put("index", b.build(), rid);
         boolean q = questions.delete(questionId, rid);
-        if (q == false) {
-            throw new AskException("Question not exists:" + questionId);
+        if (!q) {
+            System.err.println("Question not exists:" + questionId);
         }
+        return q && found;
     }
 
     @Override
-    public void deleteAnswer(String answerId, long rid) throws AskException {
-        boolean a = answers.delete(answerId, rid);
-        if (a == false) {
-            throw new AskException("Answer not exists:" + answerId);
-        }
+    public boolean deleteAnswer(String answerId, long rid) {
+        boolean s = answers.delete(answerId, rid);
+        if (!s)
+            System.err.println("delete answer: not found " + answerId);
+        return s;
     }
 
     @Override
-    public void deleteComment(String commentId, long rid) throws AskException {
-        boolean c = comments.delete(commentId, rid);
-        if (c == false) {
-            throw new AskException("Comment not exists:" + commentId);
-        }
+    public boolean deleteComment(String commentId, long rid) {
+        boolean s = comments.delete(commentId, rid);
+        if (!s)
+            System.err.println("delete comment: not found " + commentId);
+        return s;
     }
 
     // Gets
@@ -135,46 +145,38 @@ public class VoldemortDAO
         return list;
     }
 
+    @Override
+    public void cleanIndex(long rid) {
+        index.put("index", AskProto.Index.newBuilder().build(), rid);
+    }
+
     // Question
     private AskProto.Question cast(Question q) {
-        return AskProto.Question.newBuilder()
-                                .setTitle(q.title)
-                                .addAllAnswerIds(q.answersIDs)
-                                .addAllTags(q.tags)
-                                .build();
+        return q.getData();
     }
 
     private Question cast(String id, AskProto.Question q) {
-        LinkedList<String> ids = new LinkedList<String>(q.getAnswerIdsList());
-        return new Question(q.getTitle(), q.getTagsList(), ids);
+        return new Question(id, q);
     }
 
     // Answer
     private AskProto.Answer cast(Answer q) {
-        return AskProto.Answer.newBuilder()
-                              .setAuthor(q.author)
-                              .setText(q.text)
-                              .setVotes(q.votes)
-                              .setIsQuestion(q.isQuestion)
-                              .addAllCommentIds(q.commentsIds)
-                              .build();
+        return q.getData();
     }
 
     private Answer cast(String id, AskProto.Answer q) {
-        LinkedList<String> ids = new LinkedList<String>(q.getCommentIdsList());
-        return new Answer(id, q.getAuthor(), q.getText(), q.getIsQuestion(), q.getVotes(), ids);
+        return new Answer(id, q);
     }
 
     // Comment
     private AskProto.Comment cast(Comment q) {
-        return AskProto.Comment.newBuilder().setAuthor(q.getAuthor()).setText(q.text).build();
+        return q.getData();
     }
 
     private Comment cast(String id, AskProto.Comment q) {
-        Comment c = new Comment("", q.getText(), q.getAuthor());
-        c.id = id;
-        return c;
+        return new Comment(id, q);
     }
+
 
 
 }

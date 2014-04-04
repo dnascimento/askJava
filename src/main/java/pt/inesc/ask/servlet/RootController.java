@@ -2,6 +2,8 @@ package pt.inesc.ask.servlet;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,7 +71,9 @@ public class RootController {
         String title = r.getParameter("title");
         String text = r.getParameter("text");
         String[] tags = r.getParameterValues("tags");
-        s.newQuestion(title, text, Arrays.asList(tags), "author", extractRid(r));
+        List<String> tagList;
+        tagList = (tags == null) ? new LinkedList<String>() : Arrays.asList(tags);
+        s.newQuestion(title, text, tagList, "author", extractRid(r));
         return "redirect:/question/" + title;
     }
 

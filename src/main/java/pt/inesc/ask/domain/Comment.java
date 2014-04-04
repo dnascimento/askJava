@@ -3,16 +3,17 @@ package pt.inesc.ask.domain;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import pt.inesc.ask.proto.AskProto;
+
 import com.google.common.io.BaseEncoding;
 
 public class Comment {
-    public String id;
-    public String text;
-    public String author;
+    AskProto.Comment data;
+    private String id;
 
     public Comment(String answerID, String text, String author) {
-        this.text = text;
-        this.author = author;
+        AskProto.Comment.Builder b = AskProto.Comment.newBuilder();
+        b.setText(text).setAuthor(author);
         MessageDigest md;
         try {
             md = MessageDigest.getInstance("MD5");
@@ -21,6 +22,19 @@ public class Comment {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        data = b.build();
+    }
+
+    public void setText(String text) {
+        AskProto.Comment.Builder b = AskProto.Comment.newBuilder();
+        b.setAuthor(data.getAuthor()).setText(text);
+        data = b.build();
+    }
+
+
+    public Comment(String id, AskProto.Comment data) {
+        this.id = id;
+        this.data = data;
     }
 
 
@@ -33,26 +47,23 @@ public class Comment {
     }
 
     public String getText() {
-        return text;
+        return data.getText();
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
 
     public String getAuthor() {
-        return author;
+        return data.getAuthor();
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+
 
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        String author = data.getAuthor();
+        String text = data.getText();
         result = prime * result + ((author == null) ? 0 : author.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((text == null) ? 0 : text.hashCode());
@@ -69,23 +80,19 @@ public class Comment {
         if (getClass() != obj.getClass())
             return false;
         Comment other = (Comment) obj;
-        if (author == null) {
-            if (other.author != null)
-                return false;
-        } else if (!author.equals(other.author))
+        if (!getAuthor().equals(other.getAuthor()))
             return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
+        if (!id.equals(other.id))
             return false;
-        if (text == null) {
-            if (other.text != null)
-                return false;
-        } else if (!text.equals(other.text))
+        if (!getText().equals(other.getText()))
             return false;
         return true;
     }
+
+    public AskProto.Comment getData() {
+        return data;
+    }
+
 
 
 
