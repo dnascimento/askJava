@@ -36,7 +36,7 @@ public class VoldemortStore<K, V extends Message> {
         if (store == null)
             init();
         if (key == null || value == null)
-            System.err.println("Put: NULL: key" + key + " value:" + value);
+            System.err.println("Put: NULL: key" + key + " value:" + value + "t " + System.identityHashCode(this));
         return store.put(key, value, rid);
     }
 
@@ -45,7 +45,7 @@ public class VoldemortStore<K, V extends Message> {
             init();
         if (key == null)
             System.err.println("Get: NULL: key");
-        System.out.println("Get: " + key + " : " + rid);
+        System.out.println("Get: " + key + " : " + rid + "t " + System.identityHashCode(this));
         return store.get(key, rid);
     }
 
@@ -53,10 +53,9 @@ public class VoldemortStore<K, V extends Message> {
         if (store == null)
             init();
         if (key == null) {
-            System.err.println("Delete: NULL: key");
+            System.err.println("Delete: NULL: key" + "t " + System.identityHashCode(this));
             return false;
         }
         return store.delete(key, rid);
     }
-
 }
