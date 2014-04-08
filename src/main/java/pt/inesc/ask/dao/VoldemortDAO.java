@@ -30,20 +30,23 @@ public class VoldemortDAO
     // Save
     @Override
     public Version saveNew(Question quest, long rid) throws AskException {
-        Versioned<AskProto.Index> versioned = index.get("index", rid);
-        List<String> list;
-        if (versioned == null) {
-            list = new LinkedList<String>();
-        } else {
-            AskProto.Index entry = versioned.getValue();
-            list = entry.getEntryList();
-            if (list.contains(quest.getId())) {
-                throw new AskException("Save new question with known id" + quest.getId());
+        for (String tag : quest.getTags()) {
+            Versioned<AskProto.Index> versioned = index.get(tag, rid);
+            List<String> list;
+            if (versioned == null) {
+                list = new LinkedList<String>();
+            } else {
+                AskProto.Index entry = versioned.getValue();
+                list = entry.getEntryList();
+                if (list.contains(quest.getId())) {
+                    throw new AskException("Save new question with known id" + quest.getId());
+                }
             }
+            index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), rid);
         }
-        index.put("index", AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), rid);
         return save(quest, rid);
     }
+
 
     @Override
     public Version save(Question quest, long rid) {
@@ -63,21 +66,30 @@ public class VoldemortDAO
     // Delete
     @Override
     public boolean deleteQuestion(String questionId, long rid) {
-        Versioned<AskProto.Index> indexList = index.get("index", rid);
-        AskProto.Index indexMsg = indexList.getValue();
-        AskProto.Index.Builder b = AskProto.Index.newBuilder();
+        Question question;
+        try {
+            question = getQuestion(questionId, rid);
+        } catch (AskException e1) {
+            System.err.println("Delete: Question not exists");
+            return false;
+        }
         boolean found = false;
-        for (String e : indexMsg.getEntryList()) {
-            if (!e.equals(questionId)) {
-                b.addEntry(e);
-            } else {
-                found = true;
+        for (String tag : question.getTags()) {
+            Versioned<AskProto.Index> indexList = index.get(tag, rid);
+            AskProto.Index indexMsg = indexList.getValue();
+            AskProto.Index.Builder b = AskProto.Index.newBuilder();
+            for (String e : indexMsg.getEntryList()) {
+                if (!e.equals(questionId)) {
+                    b.addEntry(e);
+                } else {
+                    found = true;
+                }
             }
+            if (!found) {
+                System.err.println("Question not found in index");
+            }
+            index.put(tag, b.build(), rid);
         }
-        if (!found) {
-            System.err.println("Question not found in index");
-        }
-        index.put("index", b.build(), rid);
         boolean q = questions.delete(questionId, rid);
         if (!q) {
             System.err.println("Question not exists:" + questionId);
@@ -131,8 +143,8 @@ public class VoldemortDAO
 
 
     @Override
-    public List<Question> getListQuestions(long rid) throws AskException {
-        Versioned<AskProto.Index> indexList = index.get("index", rid);
+    public List<Question> getListQuestions(long rid, String tag) throws AskException {
+        Versioned<AskProto.Index> indexList = index.get(tag, rid);
         if (indexList == null) {
             return new LinkedList<Question>();
         }

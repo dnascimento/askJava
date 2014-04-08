@@ -5,7 +5,7 @@
 	<c:param name="title" value="Welcome"/>
 </c:import>
 
-<a href="new-question">New Question</a>
+<a href="/new-question">New Question</a>
 <ul>
 	<c:forEach var="question" items="${questionList}" >
 		<li class="questionSummary">

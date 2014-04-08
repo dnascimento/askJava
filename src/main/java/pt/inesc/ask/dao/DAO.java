@@ -32,7 +32,7 @@ public interface DAO {
 
     public Comment getComment(String commentId, long rid) throws AskException;
 
-    public List<Question> getListQuestions(long rid) throws AskException;
+    public List<Question> getListQuestions(long rid, String tag) throws AskException;
 
     Version saveNew(Question quest, long rid) throws AskException;
 

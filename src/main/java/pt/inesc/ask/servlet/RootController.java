@@ -25,7 +25,7 @@ import pt.inesc.ask.domain.AskException;
 @Controller
 public class RootController {
 
-    String[] tags = new String[] { "nice", "fixe" };
+    String[] tags = new String[] { "ist", "java", "cassandra", "undo", "voldemort" };
     AskService s = new AskService();
 
     @RequestMapping(value = "/voldemort", method = RequestMethod.GET)
@@ -42,11 +42,19 @@ public class RootController {
         return "hello";
     }
 
+    @RequestMapping(value = "/tags/{tag}", method = RequestMethod.GET)
+    public String categoryIndex(HttpServletRequest r, @PathVariable String tag, Model model) throws AskException {
+        System.out.println("GET / " + extractRid(r));
+        model.addAttribute("questionList", s.getListQuestions(extractRid(r), tag));
+        return "index";
+    }
+
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest r, Model model) throws AskException {
         System.out.println("GET / " + extractRid(r));
-        model.addAttribute("questionList", s.getListQuestions(extractRid(r)));
-        return "index";
+        model.addAttribute("tags", tags);
+        return "tags";
     }
 
     // @ExceptionHandler(Throwable.class)

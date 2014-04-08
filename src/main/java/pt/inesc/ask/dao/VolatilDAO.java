@@ -110,7 +110,7 @@ public class VolatilDAO
 
 
     @Override
-    public LinkedList<Question> getListQuestions(long rid) {
+    public LinkedList<Question> getListQuestions(long rid, String tag) {
         return new LinkedList<Question>(questions.values());
     }
 

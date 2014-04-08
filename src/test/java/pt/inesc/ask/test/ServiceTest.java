@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -24,16 +25,13 @@ public class ServiceTest {
     String questionId = "title";
     String text = "questionText";
     String author = "author";
-    ArrayList<String> tags;
+    ArrayList<String> tags = new ArrayList<String>(Arrays.asList("testTag", "nice"));
     DAO dao;
     long t = 69L;
 
     public ServiceTest() {
         s = new AskService();
         this.dao = s.getDao();
-        tags = new ArrayList<String>();
-        tags.add("testTag");
-        tags.add("nice");
     }
 
 
@@ -42,7 +40,7 @@ public class ServiceTest {
         s.newQuestion(questionId, text, tags, author, t);
         assertNotNull(exists());
         // Test question list
-        List<Question> list = s.getListQuestions(t);
+        List<Question> list = s.getListQuestions(t, tags.get(0));
         boolean found = false;
         for (Question q : list) {
             if (q.getTitle().equals(questionId)) {

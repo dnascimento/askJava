@@ -27,9 +27,9 @@ public class AskService {
 
     }
 
-    public List<Question> getListQuestions(long rid) throws AskException {
+    public List<Question> getListQuestions(long rid, String tag) throws AskException {
         System.out.println("Get Question List" + " rid:" + rid);
-        return dao.getListQuestions(rid);
+        return dao.getListQuestions(rid, tag);
     }
 
     public Map<String, Object> getQuestionData(String questionTitle, long rid) throws AskException {
