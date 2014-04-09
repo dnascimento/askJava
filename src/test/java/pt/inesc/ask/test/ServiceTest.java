@@ -37,6 +37,11 @@ public class ServiceTest {
 
     @Test
     public void questionService() throws AskException {
+        try {
+            s.deleteQuestion(questionId, t);
+        } catch (Exception e) {
+
+        }
         s.newQuestion(questionId, text, tags, author, t);
         assertNotNull(exists());
         // Test question list
