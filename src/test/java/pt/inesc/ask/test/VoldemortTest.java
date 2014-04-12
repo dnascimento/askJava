@@ -23,7 +23,7 @@ public class VoldemortTest {
     VoldemortDAO dao = new VoldemortDAO();
     LinkedList<String> tags = new LinkedList<String>(Arrays.asList("novo"));
     String questionTitle = "title";
-    RUD t = new RUD(69L);
+    RUD t = new RUD(0L);
 
     @Before
     public void setUp() throws Exception {

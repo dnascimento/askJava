@@ -184,14 +184,16 @@ public class RootController {
     }
 
     private RUD extractRid(HttpServletRequest r) {
-        // TODO
-        return null;
-        // try {
-        // return Long.parseLong(r.getHeader("Id"));
-        // } catch (NumberFormatException e) {
-        // // No rud from proxy, create stub using local clock
-        // return System.currentTimeMillis();
-        // }
+        try {
+            long rid = Long.parseLong(r.getHeader("Id"));
+            short branch = Short.parseShort(r.getHeader("B"));
+            // TODO error
+            boolean restrain = (r.getHeader("R") != null);
+            return new RUD(rid, branch, restrain);
+        } catch (NumberFormatException e) {
+            // No rud from proxy, create stub using local clock
+            return new RUD(System.currentTimeMillis());
+        }
     }
 
 
