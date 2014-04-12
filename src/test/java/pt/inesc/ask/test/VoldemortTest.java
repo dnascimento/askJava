@@ -23,7 +23,7 @@ public class VoldemortTest {
     VoldemortDAO dao = new VoldemortDAO();
     LinkedList<String> tags = new LinkedList<String>(Arrays.asList("novo"));
     String questionTitle = "title";
-    RUD t = new RUD(0L);
+    RUD t = new RUD(69L);
 
     @Before
     public void setUp() throws Exception {
@@ -110,8 +110,6 @@ public class VoldemortTest {
     @Test
     public void testIndex() throws AskException {
         Question q = new Question(questionTitle, tags, "dario");
-        long t1 = System.currentTimeMillis();
-        RUD t = new RUD(t1);
         dao.saveNew(q, t);
         for (String tag : tags) {
             List<Question> list = dao.getListQuestions(t, tag);
