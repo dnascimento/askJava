@@ -17,12 +17,13 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import voldemort.undoTracker.RUD;
 
 public class VoldemortTest {
     VoldemortDAO dao = new VoldemortDAO();
     LinkedList<String> tags = new LinkedList<String>(Arrays.asList("novo"));
     String questionTitle = "title";
-    long t = 69L;
+    RUD t = new RUD(69L);
 
     @Before
     public void setUp() throws Exception {
@@ -109,7 +110,8 @@ public class VoldemortTest {
     @Test
     public void testIndex() throws AskException {
         Question q = new Question(questionTitle, tags, "dario");
-        long t = System.currentTimeMillis();
+        long t1 = System.currentTimeMillis();
+        RUD t = new RUD(t1);
         dao.saveNew(q, t);
         for (String tag : tags) {
             List<Question> list = dao.getListQuestions(t, tag);

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import pt.inesc.ask.dao.VoldemortTestDAO;
 import pt.inesc.ask.domain.AskException;
+import voldemort.undoTracker.RUD;
 
 
 
@@ -182,13 +183,15 @@ public class RootController {
         return "upload";
     }
 
-    private long extractRid(HttpServletRequest r) {
-        try {
-            return Long.parseLong(r.getHeader("Id"));
-        } catch (NumberFormatException e) {
-            // No rid from proxy, create stub using local clock
-            return System.currentTimeMillis();
-        }
+    private RUD extractRid(HttpServletRequest r) {
+        // TODO
+        return null;
+        // try {
+        // return Long.parseLong(r.getHeader("Id"));
+        // } catch (NumberFormatException e) {
+        // // No rud from proxy, create stub using local clock
+        // return System.currentTimeMillis();
+        // }
     }
 
 

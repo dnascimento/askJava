@@ -5,6 +5,7 @@ import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
 import voldemort.client.StoreClientFactory;
 import voldemort.client.protocol.RequestFormatType;
+import voldemort.undoTracker.RUD;
 import voldemort.versioning.Version;
 import voldemort.versioning.Versioned;
 
@@ -32,30 +33,30 @@ public class VoldemortStore<K, V extends Message> {
         store = factory.getStoreClient(storeName);
     }
 
-    public Version put(K key, V value, long rid) {
+    public Version put(K key, V value, RUD rud) {
         if (store == null)
             init();
         if (key == null || value == null)
             System.err.println("Put: NULL: key" + key + " value:" + value + "t " + System.identityHashCode(this));
-        return store.put(key, value, rid);
+        return store.put(key, value, rud);
     }
 
-    public Versioned<V> get(K key, long rid) {
+    public Versioned<V> get(K key, RUD rud) {
         if (store == null)
             init();
         if (key == null)
             System.err.println("Get: NULL: key");
-        System.out.println("Get: " + key + " : " + rid + "t " + System.identityHashCode(this));
-        return store.get(key, rid);
+        System.out.println("Get: " + key + " : " + rud + "t " + System.identityHashCode(this));
+        return store.get(key, rud);
     }
 
-    public boolean delete(K key, long rid) {
+    public boolean delete(K key, RUD rud) {
         if (store == null)
             init();
         if (key == null) {
             System.err.println("Delete: NULL: key" + "t " + System.identityHashCode(this));
             return false;
         }
-        return store.delete(key, rid);
+        return store.delete(key, rud);
     }
 }

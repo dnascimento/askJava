@@ -19,6 +19,7 @@ import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.servlet.AskService;
+import voldemort.undoTracker.RUD;
 
 public class ServiceTest {
     AskService s;
@@ -27,7 +28,7 @@ public class ServiceTest {
     String author = "author";
     ArrayList<String> tags = new ArrayList<String>(Arrays.asList("testTag", "nice"));
     DAO dao;
-    long t = 69L;
+    RUD t = new RUD(69L);
 
     public ServiceTest() {
         s = new AskService();

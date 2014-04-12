@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import voldemort.undoTracker.RUD;
 import voldemort.versioning.Version;
 
 // Data access object: access to database and convertion
@@ -25,33 +26,33 @@ public class VolatilDAO
         Question q = new Question("onde estou", tags, a.getId());
         Comment c = new Comment(a.getId(), "oi", "kiko");
         a.addComment(c.getId());
-        save(a, 0L);
-        save(q, 0L);
-        save(c, 0L);
+        save(a, new RUD());
+        save(q, new RUD());
+        save(c, new RUD());
     }
 
     // Save
     @Override
-    public Version save(Question quest, long rid) {
+    public Version save(Question quest, RUD rud) {
         questions.put(quest.getId(), quest);
         return null;
     }
 
     @Override
-    public Version save(Answer answer, long rid) {
+    public Version save(Answer answer, RUD rud) {
         answers.put(answer.getId(), answer);
         return null;
     }
 
     @Override
-    public Version save(Comment comment, long rid) {
+    public Version save(Comment comment, RUD rud) {
         comments.put(comment.getId(), comment);
         return null;
     }
 
     // Delete
     @Override
-    public boolean deleteQuestion(String questionId, long rid) {
+    public boolean deleteQuestion(String questionId, RUD rud) {
         Question q = questions.remove(questionId);
         if (q == null) {
             System.err.println("Question not exists:" + questionId);
@@ -61,7 +62,7 @@ public class VolatilDAO
     }
 
     @Override
-    public boolean deleteAnswer(String answerId, long rid) {
+    public boolean deleteAnswer(String answerId, RUD rud) {
         Answer a = answers.remove(answerId);
         if (a == null) {
             System.err.println("Answer not exists:" + answerId);
@@ -71,7 +72,7 @@ public class VolatilDAO
     }
 
     @Override
-    public boolean deleteComment(String commentId, long rid) {
+    public boolean deleteComment(String commentId, RUD rud) {
         Comment c = comments.remove(commentId);
         if (c == null) {
             System.err.println("Comment not exists:" + commentId);
@@ -82,7 +83,7 @@ public class VolatilDAO
 
     // Gets
     @Override
-    public Question getQuestion(String questionTitle, long rid) {
+    public Question getQuestion(String questionTitle, RUD rud) {
         Question q = questions.get(questionTitle);
         if (q == null) {
             System.err.println("Question not exists: " + questionTitle);
@@ -91,7 +92,7 @@ public class VolatilDAO
     }
 
     @Override
-    public Answer getAnswer(String answerId, long rid) {
+    public Answer getAnswer(String answerId, RUD rud) {
         Answer a = answers.get(answerId);
         if (a == null) {
             System.err.println("Answer not exists: " + answerId);
@@ -100,7 +101,7 @@ public class VolatilDAO
     }
 
     @Override
-    public Comment getComment(String commentId, long rid) {
+    public Comment getComment(String commentId, RUD rud) {
         Comment c = comments.get(commentId);
         if (c == null) {
             System.err.println("Comment not exists: " + commentId);
@@ -110,17 +111,17 @@ public class VolatilDAO
 
 
     @Override
-    public LinkedList<Question> getListQuestions(long rid, String tag) {
+    public LinkedList<Question> getListQuestions(RUD rud, String tag) {
         return new LinkedList<Question>(questions.values());
     }
 
     @Override
-    public Version saveNew(Question quest, long rid) {
-        return save(quest, rid);
+    public Version saveNew(Question quest, RUD rud) {
+        return save(quest, rud);
     }
 
     @Override
-    public void cleanIndex(long rid) {
+    public void cleanIndex(RUD rud) {
         questions.clear();
     }
 }

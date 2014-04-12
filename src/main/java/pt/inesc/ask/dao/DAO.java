@@ -6,35 +6,36 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import voldemort.undoTracker.RUD;
 import voldemort.versioning.Version;
 
 // Data access object: access to database and conversion
 public interface DAO {
 
     // Save
-    public Version save(Question quest, long rid);
+    public Version save(Question quest, RUD rud);
 
-    public Version save(Answer answer, long rid);
+    public Version save(Answer answer, RUD rud);
 
-    public Version save(Comment comment, long rid);
+    public Version save(Comment comment, RUD rud);
 
     // Delete
-    public boolean deleteQuestion(String questionId, long rid);
+    public boolean deleteQuestion(String questionId, RUD rud);
 
-    public boolean deleteAnswer(String answerId, long rid);
+    public boolean deleteAnswer(String answerId, RUD rud);
 
-    public boolean deleteComment(String commentId, long rid);
+    public boolean deleteComment(String commentId, RUD rud);
 
     // Gets
-    public Question getQuestion(String questionTitle, long rid) throws AskException;
+    public Question getQuestion(String questionTitle, RUD rud) throws AskException;
 
-    public Answer getAnswer(String answerId, long rid) throws AskException;
+    public Answer getAnswer(String answerId, RUD rud) throws AskException;
 
-    public Comment getComment(String commentId, long rid) throws AskException;
+    public Comment getComment(String commentId, RUD rud) throws AskException;
 
-    public List<Question> getListQuestions(long rid, String tag) throws AskException;
+    public List<Question> getListQuestions(RUD rud, String tag) throws AskException;
 
-    Version saveNew(Question quest, long rid) throws AskException;
+    Version saveNew(Question quest, RUD rud) throws AskException;
 
-    void cleanIndex(long rid);
+    void cleanIndex(RUD rud);
 }
