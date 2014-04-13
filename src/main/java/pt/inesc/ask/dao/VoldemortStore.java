@@ -1,5 +1,8 @@
 package pt.inesc.ask.dao;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import voldemort.client.ClientConfig;
 import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
@@ -17,6 +20,8 @@ import com.google.protobuf.Message;
  * @author darionascimento
  */
 public class VoldemortStore<K, V extends Message> {
+    private final Logger log = LogManager.getLogger(VoldemortStore.class.getName());
+
     private StoreClient<K, V> store;
     private final String storeName;
     private final String bootstrapUrl;
@@ -36,17 +41,21 @@ public class VoldemortStore<K, V extends Message> {
     public Version put(K key, V value, RUD rud) {
         if (store == null)
             init();
-        if (key == null || value == null)
-            System.err.println("Put: NULL: key" + key + " value:" + value + "t " + System.identityHashCode(this));
+        if (key == null || value == null) {
+            log.error("Put: NULL: key" + key + " value:" + value + "t " + System.identityHashCode(this));
+            // TODO throw exception
+        }
         return store.put(key, value, rud);
     }
 
     public Versioned<V> get(K key, RUD rud) {
         if (store == null)
             init();
-        if (key == null)
-            System.err.println("Get: NULL: key");
-        System.out.println("Get: " + key + " : " + rud + "t " + System.identityHashCode(this));
+        if (key == null) {
+            log.error("Get: NULL: key");
+            // TODO throw exception
+        }
+        log.info("Get: " + key + " : " + rud + "t " + System.identityHashCode(this));
         return store.get(key, rud);
     }
 
@@ -54,7 +63,7 @@ public class VoldemortStore<K, V extends Message> {
         if (store == null)
             init();
         if (key == null) {
-            System.err.println("Delete: NULL: key" + "t " + System.identityHashCode(this));
+            log.error("Delete: NULL: key" + "t " + System.identityHashCode(this));
             return false;
         }
         return store.delete(key, rud);

@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +27,7 @@ import voldemort.undoTracker.RUD;
 
 @Controller
 public class RootController {
+    private static final Logger log = LogManager.getLogger(RootController.class.getName());
 
     String[] tags = new String[] { "ist", "java", "cassandra", "undo", "voldemort" };
     AskService s = new AskService();
@@ -39,13 +42,13 @@ public class RootController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
-        System.out.println("GET /test");
+        log.info("GET /test");
         return "hello";
     }
 
     @RequestMapping(value = "/tags/{tag}", method = RequestMethod.GET)
     public String categoryIndex(HttpServletRequest r, @PathVariable String tag, Model model) throws AskException {
-        System.out.println("GET / " + extractRid(r));
+        log.info("GET / " + extractRid(r));
         model.addAttribute("questionList", s.getListQuestions(extractRid(r), tag));
         return "index";
     }
@@ -53,7 +56,7 @@ public class RootController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest r, Model model) throws AskException {
-        System.out.println("GET / " + extractRid(r));
+        log.info("GET / " + extractRid(r));
         model.addAttribute("tags", tags);
         return "tags";
     }
@@ -68,15 +71,15 @@ public class RootController {
 
     @RequestMapping(value = "/new-question", method = RequestMethod.GET)
     public String getNewQuestion(HttpServletRequest r, Model model) {
-        System.out.println("ID" + extractRid(r));
-        System.out.println("GET /new-question");
+        log.info("ID" + extractRid(r));
+        log.info("GET /new-question");
         model.addAttribute("tags", tags);
         return "newQuestion";
     }
 
     @RequestMapping(value = "/new-question", method = RequestMethod.POST)
     public String postNewQuestion(HttpServletRequest r, Model model) throws AskException {
-        System.out.println("ID" + extractRid(r));
+        log.info("ID" + extractRid(r));
         String title = r.getParameter("title");
         String text = r.getParameter("text");
         String[] tags = r.getParameterValues("tags");
@@ -88,7 +91,7 @@ public class RootController {
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
     public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
-        System.out.println("GET /question/" + questionTitle + " " + extractRid(r));
+        log.info("GET /question/" + questionTitle + " " + extractRid(r));
 
         Map<String, Object> attributes = s.getQuestionData(questionTitle, extractRid(r));
         model.addAllAttributes(attributes);
@@ -187,9 +190,9 @@ public class RootController {
         try {
             long rid = Long.parseLong(r.getHeader("Id"));
             short branch = Short.parseShort(r.getHeader("B"));
-            // TODO error
-            boolean restrain = (r.getHeader("R") != null);
-            return new RUD(rid, branch, restrain);
+            boolean restrain = (r.getHeader("R") == "t");
+            RUD rud = new RUD(rid, branch, restrain);
+            return rud;
         } catch (NumberFormatException e) {
             // No rud from proxy, create stub using local clock
             return new RUD(System.currentTimeMillis());

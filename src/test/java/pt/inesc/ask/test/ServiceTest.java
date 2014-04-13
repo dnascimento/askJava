@@ -28,7 +28,7 @@ public class ServiceTest {
     String author = "author";
     ArrayList<String> tags = new ArrayList<String>(Arrays.asList("testTag", "nice"));
     DAO dao;
-    RUD t = new RUD(0L);
+    RUD t = new RUD(69L);
 
     public ServiceTest() {
         s = new AskService();
