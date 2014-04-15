@@ -5,9 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
 import pt.inesc.ask.dao.DAO;
 import pt.inesc.ask.dao.VoldemortDAO;
 import pt.inesc.ask.domain.Answer;
@@ -18,28 +15,27 @@ import voldemort.undoTracker.RUD;
 
 
 public class AskService {
-    private static final Logger log = LogManager.getLogger(AskService.class.getName());
 
     // DAO dao = new VolatilDAO();
     DAO dao = new VoldemortDAO();
 
     public void newQuestion(String title, String text, List<String> tags, String author, RUD rud) throws AskException {
-        log.info("New Question: " + title + " " + text + " " + tags + " " + author + " rud:" + rud);
+        System.out.println("New Question: " + title + " " + text + " " + tags + " " + author + " rud:" + rud);
         Answer ans = new Answer(title, author, text, true);
         Question quest = new Question(title, tags, ans.getId());
         dao.saveNew(quest, rud);
         dao.save(ans, rud);
-        log.info("New question:" + title);
+        System.out.println("New question:" + title);
 
     }
 
     public List<Question> getListQuestions(RUD rud, String tag) throws AskException {
-        log.info("Get Question List" + " rud:" + rud);
+        System.out.println("Get Question List" + " rud:" + rud);
         return dao.getListQuestions(rud, tag);
     }
 
     public Map<String, Object> getQuestionData(String questionTitle, RUD rud) throws AskException {
-        log.info("Get question: " + questionTitle + " rud:" + rud);
+        System.out.println("Get question: " + questionTitle + " rud:" + rud);
 
         HashMap<String, Object> attributes = new HashMap<String, Object>();
         Question question = dao.getQuestion(questionTitle, rud);
@@ -60,7 +56,7 @@ public class AskService {
     }
 
     public boolean deleteQuestion(String questionTitle, RUD rud) throws AskException {
-        log.info("Delete Question: " + questionTitle + " rud:" + rud);
+        System.out.println("Delete Question: " + questionTitle + " rud:" + rud);
         boolean c = true, a = true, q = true;
         Question quest = dao.getQuestion(questionTitle, rud);
 
@@ -82,7 +78,7 @@ public class AskService {
     }
 
     public String newAnswer(String questionTitle, String author, String text, RUD rud) throws AskException {
-        log.info("New Answer: " + questionTitle + " " + author + " " + text + " rud:" + rud);
+        System.out.println("New Answer: " + questionTitle + " " + author + " " + text + " rud:" + rud);
         Question question = dao.getQuestion(questionTitle, rud);
         Answer ans = new Answer(questionTitle, author, text, false);
         question.addAnswer(ans.getId());
@@ -92,7 +88,7 @@ public class AskService {
     }
 
     public void updateAnswer(String answerId, String text, RUD rud) throws AskException {
-        log.info("Update Answer: " + answerId + " " + text + " rud:" + rud);
+        System.out.println("Update Answer: " + answerId + " " + text + " rud:" + rud);
         Answer answer = dao.getAnswer(answerId, rud);
         if (answer == null) {
             throw new AskException("Update Answer: answer not exists:" + answerId);
@@ -102,7 +98,7 @@ public class AskService {
     }
 
     public boolean deleteAnswer(String questionTitle, String answerId, RUD rud) throws AskException {
-        log.info("Delete Answer: " + questionTitle + " " + answerId + " rud:" + rud);
+        System.out.println("Delete Answer: " + questionTitle + " " + answerId + " rud:" + rud);
         Question question = dao.getQuestion(questionTitle, rud);
         Answer answer = dao.getAnswer(answerId, rud);
         boolean c = true, a = true;
@@ -117,7 +113,7 @@ public class AskService {
     }
 
     public String newComment(String questionTitle, String answerID, String text, String author, RUD rud) throws AskException {
-        log.info("New Comment: " + questionTitle + " " + answerID + " " + text + " " + author + " rud:" + rud);
+        System.out.println("New Comment: " + questionTitle + " " + answerID + " " + text + " " + author + " rud:" + rud);
         Answer answer = dao.getAnswer(answerID, rud);
         Comment comment = new Comment(answerID, text, author);
         answer.addComment(comment.getId());
@@ -127,14 +123,15 @@ public class AskService {
     }
 
     public void updateComment(String questionTitle, String answerID, String commentID, String text, RUD rud) throws AskException {
-        log.info("Update Comment" + questionTitle + " " + answerID + " " + commentID + " " + text + " rud:" + rud);
+        System.out.println("Update Comment" + questionTitle + " " + answerID + " " + commentID + " " + text + " rud:"
+                + rud);
         Comment com = dao.getComment(commentID, rud);
         com.setText(text);
         dao.save(com, rud);
     }
 
     public void deleteComment(String commentID, String answerID, RUD rud) throws AskException {
-        log.info("Delete Comment: " + commentID + " " + answerID + " rud:" + rud);
+        System.out.println("Delete Comment: " + commentID + " " + answerID + " rud:" + rud);
         Answer answer = dao.getAnswer(answerID, rud);
         Boolean exists = answer.removeComment(commentID);
         if (!exists) {
@@ -146,14 +143,14 @@ public class AskService {
     }
 
     public void voteUp(String questionTitle, String answerId, RUD rud) throws AskException {
-        log.info("VoteUp: " + questionTitle + " " + answerId + " rud:" + rud);
+        System.out.println("VoteUp: " + questionTitle + " " + answerId + " rud:" + rud);
         Answer answer = dao.getAnswer(answerId, rud);
         answer.voteUp();
         dao.save(answer, rud);
     }
 
     public void voteDown(String questionTitle, String answerId, RUD rud) throws AskException {
-        log.info("VoteDown: " + questionTitle + " " + answerId + " rud:" + rud);
+        System.out.println("VoteDown: " + questionTitle + " " + answerId + " rud:" + rud);
         Answer answer = dao.getAnswer(answerId, rud);
         answer.voteDown();
         dao.save(answer, rud);
