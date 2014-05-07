@@ -190,16 +190,7 @@ public class RootController {
     }
 
     private RUD extractRid(HttpServletRequest r) {
-        try {
-            long rid = Long.parseLong(r.getHeader("Id"));
-            short branch = Short.parseShort(r.getHeader("B"));
-            boolean restrain = (r.getHeader("R") == "t");
-            RUD rud = new RUD(rid, branch, restrain);
-            return rud;
-        } catch (NumberFormatException e) {
-            // No rud from proxy, create stub using local clock
-            return new RUD(System.currentTimeMillis());
-        }
+        return (RUD) r.getAttribute("rud");
     }
 
 

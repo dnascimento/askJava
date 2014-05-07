@@ -21,7 +21,10 @@
 	<!-- mvc resources tag for static resources -->
 	<mvc:resources mapping="/static/**" location="/static/" />
 	<mvc:resources mapping="/favicon.ico" location="favicon.ico" />
-
+	<mvc:interceptors>
+		<bean class="pt.inesc.shuttle.ShuttleInterceptor"/>
+	</mvc:interceptors>
+	
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/views/" />
