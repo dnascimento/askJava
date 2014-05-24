@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,11 +59,11 @@ public class RootController {
         return "tags";
     }
 
-    // @ExceptionHandler(Throwable.class)
-    // public @ResponseBody
-    // String handleAnyException(Throwable ex, HttpServletRequest request) {
-    // return ex.getMessage();
-    // }
+    @ExceptionHandler(Throwable.class)
+    public @ResponseBody
+    String handleAnyException(Throwable ex, HttpServletRequest request) {
+        return ex.getMessage();
+    }
 
     // ########## Question ################
 

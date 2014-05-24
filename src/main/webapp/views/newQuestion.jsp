@@ -13,7 +13,8 @@
 			<br>
 			<label>tags</label>
 			 <select name="tags" multiple>
-			 <c:forEach var="tag" items="${tags}">
+			 <option value="${tags[0]}" SELECTED>${tags[0]}</option> 
+			 <c:forEach begin="1" var="tag" items="${tags}">
 			 	<option value="${tag}">${tag}</option> 
 			 </c:forEach>
 			 </select>
