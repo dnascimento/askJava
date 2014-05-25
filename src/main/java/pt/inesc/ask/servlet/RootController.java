@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +28,7 @@ import voldemort.undoTracker.RUD;
 
 @Controller
 public class RootController {
+    private static final Logger log = LogManager.getLogger(RootController.class.getName());
 
     String[] tags = new String[] { "ist", "java", "cassandra", "undo", "voldemort" };
     AskService s = new AskService();
@@ -40,13 +43,12 @@ public class RootController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
-        System.out.println("GET /test");
+        log.info("GET /test");
         return "hello";
     }
 
     @RequestMapping(value = "/tags/{tag}", method = RequestMethod.GET)
     public String categoryIndex(HttpServletRequest r, @PathVariable String tag, Model model) throws AskException {
-        System.out.println("GET / " + extractRid(r));
         model.addAttribute("questionList", s.getListQuestions(extractRid(r), tag));
         return "index";
     }
@@ -54,7 +56,7 @@ public class RootController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest r, Model model) throws AskException {
-        System.out.println("GET / " + extractRid(r));
+        log.info("GET / " + extractRid(r));
         model.addAttribute("tags", tags);
         return "tags";
     }
@@ -69,15 +71,14 @@ public class RootController {
 
     @RequestMapping(value = "/new-question", method = RequestMethod.GET)
     public String getNewQuestion(HttpServletRequest r, Model model) {
-        System.out.println("ID" + extractRid(r));
-        System.out.println("GET /new-question");
+        log.info("GET /new-question" + extractRid(r));
         model.addAttribute("tags", tags);
         return "newQuestion";
     }
 
     @RequestMapping(value = "/new-question", method = RequestMethod.POST)
     public String postNewQuestion(HttpServletRequest r, Model model) throws AskException {
-        System.out.println("ID" + extractRid(r));
+        // log.info("ID" + extractRid(r));
         String title = r.getParameter("title");
         String text = r.getParameter("text");
         String[] tags = r.getParameterValues("tags");
@@ -89,7 +90,7 @@ public class RootController {
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
     public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
-        System.out.println("GET /question/" + questionTitle + " " + extractRid(r));
+        // log.info("GET /question/" + questionTitle + " " + extractRid(r));
 
         Map<String, Object> attributes = s.getQuestionData(questionTitle, extractRid(r));
         model.addAllAttributes(attributes);
@@ -100,8 +101,7 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.DELETE)
     public @ResponseBody
     String deleteQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
-        System.out.println("DELETE /question/" + questionTitle + " " + extractRid(r));
-
+        // log.info("DELETE /question/" + questionTitle + " " + extractRid(r));
         s.deleteQuestion(questionTitle, extractRid(r));
         return "success";
     }
@@ -112,7 +112,8 @@ public class RootController {
     // ########## Answers ##########
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.POST)
     public String newAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        System.out.println("POST /question/" + questionTitle + "/answer" + extractRid(r));
+        // log.info("POST /question/" + questionTitle + "/answer" +
+        // extractRid(r));
         s.newAnswer(questionTitle, "author", p.get("text"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
@@ -120,7 +121,8 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.PUT)
     public @ResponseBody
     String updateAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        System.out.println("PUT /question/" + questionTitle + "/answer" + extractRid(r));
+        // log.info("PUT /question/" + questionTitle + "/answer" +
+        // extractRid(r));
         s.updateAnswer(p.get("answerID"), p.get("text"), extractRid(r));
         return "success";
     }
@@ -130,7 +132,8 @@ public class RootController {
     String deleteAnswer(HttpServletRequest r, @PathVariable String questionTitle,
 
     @RequestBody Map<String, String> p) throws AskException {
-        System.out.println("DELETE /question/" + questionTitle + "/answer" + extractRid(r));
+        // log.info("DELETE /question/" + questionTitle + "/answer" +
+        // extractRid(r));
         s.deleteAnswer(questionTitle, p.get("answerID"), extractRid(r));
         return "success";
     }
@@ -141,7 +144,8 @@ public class RootController {
             HttpServletRequest r,
                 @PathVariable String questionTitle,
                 @RequestBody Map<String, String> p) throws AskException {
-        System.out.println("POST /question/" + questionTitle + "/comment" + extractRid(r));
+        // log.info("POST /question/" + questionTitle + "/comment" +
+        // extractRid(r));
         s.newComment(questionTitle, p.get("answerID"), p.get("text"), "author", extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
@@ -149,7 +153,8 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.PUT)
     public @ResponseBody
     String putComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        System.out.println("PUT /question/" + questionTitle + "/comment" + extractRid(r));
+        // log.info("PUT /question/" + questionTitle + "/comment" +
+        // extractRid(r));
         s.updateComment(questionTitle, p.get("answerID"), p.get("commentID"), p.get("text"), extractRid(r));
         return "success";
     }
@@ -158,7 +163,8 @@ public class RootController {
     public @ResponseBody
     String deleteComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             IOException {
-        System.out.println("DELETE /question/" + questionTitle + "/comment" + extractRid(r));
+        // log.info("DELETE /question/" + questionTitle + "/comment" +
+        // extractRid(r));
         s.deleteComment(p.get("commentID"), p.get("answerID"), extractRid(r));
         return "success";
     }
@@ -166,14 +172,15 @@ public class RootController {
     // ######## Vote ##########
     @RequestMapping(value = "/question/{questionTitle}/up", method = RequestMethod.POST)
     public String voteUp(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        System.out.println("POST /question/" + questionTitle + "/up" + extractRid(r));
+        // log.info("POST /question/" + questionTitle + "/up" + extractRid(r));
         s.voteUp(questionTitle, p.get("answerID"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/down", method = RequestMethod.POST)
     public String voteDown(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        System.out.println("POST /question/" + questionTitle + "/down" + extractRid(r));
+        // log.info("POST /question/" + questionTitle + "/down" +
+        // extractRid(r));
         s.voteDown(questionTitle, p.get("answerID"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }

@@ -1,1 +1,2 @@
 mvn wildfly:deploy
+mvn dependency:copy-dependencies

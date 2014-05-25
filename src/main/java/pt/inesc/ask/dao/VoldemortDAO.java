@@ -3,6 +3,9 @@ package pt.inesc.ask.dao;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
@@ -15,6 +18,8 @@ import voldemort.versioning.Versioned;
 // Data access object: access to database and convertion
 public class VoldemortDAO
         implements DAO {
+    private static final Logger log = LogManager.getLogger(VoldemortDAO.class.getName());
+
     VoldemortStore<String, AskProto.Question> questions;
     VoldemortStore<String, AskProto.Answer> answers;
     VoldemortStore<String, AskProto.Comment> comments;
@@ -71,7 +76,7 @@ public class VoldemortDAO
         try {
             question = getQuestion(questionId, rud);
         } catch (AskException e1) {
-            System.err.println("Delete: Question not exists");
+            log.error("Delete: Question not exists");
             return false;
         }
         boolean found = false;
@@ -87,13 +92,13 @@ public class VoldemortDAO
                 }
             }
             if (!found) {
-                System.err.println("Question not found in index");
+                log.error("Question not found in index");
             }
             index.put(tag, b.build(), rud);
         }
         boolean q = questions.delete(questionId, rud);
         if (!q) {
-            System.err.println("Question not exists:" + questionId);
+            log.error("Question not exists:" + questionId);
         }
         return q && found;
     }
@@ -102,7 +107,7 @@ public class VoldemortDAO
     public boolean deleteAnswer(String answerId, RUD rud) {
         boolean s = answers.delete(answerId, rud);
         if (!s)
-            System.err.println("delete answer: not found " + answerId);
+            log.error("delete answer: not found " + answerId);
         return s;
     }
 
@@ -110,7 +115,7 @@ public class VoldemortDAO
     public boolean deleteComment(String commentId, RUD rud) {
         boolean s = comments.delete(commentId, rud);
         if (!s)
-            System.err.println("delete comment: not found " + commentId);
+            log.error("delete comment: not found " + commentId);
         return s;
     }
 

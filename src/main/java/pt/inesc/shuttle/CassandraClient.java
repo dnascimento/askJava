@@ -97,7 +97,6 @@ public class CassandraClient {
         sb.append("] where id=");
         sb.append(id);
         sb.append(";");
-        System.out.println(sb.toString());
         session.execute(sb.toString());
     }
 

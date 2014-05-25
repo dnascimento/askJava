@@ -1,28 +1,26 @@
 package pt.inesc.shuttle;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import pt.inesc.shuttle.unlock.DatabaseClientCache;
-import voldemort.client.StoreClient;
 import voldemort.undoTracker.KeyAccess;
 import voldemort.undoTracker.RUD;
-import voldemort.utils.ByteArray;
 
 public class ShuttleInterceptor
         implements HandlerInterceptor {
+    private static final Logger log = LogManager.getLogger(ShuttleInterceptor.class.getName());
 
     // static ConcurrentHashMap<Long, RUD> mapRequestRud = new ConcurrentHashMap<Long,
     // RUD>();
     CassandraClient cassandra = new CassandraClient();
-    DatabaseClientCache databaseClients = new DatabaseClientCache();
+    VoldemortUnlocker databaseUnlocker = new VoldemortUnlocker();
 
     @Override
     public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Exception exception) throws Exception {
@@ -41,15 +39,20 @@ public class ShuttleInterceptor
         if (rud.redo) {
             // get the keys used before
             Set<KeyAccess> originalKeys = cassandra.getKeys(rud.rid);
+            log.error("originalKeys keys" + originalKeys);
+
             // subtract the accessed keys from original keys
             originalKeys.removeAll(rud.getAccessedKeys());
+            log.error("accessed keys" + rud.getAccessedKeys());
 
-            System.out.println("Remain keys: " + originalKeys);
-            if (!originalKeys.isEmpty())
-                unlockKeys(originalKeys, rud);
+            if (!originalKeys.isEmpty()) {
+                log.error("Unlock keys: " + originalKeys);
+                databaseUnlocker.unlockKeys(originalKeys, rud);
+            }
         } else {
             if (!accessedKeys.isEmpty())
-                cassandra.addKeys(accessedKeys, rud.rid);
+                log.error("Store keys: " + accessedKeys);
+            cassandra.addKeys(accessedKeys, rud.rid);
         }
     }
 
@@ -73,28 +76,5 @@ public class ShuttleInterceptor
         return true;
     }
 
-    /**
-     * @param accessedKeys Not empty set of keys to unlock
-     */
-    private void unlockKeys(Set<KeyAccess> unlockKeys, RUD rud) {
-        ArrayList<KeyAccess> list = new ArrayList<KeyAccess>(unlockKeys);
-        // sort by store
-        Collections.sort(list);
-        String lastStore = list.get(0).store;
-        StoreClient<ByteArray, Object> client;
-        ArrayList<ByteArray> keys = new ArrayList<ByteArray>();
 
-        for (int i = 0; i < list.size(); i++) {
-            KeyAccess k = list.get(i);
-            if (k.store.equals(lastStore)) {
-                keys.add(k.key);
-            } else {
-                client = databaseClients.get(lastStore);
-                client.unlockKeys(keys, rud);
-                keys.clear();
-                lastStore = k.store;
-                keys.add(k.key);
-            }
-        }
-    }
 }
