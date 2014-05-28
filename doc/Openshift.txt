@@ -1,0 +1,22 @@
+===================================================================================
+================================== Openshift ======================================
+===================================================================================
+
+
+http://openshift.github.io/documentation/oo_deployment_guide_vm.html#virtualbox
+
+default 
+user: root
+password: changeme
+
+#change keyboard layout
+loadkeys pt
+#configure the dns inside the vm
+yum install -y nss-mdns
+
+
+#start new app (local)
+rhc create-app <app name> jbossas-7
+
+
+
