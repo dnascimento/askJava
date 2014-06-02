@@ -64,6 +64,7 @@ public class RootController {
     @ExceptionHandler(Throwable.class)
     public @ResponseBody
     String handleAnyException(Throwable ex, HttpServletRequest request) {
+        log.error("Handled exception", ex);
         return ex.getMessage();
     }
 

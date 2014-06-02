@@ -21,7 +21,7 @@
 	<!-- mvc resources tag for static resources -->
 	<mvc:resources mapping="/static/**" location="/static/" />
 	<mvc:resources mapping="/favicon.ico" location="favicon.ico" />
-	<mvc:interceptors>
+	 <mvc:interceptors>
 		<bean class="pt.inesc.shuttle.ShuttleInterceptor"/>
 	</mvc:interceptors>
 	

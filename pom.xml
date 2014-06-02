@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pt.inesc.ask</groupId>
 	<artifactId>ask-war</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<packaging>war</packaging>
 
 	<name>ask</name>
@@ -19,11 +19,8 @@
 		<version>10</version>
 	</parent>
 
-	<!-- <parent> <groupId>com.google.appengine.demos</groupId> <artifactId>guestbook</artifactId> 
-		<version>1.0-SNAPSHOT</version> </parent> -->
-
 	<properties>
-		<appengine.target.version>1.9.1</appengine.target.version>
+		<appengine.target.version>1.9.5</appengine.target.version>
 		<version.org.jboss.spec.javax.servlet.api>1.0.0.Final</version.org.jboss.spec.javax.servlet.api>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.0.2.RELEASE</spring.version>
@@ -55,12 +52,23 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.3.0</version>
+		</dependency>
+		 
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.3.0</version>
+		</dependency>
+		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
 
-		<!-- Spring 3 dependencies -->
+		<!-- Spring dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -130,7 +138,7 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
-			<plugin>
+			 <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -138,10 +146,9 @@
 						<id>generate-sources</id>
 						<phase>generate-sources</phase>
 						<configuration>
-							<tasks>
+						 	<tasks>
 								<echo message="Generating Google Protocol Buffers" />
 								<mkdir dir="target/generated-sources" />
-								<!-- <exec executable='protoc'> -->
 								<exec executable='/usr/local/bin/protoc'>
 									<arg value='--java_out=src/main/java' />
 									<arg value='src/main/resources/proto/AskProto.proto' />

@@ -17,6 +17,25 @@ public class ShuttleInterceptor
         implements HandlerInterceptor {
     private static final Logger log = LogManager.getLogger(ShuttleInterceptor.class.getName());
 
+    public ShuttleInterceptor() {
+        super();
+    }
+
+    private static final boolean IS_UNSAFE_SUPPORTED;
+
+    static {
+
+        boolean isUnsafeFound;
+
+        try {
+            isUnsafeFound = Class.forName("sun.misc.Unsafe") != null;
+        } catch (Throwable t) {
+            isUnsafeFound = false;
+        }
+
+        IS_UNSAFE_SUPPORTED = isUnsafeFound;
+    }
+
     // static ConcurrentHashMap<Long, RUD> mapRequestRud = new ConcurrentHashMap<Long,
     // RUD>();
     CassandraClient cassandra = new CassandraClient();

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-    <application>askInesc</application>
+    <application>ask-inesc</application>
     <version>1</version>
     <!--Threadsafe: allow multithread-->
     <threadsafe>true</threadsafe>
     <system-properties>
-        <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+        <property name="java.util.logging.config.file" value="WEB-INF/log4j.xml"/>
     </system-properties>
 </appengine-web-app>

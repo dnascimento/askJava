@@ -1,9 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="pt.inesc.ask.domain.Question"%>
 
-<c:import url="header.jsp">
-	<c:param name="title" value="Welcome"/>
-</c:import>
+<jsp:include page="header.jsp">
+<jsp:param name="title" value="Welcome"/>
+</jsp:include>
 
 <a href="/new-question">New Question</a>
 <ul>
@@ -20,5 +20,5 @@
 		</li>
 	</c:forEach>
 </ul>
-<c:import url="footer.jsp"/>
+<jsp:include page="footer.jsp"/>
 
