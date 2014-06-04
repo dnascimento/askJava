@@ -20,7 +20,7 @@
 	</parent>
 
 	<properties>
-		<appengine.target.version>1.9.5</appengine.target.version>
+		<appengine.target.version>1.8.0</appengine.target.version>
 		<version.org.jboss.spec.javax.servlet.api>1.0.0.Final</version.org.jboss.spec.javax.servlet.api>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.0.2.RELEASE</spring.version>
@@ -43,8 +43,8 @@
 			<artifactId>voldemort</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-		<!-- <dependency> <groupId>com.google.appengine</groupId> <artifactId>appengine-api-1.0-sdk</artifactId> 
-			<version>${appengine.target.version}</version> </dependency> -->
+		 <dependency> <groupId>com.google.appengine</groupId> <artifactId>appengine-api-1.0-sdk</artifactId> 
+			<version>${appengine.target.version}</version> </dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>

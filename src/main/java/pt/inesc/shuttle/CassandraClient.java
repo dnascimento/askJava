@@ -35,7 +35,7 @@ public class CassandraClient {
     private static final int CONCURRENCY = 20;
     private static final int MAX_CONNECTIONS = 10;
     private static final String TABLE_NAME = "requests";
-    private static final String NODE = "localhost";
+    private static final String NODE = "192.168.1.104";
     private static final String KEYSPACE = "requestStore";
     private static final String COL_KEYS = "keys";
 
@@ -77,6 +77,8 @@ public class CassandraClient {
     // //////////////////////////////////////
 
     public void addKeys(Set<KeyAccess> accessedKeys, long id) {
+        if (session == null)
+            return;
         StringBuilder sb = new StringBuilder();
         sb.append("update ");
         sb.append(TABLE_NAME);
@@ -101,6 +103,8 @@ public class CassandraClient {
     }
 
     public Set<KeyAccess> getKeys(long id) {
+        if (session == null)
+            return null;
         StringBuilder sb = new StringBuilder();
         sb.append(QUERY_KEYS);
         sb.append(id);

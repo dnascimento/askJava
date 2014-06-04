@@ -37,7 +37,7 @@ public class VoldemortUnlocker {
 
     private void newClient(String storeName) {
         StoreClientFactory factory = new SocketStoreClientFactory(
-                new ClientConfig().setBootstrapUrls("tcp://localhost:6666")
+                new ClientConfig().setBootstrapUrls("tcp://192.168.1.104:6666")
                                   .setRequestFormatType(RequestFormatType.PROTOCOL_BUFFERS));
         StoreClient<ByteArray, Object> s = factory.getStoreClient(storeName);
         cache.putIfAbsent(storeName, s);

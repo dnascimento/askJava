@@ -28,6 +28,7 @@ import voldemort.undoTracker.RUD;
 
 @Controller
 public class RootController {
+
     private static final Logger log = LogManager.getLogger(RootController.class.getName());
 
     String[] tags = new String[] { "ist", "java", "cassandra", "undo", "voldemort" };

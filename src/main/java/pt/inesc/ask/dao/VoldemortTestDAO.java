@@ -12,7 +12,7 @@ public class VoldemortTestDAO {
     StoreClient<String, String> test;
 
     public VoldemortTestDAO() {
-        String bootstrapUrl = "tcp://localhost:6666";
+        String bootstrapUrl = "tcp://192.168.1.104:6666";
         StoreClientFactory factory = new SocketStoreClientFactory(new ClientConfig().setBootstrapUrls(bootstrapUrl));
         test = factory.getStoreClient("test");
     }

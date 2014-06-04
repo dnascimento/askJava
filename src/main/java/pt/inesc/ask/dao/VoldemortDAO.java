@@ -26,7 +26,7 @@ public class VoldemortDAO
     VoldemortStore<String, AskProto.Index> index;
 
     public VoldemortDAO() {
-        String bootstrapUrl = "tcp://localhost:6666";
+        String bootstrapUrl = "tcp://192.168.1.104:6666";
         questions = new VoldemortStore<String, AskProto.Question>("questionStore", bootstrapUrl);
         answers = new VoldemortStore<String, AskProto.Answer>("answerStore", bootstrapUrl);
         comments = new VoldemortStore<String, AskProto.Comment>("commentStore", bootstrapUrl);
