@@ -21,20 +21,9 @@ public class ShuttleInterceptor
         super();
     }
 
-    private static final boolean IS_UNSAFE_SUPPORTED;
 
     static {
         System.setProperty("appengine.disableRestrictedCheck", "true");
-
-        boolean isUnsafeFound;
-
-        try {
-            isUnsafeFound = Class.forName("sun.misc.Unsafe") != null;
-        } catch (Throwable t) {
-            isUnsafeFound = false;
-        }
-
-        IS_UNSAFE_SUPPORTED = isUnsafeFound;
     }
 
     // static ConcurrentHashMap<Long, RUD> mapRequestRud = new ConcurrentHashMap<Long,

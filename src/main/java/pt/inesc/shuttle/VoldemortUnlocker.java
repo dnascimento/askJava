@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import pt.inesc.ask.servlet.RootController;
 import voldemort.client.ClientConfig;
 import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
@@ -36,9 +37,8 @@ public class VoldemortUnlocker {
     }
 
     private void newClient(String storeName) {
-        StoreClientFactory factory = new SocketStoreClientFactory(
-                new ClientConfig().setBootstrapUrls("tcp://192.168.1.104:6666")
-                                  .setRequestFormatType(RequestFormatType.PROTOCOL_BUFFERS));
+        StoreClientFactory factory = new SocketStoreClientFactory(new ClientConfig().setBootstrapUrls("tcp://"
+                + RootController.DATABASE_SERVER + ":6666").setRequestFormatType(RequestFormatType.PROTOCOL_BUFFERS));
         StoreClient<ByteArray, Object> s = factory.getStoreClient(storeName);
         cache.putIfAbsent(storeName, s);
     }

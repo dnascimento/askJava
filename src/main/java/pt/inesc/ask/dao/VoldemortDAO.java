@@ -11,6 +11,7 @@ import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.proto.AskProto;
+import pt.inesc.ask.servlet.RootController;
 import voldemort.undoTracker.RUD;
 import voldemort.versioning.Version;
 import voldemort.versioning.Versioned;
@@ -26,7 +27,7 @@ public class VoldemortDAO
     VoldemortStore<String, AskProto.Index> index;
 
     public VoldemortDAO() {
-        String bootstrapUrl = "tcp://192.168.1.104:6666";
+        String bootstrapUrl = "tcp://" + RootController.DATABASE_SERVER + ":6666";
         questions = new VoldemortStore<String, AskProto.Question>("questionStore", bootstrapUrl);
         answers = new VoldemortStore<String, AskProto.Answer>("answerStore", bootstrapUrl);
         comments = new VoldemortStore<String, AskProto.Comment>("commentStore", bootstrapUrl);

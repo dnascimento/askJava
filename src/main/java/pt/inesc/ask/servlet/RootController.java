@@ -29,6 +29,8 @@ import voldemort.undoTracker.RUD;
 @Controller
 public class RootController {
 
+    public static String DATABASE_SERVER = "localhost";
+
     private static final Logger log = LogManager.getLogger(RootController.class.getName());
 
     String[] tags = new String[] { "ist", "java", "cassandra", "undo", "voldemort" };
@@ -84,9 +86,14 @@ public class RootController {
         String title = r.getParameter("title");
         String text = r.getParameter("text");
         String[] tags = r.getParameterValues("tags");
+        String author = r.getParameter("author");
+        if (author == null) {
+            author = "author";
+        }
+
         List<String> tagList;
         tagList = (tags == null) ? new LinkedList<String>() : Arrays.asList(tags);
-        s.newQuestion(title, text, tagList, "author", extractRid(r));
+        s.newQuestion(title, text, tagList, author, extractRid(r));
         return "redirect:/question/" + title;
     }
 
@@ -116,7 +123,11 @@ public class RootController {
     public String newAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
         // log.info("POST /question/" + questionTitle + "/answer" +
         // extractRid(r));
-        s.newAnswer(questionTitle, "author", p.get("text"), extractRid(r));
+        String author = p.get("author");
+        if (author == null) {
+            author = "author";
+        }
+        s.newAnswer(questionTitle, author, p.get("text"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
@@ -142,13 +153,14 @@ public class RootController {
 
     // ############ comments #########################
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.POST)
-    public String newComment(
-            HttpServletRequest r,
-                @PathVariable String questionTitle,
-                @RequestBody Map<String, String> p) throws AskException {
+    public String newComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
         // log.info("POST /question/" + questionTitle + "/comment" +
         // extractRid(r));
-        s.newComment(questionTitle, p.get("answerID"), p.get("text"), "author", extractRid(r));
+        String author = p.get("author");
+        if (author == null) {
+            author = "author";
+        }
+        s.newComment(questionTitle, p.get("answerID"), p.get("text"), author, extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 

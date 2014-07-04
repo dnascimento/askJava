@@ -15,6 +15,7 @@ import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import pt.inesc.ask.servlet.RootController;
 import voldemort.undoTracker.KeyAccess;
 import voldemort.utils.ByteArray;
 
@@ -35,7 +36,6 @@ public class CassandraClient {
     private static final int CONCURRENCY = 20;
     private static final int MAX_CONNECTIONS = 10;
     private static final String TABLE_NAME = "requests";
-    private static final String NODE = "192.168.1.104";
     private static final String KEYSPACE = "requestStore";
     private static final String COL_KEYS = "keys";
 
@@ -53,16 +53,14 @@ public class CassandraClient {
         pools.setCoreConnectionsPerHost(HostDistance.REMOTE, MAX_CONNECTIONS);
         pools.setMaxConnectionsPerHost(HostDistance.REMOTE, MAX_CONNECTIONS);
 
-        cluster = new Cluster.Builder().addContactPoints(NODE)
+        cluster = new Cluster.Builder().addContactPoints(RootController.DATABASE_SERVER)
                                        .withPoolingOptions(pools)
                                        .withSocketOptions(new SocketOptions().setTcpNoDelay(true))
                                        .build();
         try {
             session = cluster.connect(KEYSPACE);
             Metadata metadata = cluster.getMetadata();
-            System.out.println(String.format("Connected to cluster '%s' on %s.",
-                                             metadata.getClusterName(),
-                                             metadata.getAllHosts()));
+            System.out.println(String.format("Connected to cluster '%s' on %s.", metadata.getClusterName(), metadata.getAllHosts()));
 
         } catch (NoHostAvailableException e) {
             log.error("No Cassandra server available");
