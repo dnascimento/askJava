@@ -77,7 +77,8 @@ public class ShuttleInterceptor
             rud = new RUD(rid, branch, restrain, redo);
         } catch (NumberFormatException e) {
             // No rud from proxy, create stub using local clock
-            rud = new RUD(System.currentTimeMillis());
+            rud = new RUD(0L);
+            // rud = new RUD(System.currentTimeMillis());
         }
 
         // mapRequestRud.put(Thread.currentThread().getId(),rud);

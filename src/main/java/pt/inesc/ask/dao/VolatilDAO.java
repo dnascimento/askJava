@@ -3,6 +3,7 @@ package pt.inesc.ask.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.Comment;
@@ -16,14 +17,14 @@ public class VolatilDAO
     HashMap<String, Question> questions = new HashMap<String, Question>();
     HashMap<String, Answer> answers = new HashMap<String, Answer>();
     HashMap<String, Comment> comments = new HashMap<String, Comment>();
+    ArrayList<String> tags = new ArrayList<String>();
 
 
 
     public VolatilDAO() {
         Answer a = new Answer("onde estou", "dario", "o que e isto", true);
-        ArrayList<String> tags = new ArrayList<String>();
         tags.add("perdido");
-        Question q = new Question("onde estou", tags, a.getId());
+        Question q = new Question("onde estou", tags, "1", "1", a.getId());
         Comment c = new Comment(a.getId(), "oi", "kiko");
         a.addComment(c.getId());
         save(a, new RUD());
@@ -123,5 +124,10 @@ public class VolatilDAO
     @Override
     public void cleanIndex(RUD rud) {
         questions.clear();
+    }
+
+    @Override
+    public List<String> getTags() {
+        return tags;
     }
 }

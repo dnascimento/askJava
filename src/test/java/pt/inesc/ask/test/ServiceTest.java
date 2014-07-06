@@ -43,7 +43,7 @@ public class ServiceTest {
         } catch (Exception e) {
 
         }
-        s.newQuestion(questionId, text, tags, author, t);
+        s.newQuestion(questionId, text, tags, author, "1", "1", t);
         assertNotNull(exists());
         // Test question list
         List<Question> list = s.getListQuestions(t, tags.get(0));
@@ -66,7 +66,7 @@ public class ServiceTest {
             Question q = (Question) attributes.get("questionData");
             if (q == null)
                 return null;
-            if (q.getTitle().equals(questionId) && q.getTags().equals(tags)) {
+            if (q.getUrl().equals(questionId) && q.getTags().equals(tags)) {
                 for (String ans : q.getAnswersIDs()) {
                     Answer a = dao.getAnswer(ans, t);
                     a.getText().equals(text);
@@ -95,7 +95,7 @@ public class ServiceTest {
         } catch (AskException e) {
             // clean old if exists
         }
-        s.newQuestion(questionId, text1, new ArrayList<String>(), author, t);
+        s.newQuestion(questionId, text1, new ArrayList<String>(), author, "1", "1", t);
         // Test get
         Answer a1 = getQuestionText();
         assertNotNull(a1);
@@ -180,7 +180,7 @@ public class ServiceTest {
         } catch (AskException e) {
             // clean previous questions
         }
-        s.newQuestion(questionId, "text", new ArrayList<String>(), "author", t);
+        s.newQuestion(questionId, "text", new ArrayList<String>(), "author", "1", "1", t);
         String answerId = s.newAnswer(questionId, "authorAnswer", "answerText", t);
         String cId1 = s.newComment(questionId, answerId, cText1, author, t);
         // Exists:

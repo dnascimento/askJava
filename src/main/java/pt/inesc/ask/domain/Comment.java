@@ -3,6 +3,8 @@ package pt.inesc.ask.domain;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import pt.inesc.ask.proto.AskProto;
 
 import com.google.common.io.BaseEncoding;
@@ -47,7 +49,7 @@ public class Comment {
     }
 
     public String getText() {
-        return data.getText();
+        return StringEscapeUtils.unescapeHtml(data.getText());
     }
 
 

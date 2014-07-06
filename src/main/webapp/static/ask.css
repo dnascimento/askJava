@@ -17,8 +17,18 @@ body{
 	color: #686666;
 }
 
+hr{
+	clear: both;
+}
+
 #content{
 	margin:20px;
+}
+
+.viewCounter p {
+	float: right;
+	position: relative;
+	top: -20px;
 }
 
 label{

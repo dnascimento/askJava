@@ -4,15 +4,16 @@ import java.util.List;
 
 import pt.inesc.ask.proto.AskProto;
 import pt.inesc.ask.proto.AskProto.Question.Builder;
+import pt.inesc.ask.servlet.AskService;
 
 public class Question {
     private String id;
     AskProto.Question data;
 
-    public Question(String title, List<String> tags, String questionAnswerID) {
+    public Question(String title, List<String> tags, String views, String answers, String questionAnswerID) {
         Builder b = AskProto.Question.newBuilder();
         this.id = title;
-        this.data = b.setTitle(title).addAllTags(tags).addAnswerIds(questionAnswerID).build();
+        this.data = b.setTitle(title).addAllTags(tags).addAnswerIds(questionAnswerID).setViews(views).setAnswers(answers).build();
         this.id = title;
     }
 
@@ -34,9 +35,21 @@ public class Question {
 
 
     public String getTitle() {
+        return AskService.decodeTitle(data.getTitle());
+    }
+
+    public String getUrl() {
         return data.getTitle();
     }
 
+
+    public String getViews() {
+        return data.getViews();
+    }
+
+    public String getAnswers() {
+        return data.getAnswers();
+    }
 
     public List<String> getTags() {
         return data.getTagsList();
@@ -83,7 +96,7 @@ public class Question {
             return false;
         if (!getTags().equals(other.getTags()))
             return false;
-        if (!getTitle().equals(other.getTitle()))
+        if (!getUrl().equals(other.getUrl()))
             return false;
         return true;
     }
@@ -91,6 +104,7 @@ public class Question {
     public AskProto.Question getData() {
         return data;
     }
+
 
 
 }

@@ -12,6 +12,11 @@
 			<li class="tag">${tag}</li>
 		</c:forEach>
 	</ul>
+	<div class="viewCounter">
+		<p>${questionData.views} Views</p>
+		<br>
+		<p>${questionData.answers} Answers</p>
+	</div>
 	<hr>
 	<c:set var="answer" value="${question}" scope="request"/>
 	<jsp:include page="answer.jsp"/>

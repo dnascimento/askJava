@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.DecoderException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -33,7 +34,6 @@ public class RootController {
 
     private static final Logger log = LogManager.getLogger(RootController.class.getName());
 
-    String[] tags = new String[] { "ist", "java", "cassandra", "undo", "voldemort" };
     AskService s = new AskService();
 
     @RequestMapping(value = "/voldemort", method = RequestMethod.GET)
@@ -60,7 +60,7 @@ public class RootController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest r, Model model) throws AskException {
         log.info("GET / " + extractRid(r));
-        model.addAttribute("tags", tags);
+        model.addAttribute("tags", s.getTags().toArray());
         return "tags";
     }
 
@@ -76,31 +76,34 @@ public class RootController {
     @RequestMapping(value = "/new-question", method = RequestMethod.GET)
     public String getNewQuestion(HttpServletRequest r, Model model) {
         log.info("GET /new-question" + extractRid(r));
-        model.addAttribute("tags", tags);
+        model.addAttribute("tags", s.getTags());
         return "newQuestion";
     }
 
     @RequestMapping(value = "/new-question", method = RequestMethod.POST)
-    public String postNewQuestion(HttpServletRequest r, Model model) throws AskException {
-        // log.info("ID" + extractRid(r));
+    public String postNewQuestion(HttpServletRequest r, Model model) throws AskException, DecoderException {
         String title = r.getParameter("title");
         String text = r.getParameter("text");
-        String[] tags = r.getParameterValues("tags");
-        String author = r.getParameter("author");
-        if (author == null) {
-            author = "author";
-        }
+        String[] tags = r.getParameter("tags").split(",");
+
+
+        String author = getParameterDefault(r, "author", "author");
+        String views = getParameterDefault(r, "views", "1");
+        String answers = getParameterDefault(r, "answers", "1");
 
         List<String> tagList;
         tagList = (tags == null) ? new LinkedList<String>() : Arrays.asList(tags);
-        s.newQuestion(title, text, tagList, author, extractRid(r));
+        String encoded = AskService.encodeTitle(title);
+        s.newQuestion(encoded, text, tagList, author, views, answers, extractRid(r));
         return "redirect:/question/" + title;
     }
 
-    @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
-    public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
-        // log.info("GET /question/" + questionTitle + " " + extractRid(r));
 
+
+    @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
+    public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException, DecoderException {
+        log.info("GET /question/" + questionTitle);
+        questionTitle = AskService.encodeTitle(questionTitle);
         Map<String, Object> attributes = s.getQuestionData(questionTitle, extractRid(r));
         model.addAllAttributes(attributes);
         return "question";
@@ -109,8 +112,9 @@ public class RootController {
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.DELETE)
     public @ResponseBody
-    String deleteQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException {
+    String deleteQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException, DecoderException {
         // log.info("DELETE /question/" + questionTitle + " " + extractRid(r));
+        questionTitle = AskService.encodeTitle(questionTitle);
         s.deleteQuestion(questionTitle, extractRid(r));
         return "success";
     }
@@ -120,14 +124,13 @@ public class RootController {
 
     // ########## Answers ##########
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.POST)
-    public String newAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
+    public String newAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
+            DecoderException {
         // log.info("POST /question/" + questionTitle + "/answer" +
         // extractRid(r));
-        String author = p.get("author");
-        if (author == null) {
-            author = "author";
-        }
-        s.newAnswer(questionTitle, author, p.get("text"), extractRid(r));
+        String author = getParameterDefault(r, "author", "author");
+        String encoded = AskService.encodeTitle(questionTitle);
+        s.newAnswer(encoded, author, p.get("text"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
@@ -144,31 +147,32 @@ public class RootController {
     public @ResponseBody
     String deleteAnswer(HttpServletRequest r, @PathVariable String questionTitle,
 
-    @RequestBody Map<String, String> p) throws AskException {
+    @RequestBody Map<String, String> p) throws AskException, DecoderException {
         // log.info("DELETE /question/" + questionTitle + "/answer" +
         // extractRid(r));
+        questionTitle = AskService.encodeTitle(questionTitle);
         s.deleteAnswer(questionTitle, p.get("answerID"), extractRid(r));
         return "success";
     }
 
     // ############ comments #########################
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.POST)
-    public String newComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
+    public String newComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
+            DecoderException {
         // log.info("POST /question/" + questionTitle + "/comment" +
         // extractRid(r));
-        String author = p.get("author");
-        if (author == null) {
-            author = "author";
-        }
+        String author = getParameterDefault(r, "author", "author");
         s.newComment(questionTitle, p.get("answerID"), p.get("text"), author, extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.PUT)
     public @ResponseBody
-    String putComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
+    String putComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
+            DecoderException {
         // log.info("PUT /question/" + questionTitle + "/comment" +
         // extractRid(r));
+        questionTitle = AskService.encodeTitle(questionTitle);
         s.updateComment(questionTitle, p.get("answerID"), p.get("commentID"), p.get("text"), extractRid(r));
         return "success";
     }
@@ -186,15 +190,14 @@ public class RootController {
     // ######## Vote ##########
     @RequestMapping(value = "/question/{questionTitle}/up", method = RequestMethod.POST)
     public String voteUp(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        // log.info("POST /question/" + questionTitle + "/up" + extractRid(r));
+        questionTitle = AskService.encodeTitle(questionTitle);
         s.voteUp(questionTitle, p.get("answerID"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/down", method = RequestMethod.POST)
     public String voteDown(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        // log.info("POST /question/" + questionTitle + "/down" +
-        // extractRid(r));
+        questionTitle = AskService.encodeTitle(questionTitle);
         s.voteDown(questionTitle, p.get("answerID"), extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
@@ -213,6 +216,15 @@ public class RootController {
 
     private RUD extractRid(HttpServletRequest r) {
         return (RUD) r.getAttribute("rud");
+    }
+
+    private String getParameterDefault(HttpServletRequest request, String field, String defaultValue) {
+        String str = request.getParameter(field);
+        if (str == null) {
+            return defaultValue;
+        } else {
+            return str;
+        }
     }
 
 

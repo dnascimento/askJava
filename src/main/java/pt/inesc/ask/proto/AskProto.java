@@ -65,6 +65,36 @@ public final class AskProto {
      */
     com.google.protobuf.ByteString
         getAnswerIdsBytes(int index);
+
+    // required string views = 4;
+    /**
+     * <code>required string views = 4;</code>
+     */
+    boolean hasViews();
+    /**
+     * <code>required string views = 4;</code>
+     */
+    java.lang.String getViews();
+    /**
+     * <code>required string views = 4;</code>
+     */
+    com.google.protobuf.ByteString
+        getViewsBytes();
+
+    // required string answers = 5;
+    /**
+     * <code>required string answers = 5;</code>
+     */
+    boolean hasAnswers();
+    /**
+     * <code>required string answers = 5;</code>
+     */
+    java.lang.String getAnswers();
+    /**
+     * <code>required string answers = 5;</code>
+     */
+    com.google.protobuf.ByteString
+        getAnswersBytes();
   }
   /**
    * Protobuf type {@code pt.inesc.ask.proto.Question}
@@ -136,6 +166,16 @@ public final class AskProto {
                 mutable_bitField0_ |= 0x00000004;
               }
               answerIds_.add(input.readBytes());
+              break;
+            }
+            case 34: {
+              bitField0_ |= 0x00000002;
+              views_ = input.readBytes();
+              break;
+            }
+            case 42: {
+              bitField0_ |= 0x00000004;
+              answers_ = input.readBytes();
               break;
             }
           }
@@ -287,10 +327,98 @@ public final class AskProto {
       return answerIds_.getByteString(index);
     }
 
+    // required string views = 4;
+    public static final int VIEWS_FIELD_NUMBER = 4;
+    private java.lang.Object views_;
+    /**
+     * <code>required string views = 4;</code>
+     */
+    public boolean hasViews() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required string views = 4;</code>
+     */
+    public java.lang.String getViews() {
+      java.lang.Object ref = views_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          views_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string views = 4;</code>
+     */
+    public com.google.protobuf.ByteString
+        getViewsBytes() {
+      java.lang.Object ref = views_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        views_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    // required string answers = 5;
+    public static final int ANSWERS_FIELD_NUMBER = 5;
+    private java.lang.Object answers_;
+    /**
+     * <code>required string answers = 5;</code>
+     */
+    public boolean hasAnswers() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>required string answers = 5;</code>
+     */
+    public java.lang.String getAnswers() {
+      java.lang.Object ref = answers_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          answers_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string answers = 5;</code>
+     */
+    public com.google.protobuf.ByteString
+        getAnswersBytes() {
+      java.lang.Object ref = answers_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        answers_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private void initFields() {
       title_ = "";
       tags_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       answerIds_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      views_ = "";
+      answers_ = "";
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -298,6 +426,14 @@ public final class AskProto {
       if (isInitialized != -1) return isInitialized == 1;
 
       if (!hasTitle()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasViews()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasAnswers()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -316,6 +452,12 @@ public final class AskProto {
       }
       for (int i = 0; i < answerIds_.size(); i++) {
         output.writeBytes(3, answerIds_.getByteString(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(4, getViewsBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBytes(5, getAnswersBytes());
       }
       getUnknownFields().writeTo(output);
     }
@@ -347,6 +489,14 @@ public final class AskProto {
         }
         size += dataSize;
         size += 1 * getAnswerIdsList().size();
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(4, getViewsBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(5, getAnswersBytes());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -470,6 +620,10 @@ public final class AskProto {
         bitField0_ = (bitField0_ & ~0x00000002);
         answerIds_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000004);
+        views_ = "";
+        bitField0_ = (bitField0_ & ~0x00000008);
+        answers_ = "";
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -514,6 +668,14 @@ public final class AskProto {
           bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.answerIds_ = answerIds_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.views_ = views_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.answers_ = answers_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -555,12 +717,30 @@ public final class AskProto {
           }
           onChanged();
         }
+        if (other.hasViews()) {
+          bitField0_ |= 0x00000008;
+          views_ = other.views_;
+          onChanged();
+        }
+        if (other.hasAnswers()) {
+          bitField0_ |= 0x00000010;
+          answers_ = other.answers_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasTitle()) {
+          
+          return false;
+        }
+        if (!hasViews()) {
+          
+          return false;
+        }
+        if (!hasAnswers()) {
           
           return false;
         }
@@ -842,6 +1022,154 @@ public final class AskProto {
   }
   ensureAnswerIdsIsMutable();
         answerIds_.add(value);
+        onChanged();
+        return this;
+      }
+
+      // required string views = 4;
+      private java.lang.Object views_ = "";
+      /**
+       * <code>required string views = 4;</code>
+       */
+      public boolean hasViews() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>required string views = 4;</code>
+       */
+      public java.lang.String getViews() {
+        java.lang.Object ref = views_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          views_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string views = 4;</code>
+       */
+      public com.google.protobuf.ByteString
+          getViewsBytes() {
+        java.lang.Object ref = views_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          views_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string views = 4;</code>
+       */
+      public Builder setViews(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        views_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string views = 4;</code>
+       */
+      public Builder clearViews() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        views_ = getDefaultInstance().getViews();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string views = 4;</code>
+       */
+      public Builder setViewsBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        views_ = value;
+        onChanged();
+        return this;
+      }
+
+      // required string answers = 5;
+      private java.lang.Object answers_ = "";
+      /**
+       * <code>required string answers = 5;</code>
+       */
+      public boolean hasAnswers() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>required string answers = 5;</code>
+       */
+      public java.lang.String getAnswers() {
+        java.lang.Object ref = answers_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          answers_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string answers = 5;</code>
+       */
+      public com.google.protobuf.ByteString
+          getAnswersBytes() {
+        java.lang.Object ref = answers_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          answers_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string answers = 5;</code>
+       */
+      public Builder setAnswers(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000010;
+        answers_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string answers = 5;</code>
+       */
+      public Builder clearAnswers() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        answers_ = getDefaultInstance().getAnswers();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string answers = 5;</code>
+       */
+      public Builder setAnswersBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000010;
+        answers_ = value;
         onChanged();
         return this;
       }
@@ -3033,13 +3361,14 @@ public final class AskProto {
   static {
     java.lang.String[] descriptorData = {
       "\n\'src/main/resources/proto/AskProto.prot" +
-      "o\022\022pt.inesc.ask.proto\":\n\010Question\022\r\n\005tit" +
+      "o\022\022pt.inesc.ask.proto\"Z\n\010Question\022\r\n\005tit" +
       "le\030\001 \002(\t\022\014\n\004tags\030\002 \003(\t\022\021\n\tanswerIds\030\003 \003(" +
-      "\t\"]\n\006Answer\022\016\n\006author\030\001 \002(\t\022\014\n\004text\030\002 \002(" +
-      "\t\022\022\n\nisQuestion\030\003 \002(\010\022\r\n\005votes\030\004 \002(\005\022\022\n\n" +
-      "commentIds\030\005 \003(\t\"\'\n\007Comment\022\014\n\004text\030\001 \002(" +
-      "\t\022\016\n\006author\030\002 \002(\t\"\026\n\005Index\022\r\n\005entry\030\001 \003(" +
-      "\tB\026\n\022pt.inesc.ask.protoH\001"
+      "\t\022\r\n\005views\030\004 \002(\t\022\017\n\007answers\030\005 \002(\t\"]\n\006Ans" +
+      "wer\022\016\n\006author\030\001 \002(\t\022\014\n\004text\030\002 \002(\t\022\022\n\nisQ" +
+      "uestion\030\003 \002(\010\022\r\n\005votes\030\004 \002(\005\022\022\n\ncommentI" +
+      "ds\030\005 \003(\t\"\'\n\007Comment\022\014\n\004text\030\001 \002(\t\022\016\n\006aut" +
+      "hor\030\002 \002(\t\"\026\n\005Index\022\r\n\005entry\030\001 \003(\tB\026\n\022pt." +
+      "inesc.ask.protoH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3051,7 +3380,7 @@ public final class AskProto {
           internal_static_pt_inesc_ask_proto_Question_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_pt_inesc_ask_proto_Question_descriptor,
-              new java.lang.String[] { "Title", "Tags", "AnswerIds", });
+              new java.lang.String[] { "Title", "Tags", "AnswerIds", "Views", "Answers", });
           internal_static_pt_inesc_ask_proto_Answer_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_pt_inesc_ask_proto_Answer_fieldAccessorTable = new

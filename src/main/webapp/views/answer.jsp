@@ -1,4 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="pt.inesc.ask.domain.Answer" %>
+
 <div class="answerArea" answer-id="${answer.id}">
 	<div class="vote">
 		<img class="up" src="/static/up.png"/>
@@ -6,8 +8,8 @@
 		<img class="down" src="/static/down.png"/>
 	</div>
 	<div class="answerContent">
-		<div>
-			<p>${answer.text}</p>
+		<% out.println( ((Answer)request.getAttribute("answer")).getText()); %> 
+			<br>
 			<c:if test="${answer.isQuestion}">
 				<button class="edit">Edit Question</button>
 			</c:if>

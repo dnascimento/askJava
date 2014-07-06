@@ -9,7 +9,7 @@
 <ul>
 	<c:forEach var="question" items="${questionList}" >
 		<li class="questionSummary">
-			<a href="/question/${question.title}">
+			<a href="/question/${question.url}">
 				<h3>${question.title}</h3>
 			</a>
 			<ul>

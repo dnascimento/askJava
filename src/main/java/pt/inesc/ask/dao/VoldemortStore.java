@@ -33,8 +33,7 @@ public class VoldemortStore<K, V extends Message> {
 
     private void init() {
         StoreClientFactory factory = new SocketStoreClientFactory(
-                new ClientConfig().setBootstrapUrls(bootstrapUrl)
-                                  .setRequestFormatType(RequestFormatType.PROTOCOL_BUFFERS));
+                new ClientConfig().setBootstrapUrls(bootstrapUrl).setRequestFormatType(RequestFormatType.PROTOCOL_BUFFERS));
         store = factory.getStoreClient(storeName);
     }
 

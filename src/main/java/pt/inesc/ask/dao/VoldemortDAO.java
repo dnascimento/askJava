@@ -25,6 +25,8 @@ public class VoldemortDAO
     VoldemortStore<String, AskProto.Answer> answers;
     VoldemortStore<String, AskProto.Comment> comments;
     VoldemortStore<String, AskProto.Index> index;
+    String TAG_LIST = "TAG_LIST";
+
 
     public VoldemortDAO() {
         String bootstrapUrl = "tcp://" + RootController.DATABASE_SERVER + ":6666";
@@ -42,18 +44,40 @@ public class VoldemortDAO
             List<String> list;
             if (versioned == null) {
                 list = new LinkedList<String>();
+                newTag(tag);
             } else {
                 AskProto.Index entry = versioned.getValue();
                 list = entry.getEntryList();
-                if (list.contains(quest.getId())) {
-                    throw new AskException("Save new question with known id" + quest.getId());
-                }
             }
-            index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), rud);
+            if (!list.contains(quest.getId())) {
+                index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), rud);
+            }
         }
         return save(quest, rud);
     }
 
+
+    /**
+     * Add a new tag
+     * 
+     * @param tag
+     */
+    private void newTag(String tag) {
+        // ignore depenencies
+        RUD rud = new RUD();
+        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, rud);
+        List<String> list;
+        if (versioned == null) {
+            list = new LinkedList<String>();
+        } else {
+            AskProto.Index entry = versioned.getValue();
+            list = entry.getEntryList();
+            if (list.contains(tag)) {
+                return;
+            }
+        }
+        index.put(TAG_LIST, AskProto.Index.newBuilder().addAllEntry(list).addEntry(tag).build(), rud);
+    }
 
     @Override
     public Version save(Question quest, RUD rud) {
@@ -198,4 +222,16 @@ public class VoldemortDAO
 
 
 
+    @Override
+    public List<String> getTags() {
+        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, new RUD());
+        List<String> list;
+        if (versioned == null) {
+            list = new LinkedList<String>();
+        } else {
+            AskProto.Index entry = versioned.getValue();
+            list = entry.getEntryList();
+        }
+        return list;
+    }
 }

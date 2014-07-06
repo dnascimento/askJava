@@ -28,7 +28,7 @@ public class SimpleClientTest {
     @Test
     public void putGet() throws AskException {
         String text1 = "dario";
-        Question q = new Question(questionTitle, tags, text1);
+        Question q = new Question(questionTitle, tags, "1", "1", text1);
         questions.put(questionTitle, q.getData(), rud);
         System.out.println("put done");
         questions.put(questionTitle, q.getData(), rud);

@@ -38,4 +38,6 @@ public interface DAO {
     Version saveNew(Question quest, RUD rud) throws AskException;
 
     void cleanIndex(RUD rud);
+
+    public List<String> getTags();
 }

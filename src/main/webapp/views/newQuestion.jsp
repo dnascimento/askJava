@@ -12,12 +12,7 @@
 			<textarea name="text" cols="40" rows="10"></textarea>
 			<br>
 			<label>tags</label>
-			 <select name="tags" multiple>
-			 <option value="${tags[0]}" SELECTED>${tags[0]}</option> 
-			 <c:forEach begin="1" var="tag" items="${tags}">
-			 	<option value="${tag}">${tag}</option> 
-			 </c:forEach>
-			 </select>
+			<input name="tags" type="text"/>
 			<br>
 			<input value="Submit" type="submit"/>
 </form>

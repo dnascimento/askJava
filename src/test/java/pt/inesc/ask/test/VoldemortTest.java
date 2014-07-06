@@ -39,12 +39,13 @@ public class VoldemortTest {
         String text1 = "dario";
         String text2 = "surf";
         dao.cleanIndex(t);
-        Question q = new Question(questionTitle, tags, text1);
+
+        Question q = new Question(questionTitle, tags, "1", "1", text1);
         dao.saveNew(q, t);
         Question q2 = dao.getQuestion(q.getId(), t);
         assertEquals(q, q2);
         // test update
-        Question q3 = new Question(questionTitle, tags, text2);
+        Question q3 = new Question(questionTitle, tags, "1", "1", text2);
         dao.save(q3, t);
         Question q4 = dao.getQuestion(q.getId(), t);
         assertEquals(q3, q4);
@@ -109,7 +110,7 @@ public class VoldemortTest {
 
     @Test
     public void testIndex() throws AskException {
-        Question q = new Question(questionTitle, tags, "dario");
+        Question q = new Question(questionTitle, tags, "1", "1", "dario");
         dao.saveNew(q, t);
         for (String tag : tags) {
             List<Question> list = dao.getListQuestions(t, tag);

@@ -8,6 +8,8 @@ message Question{
 	required string title = 1;
 	repeated string tags = 2;
 	repeated string answerIds = 3;
+	required string views = 4;
+	required string answers = 5;
 }
 
 message Answer{

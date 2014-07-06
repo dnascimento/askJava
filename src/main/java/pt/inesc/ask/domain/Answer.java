@@ -1,9 +1,12 @@
 package pt.inesc.ask.domain;
 
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 import pt.inesc.ask.proto.AskProto;
 
@@ -19,9 +22,12 @@ public class Answer {
         MessageDigest md;
         try {
             md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest((questionTitle + author + text).getBytes());
+            System.out.println("New answer: " + questionTitle + author + text);
+            byte[] digest = md.digest((questionTitle + author + text).getBytes("UTF-16"));
             this.id = BaseEncoding.base64().encode(digest);
         } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         AskProto.Answer.Builder b = AskProto.Answer.newBuilder();
@@ -56,10 +62,7 @@ public class Answer {
         List<String> oldList = data.getCommentIdsList();
         boolean found = false;
         AskProto.Answer.Builder b = AskProto.Answer.newBuilder();
-        b.setAuthor(data.getAuthor())
-         .setText(data.getText())
-         .setVotes(data.getVotes())
-         .setIsQuestion(data.getIsQuestion());
+        b.setAuthor(data.getAuthor()).setText(data.getText()).setVotes(data.getVotes()).setIsQuestion(data.getIsQuestion());
 
         for (String e : oldList) {
             if (e.equals(commentId)) {
@@ -78,11 +81,7 @@ public class Answer {
 
     private void vote(int votes) {
         data.getVotes();
-        newData(data.getAuthor(),
-                data.getText(),
-                data.getVotes() + votes,
-                data.getIsQuestion(),
-                data.getCommentIdsList());
+        newData(data.getAuthor(), data.getText(), data.getVotes() + votes, data.getIsQuestion(), data.getCommentIdsList());
     }
 
     private void newData(String author, String text, int votes, boolean isQuestion, List<String> commentIds) {
@@ -107,8 +106,8 @@ public class Answer {
 
     @Override
     public String toString() {
-        return "Answer [id=" + id + ", author=" + getAuthor() + ", text=" + getText() + ", isQuestion="
-                + getIsQuestion() + ", votes=" + getVotes() + ", commentsIds=" + getCommentsIds() + "]";
+        return "Answer [id=" + id + ", author=" + getAuthor() + ", text=" + getText() + ", isQuestion=" + getIsQuestion() + ", votes="
+                + getVotes() + ", commentsIds=" + getCommentsIds() + "]";
     }
 
     public String getId() {
@@ -125,7 +124,7 @@ public class Answer {
 
 
     public String getText() {
-        return data.getText();
+        return StringEscapeUtils.unescapeHtml(data.getText());
     }
 
 

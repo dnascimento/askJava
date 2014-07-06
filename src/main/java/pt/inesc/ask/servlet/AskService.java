@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.net.URLCodec;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -22,10 +25,10 @@ public class AskService {
 
     DAO dao = new VoldemortDAO();
 
-    public void newQuestion(String title, String text, List<String> tags, String author, RUD rud) throws AskException {
+    public void newQuestion(String title, String text, List<String> tags, String author, String views, String answers, RUD rud) throws AskException {
         log.info("New Question: " + title + " " + text + " " + tags + " " + author + " rud:" + rud);
         Answer ans = new Answer(title, author, text, true);
-        Question quest = new Question(title, tags, ans.getId());
+        Question quest = new Question(title, tags, views, answers, ans.getId());
         dao.saveNew(quest, rud);
         dao.save(ans, rud);
         log.info("New question:" + title);
@@ -39,7 +42,6 @@ public class AskService {
 
     public Map<String, Object> getQuestionData(String questionTitle, RUD rud) throws AskException {
         log.info("Get question: " + questionTitle + " rud:" + rud);
-
         HashMap<String, Object> attributes = new HashMap<String, Object>();
         Question question = dao.getQuestion(questionTitle, rud);
         attributes.put("questionData", question);
@@ -160,5 +162,27 @@ public class AskService {
 
     public DAO getDao() {
         return dao;
+    }
+
+    public List<String> getTags() {
+        return dao.getTags();
+    }
+
+    public static String encodeTitle(String title) {
+        try {
+            return new URLCodec().encode(title);
+        } catch (EncoderException e) {
+            log.error(e);
+            return title;
+        }
+    }
+
+    public static String decodeTitle(String title) {
+        try {
+            return new URLCodec().decode(title);
+        } catch (DecoderException e) {
+            log.error(e);
+            return title;
+        }
     }
 }
