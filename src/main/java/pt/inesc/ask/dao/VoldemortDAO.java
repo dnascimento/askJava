@@ -10,8 +10,8 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import pt.inesc.ask.domain.QuestionEntry;
 import pt.inesc.ask.proto.AskProto;
-import pt.inesc.ask.servlet.RootController;
 import voldemort.undoTracker.RUD;
 import voldemort.versioning.Version;
 import voldemort.versioning.Versioned;
@@ -28,8 +28,7 @@ public class VoldemortDAO
     String TAG_LIST = "TAG_LIST";
 
 
-    public VoldemortDAO() {
-        String bootstrapUrl = "tcp://" + RootController.DATABASE_SERVER + ":6666";
+    public VoldemortDAO(String bootstrapUrl) {
         questions = new VoldemortStore<String, AskProto.Question>("questionStore", bootstrapUrl);
         answers = new VoldemortStore<String, AskProto.Answer>("answerStore", bootstrapUrl);
         comments = new VoldemortStore<String, AskProto.Comment>("commentStore", bootstrapUrl);
@@ -174,18 +173,18 @@ public class VoldemortDAO
 
 
     @Override
-    public List<Question> getListQuestions(RUD rud, String tag) throws AskException {
+    public List<QuestionEntry> getListQuestions(RUD rud, String tag) throws AskException {
         Versioned<AskProto.Index> indexList = index.get(tag, rud);
         if (indexList == null) {
-            return new LinkedList<Question>();
+            return new LinkedList<QuestionEntry>();
         }
         AskProto.Index indexMsg = indexList.getValue();
-        List<String> indice = indexMsg.getEntryList();
-        LinkedList<Question> list = new LinkedList<Question>();
-        for (String str : indice) {
-            list.add(getQuestion(str, rud));
+        List<String> list = indexMsg.getEntryList();
+        LinkedList<QuestionEntry> result = new LinkedList<QuestionEntry>();
+        for (String str : list) {
+            result.add(new QuestionEntry(str));
         }
-        return list;
+        return result;
     }
 
     @Override

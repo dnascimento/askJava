@@ -48,19 +48,19 @@ public class ShuttleInterceptor
         if (rud.redo) {
             // get the keys used before
             Set<KeyAccess> originalKeys = cassandra.getKeys(rud.rid);
-            log.error("originalKeys keys" + originalKeys);
+            log.debug("originalKeys keys" + originalKeys);
 
             // subtract the accessed keys from original keys
             originalKeys.removeAll(rud.getAccessedKeys());
-            log.error("accessed keys" + rud.getAccessedKeys());
+            log.debug("accessed keys" + rud.getAccessedKeys());
 
             if (!originalKeys.isEmpty()) {
-                log.error("Unlock keys: " + originalKeys);
+                log.debug("Unlock keys: " + originalKeys);
                 databaseUnlocker.unlockKeys(originalKeys, rud);
             }
         } else {
             if (!accessedKeys.isEmpty())
-                log.error("Store keys: " + accessedKeys);
+                log.debug("Store keys: " + accessedKeys);
             cassandra.addKeys(accessedKeys, rud.rid);
         }
     }
@@ -77,8 +77,8 @@ public class ShuttleInterceptor
             rud = new RUD(rid, branch, restrain, redo);
         } catch (NumberFormatException e) {
             // No rud from proxy, create stub using local clock
-            rud = new RUD(0L);
-            // rud = new RUD(System.currentTimeMillis());
+            // rud = new RUD(0L);
+            rud = new RUD(System.currentTimeMillis());
         }
 
         // mapRequestRud.put(Thread.currentThread().getId(),rud);

@@ -31,6 +31,8 @@ import com.datastax.driver.core.exceptions.NoHostAvailableException;
 import com.google.common.io.BaseEncoding;
 
 public class CassandraClient {
+
+
     private static final Logger log = LogManager.getLogger(CassandraClient.class.getName());
 
     private static final int CONCURRENCY = 20;

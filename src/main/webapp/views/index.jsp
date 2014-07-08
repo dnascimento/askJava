@@ -12,11 +12,6 @@
 			<a href="/question/${question.url}">
 				<h3>${question.title}</h3>
 			</a>
-			<ul>
-			<c:forEach var="tag" items="${question.tags}">
-					<li class="tag">${tag}</li>
-			</c:forEach>
-			</ul>
 		</li>
 	</c:forEach>
 </ul>

@@ -1,11 +1,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 
 <!DOCTYPE HTML>
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="/static/ask.css"/>
-	<script src="/static/jquery.js"></script>
-	<script src="/static/ask.js"></script>
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/ask.css"/>
+	<script src="${pageContext.request.contextPath}/static/jquery.js"></script>
+	<script src="${pageContext.request.contextPath}/static/ask.js"></script>
 	<title>${param.title}</title>
 </head>
 <body>
@@ -14,12 +16,5 @@
 			<img src="/static/logo.png"/>
 			<h1>Ask</h1>
 		</a>
-		<div class="user">
-			<!-- %if defined('name'):
-				<h2>Welcome: {{name}}</h2>
-			%else:
-				<a href="/login"><h2>Login</h2></a>
-			%end -->
-		</div>
 	</div>
-	<div id="content">
+<div id="content">

@@ -8,6 +8,7 @@ import java.util.List;
 import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import pt.inesc.ask.domain.QuestionEntry;
 import voldemort.undoTracker.RUD;
 import voldemort.versioning.Version;
 
@@ -112,8 +113,12 @@ public class VolatilDAO
 
 
     @Override
-    public LinkedList<Question> getListQuestions(RUD rud, String tag) {
-        return new LinkedList<Question>(questions.values());
+    public List<QuestionEntry> getListQuestions(RUD rud, String tag) {
+        LinkedList<QuestionEntry> list = new LinkedList<QuestionEntry>();
+        for (Question e : questions.values()) {
+            list.add(new QuestionEntry(e.getTitle()));
+        }
+        return list;
     }
 
     @Override

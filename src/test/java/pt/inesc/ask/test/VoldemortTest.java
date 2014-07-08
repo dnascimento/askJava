@@ -17,10 +17,11 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import pt.inesc.ask.domain.QuestionEntry;
 import voldemort.undoTracker.RUD;
 
 public class VoldemortTest {
-    VoldemortDAO dao = new VoldemortDAO();
+    VoldemortDAO dao = new VoldemortDAO("tcp://localhost:6666");
     LinkedList<String> tags = new LinkedList<String>(Arrays.asList("novo"));
     String questionTitle = "title";
     RUD t = new RUD(69L);
@@ -113,9 +114,17 @@ public class VoldemortTest {
         Question q = new Question(questionTitle, tags, "1", "1", "dario");
         dao.saveNew(q, t);
         for (String tag : tags) {
-            List<Question> list = dao.getListQuestions(t, tag);
-            assertTrue(list.contains(q));
+            List<QuestionEntry> list = dao.getListQuestions(t, tag);
+            assertTrue(questionExists(list, q.getTitle()));
         }
         dao.deleteQuestion(q.getId(), t);
+    }
+
+    private boolean questionExists(List<QuestionEntry> list, String questionTitle) {
+        for (QuestionEntry e : list) {
+            if (e.getTitle().equals(questionTitle))
+                return true;
+        }
+        return false;
     }
 }

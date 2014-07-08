@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	 xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc
  http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
  http://www.springframework.org/schema/beans
@@ -24,7 +25,10 @@
 	 <mvc:interceptors>
 		<bean class="pt.inesc.shuttle.ShuttleInterceptor"/>
 	</mvc:interceptors> 
-	
+
+	<context:property-placeholder location="WEB-INF/application.properties"/>
+
+
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/views/" />

@@ -6,6 +6,7 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import pt.inesc.ask.domain.QuestionEntry;
 import voldemort.undoTracker.RUD;
 import voldemort.versioning.Version;
 
@@ -33,7 +34,7 @@ public interface DAO {
 
     public Comment getComment(String commentId, RUD rud) throws AskException;
 
-    public List<Question> getListQuestions(RUD rud, String tag) throws AskException;
+    public List<QuestionEntry> getListQuestions(RUD rud, String tag) throws AskException;
 
     Version saveNew(Question quest, RUD rud) throws AskException;
 

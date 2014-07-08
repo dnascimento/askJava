@@ -17,13 +17,14 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import pt.inesc.ask.domain.QuestionEntry;
 import voldemort.undoTracker.RUD;
 
 
 public class AskService {
     private static final Logger log = LogManager.getLogger(AskService.class.getName());
 
-    DAO dao = new VoldemortDAO();
+    DAO dao = new VoldemortDAO("tcp://" + RootController.DATABASE_SERVER + ":" + RootController.VOLDEMORT_PORT);
 
     public void newQuestion(String title, String text, List<String> tags, String author, String views, String answers, RUD rud) throws AskException {
         log.info("New Question: " + title + " " + text + " " + tags + " " + author + " rud:" + rud);
@@ -35,7 +36,7 @@ public class AskService {
 
     }
 
-    public List<Question> getListQuestions(RUD rud, String tag) throws AskException {
+    public List<QuestionEntry> getListQuestions(RUD rud, String tag) throws AskException {
         log.info("Get Question List" + " rud:" + rud);
         return dao.getListQuestions(rud, tag);
     }

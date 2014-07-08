@@ -18,6 +18,7 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
+import pt.inesc.ask.domain.QuestionEntry;
 import pt.inesc.ask.servlet.AskService;
 import voldemort.undoTracker.RUD;
 
@@ -46,9 +47,9 @@ public class ServiceTest {
         s.newQuestion(questionId, text, tags, author, "1", "1", t);
         assertNotNull(exists());
         // Test question list
-        List<Question> list = s.getListQuestions(t, tags.get(0));
+        List<QuestionEntry> list = s.getListQuestions(t, tags.get(0));
         boolean found = false;
-        for (Question q : list) {
+        for (QuestionEntry q : list) {
             if (q.getTitle().equals(questionId)) {
                 found = true;
             }

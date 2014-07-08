@@ -30,9 +30,11 @@ import voldemort.undoTracker.RUD;
 @Controller
 public class RootController {
 
-    public static String DATABASE_SERVER = "localhost";
+    public static final String DATABASE_SERVER = "localhost";
+    public static final String VOLDEMORT_PORT = "7666";
 
     private static final Logger log = LogManager.getLogger(RootController.class.getName());
+
 
     AskService s = new AskService();
 
@@ -128,7 +130,8 @@ public class RootController {
             DecoderException {
         // log.info("POST /question/" + questionTitle + "/answer" +
         // extractRid(r));
-        String author = getParameterDefault(r, "author", "author");
+
+        String author = getParameterDefault(p, "author", "author");
         String encoded = AskService.encodeTitle(questionTitle);
         s.newAnswer(encoded, author, p.get("text"), extractRid(r));
         return "redirect:/question/" + questionTitle;
@@ -161,10 +164,11 @@ public class RootController {
             DecoderException {
         // log.info("POST /question/" + questionTitle + "/comment" +
         // extractRid(r));
-        String author = getParameterDefault(r, "author", "author");
+        String author = getParameterDefault(p, "author", "author");
         s.newComment(questionTitle, p.get("answerID"), p.get("text"), author, extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
+
 
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.PUT)
     public @ResponseBody
@@ -227,5 +231,14 @@ public class RootController {
         }
     }
 
+
+    private String getParameterDefault(Map<String, String> p, String field, String defaultValue) {
+        String str = p.get(field);
+        if (str == null) {
+            return defaultValue;
+        } else {
+            return str;
+        }
+    }
 
 }
