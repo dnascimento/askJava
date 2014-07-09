@@ -5,8 +5,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import  org.jboss.logging.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,7 +14,7 @@ import voldemort.undoTracker.RUD;
 
 public class ShuttleInterceptor
         implements HandlerInterceptor {
-    private static final Logger log = LogManager.getLogger(ShuttleInterceptor.class.getName());
+    private static final Logger log = Logger.getLogger(ShuttleInterceptor.class.getName());
 
     public ShuttleInterceptor() {
         super();
@@ -68,7 +67,6 @@ public class ShuttleInterceptor
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
         RUD rud;
-        // System.out.println("Pre thread: " + Thread.currentThread().getId());
         try {
             long rid = Long.parseLong(req.getHeader("Id"));
             short branch = Short.parseShort(req.getHeader("B"));

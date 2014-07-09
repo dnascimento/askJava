@@ -3,8 +3,7 @@ package pt.inesc.ask.dao;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import  org.jboss.logging.Logger;
 
 import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
@@ -19,7 +18,7 @@ import voldemort.versioning.Versioned;
 // Data access object: access to database and convertion
 public class VoldemortDAO
         implements DAO {
-    private static final Logger log = LogManager.getLogger(VoldemortDAO.class.getName());
+    private static final Logger log = Logger.getLogger(VoldemortDAO.class.getName());
 
     VoldemortStore<String, AskProto.Question> questions;
     VoldemortStore<String, AskProto.Answer> answers;

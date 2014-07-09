@@ -43,6 +43,12 @@ public class QuestionEntry {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "QuestionEntry [" + id + "]";
+    }
+
+
 
 
 

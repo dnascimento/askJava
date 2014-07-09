@@ -37,12 +37,12 @@ public class ListCompare<T> {
                 it1.remove();
                 shared.add(s);
             } else {
-                System.out.println(label + "1 has: " + s);
+                System.out.println(label + " server 6666 has: " + s);
             }
         }
 
         for (T s : list2) {
-            System.out.println(label + "2 has: " + s);
+            System.out.println(label + " server 7666 has: " + s);
         }
         return shared;
     }

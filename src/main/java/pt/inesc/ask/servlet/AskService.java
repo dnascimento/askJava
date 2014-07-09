@@ -8,8 +8,7 @@ import java.util.Map;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import  org.jboss.logging.Logger;
 
 import pt.inesc.ask.dao.DAO;
 import pt.inesc.ask.dao.VoldemortDAO;
@@ -22,7 +21,7 @@ import voldemort.undoTracker.RUD;
 
 
 public class AskService {
-    private static final Logger log = LogManager.getLogger(AskService.class.getName());
+    private static final Logger log = Logger.getLogger(AskService.class.getName());
 
     DAO dao = new VoldemortDAO("tcp://" + RootController.DATABASE_SERVER + ":" + RootController.VOLDEMORT_PORT);
 

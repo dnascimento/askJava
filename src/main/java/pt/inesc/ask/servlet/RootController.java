@@ -9,8 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,15 +24,13 @@ import pt.inesc.ask.domain.AskException;
 import voldemort.undoTracker.RUD;
 
 
-
-
 @Controller
 public class RootController {
 
     public static final String DATABASE_SERVER = "localhost";
-    public static final String VOLDEMORT_PORT = "7666";
+    public static final String VOLDEMORT_PORT = "6666";
 
-    private static final Logger log = LogManager.getLogger(RootController.class.getName());
+    private static final Logger log = Logger.getLogger(RootController.class.getName());
 
 
     AskService s = new AskService();

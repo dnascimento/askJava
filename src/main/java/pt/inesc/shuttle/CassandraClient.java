@@ -12,8 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import  org.jboss.logging.Logger;
 
 import pt.inesc.ask.servlet.RootController;
 import voldemort.undoTracker.KeyAccess;
@@ -33,7 +32,7 @@ import com.google.common.io.BaseEncoding;
 public class CassandraClient {
 
 
-    private static final Logger log = LogManager.getLogger(CassandraClient.class.getName());
+    private static final Logger log = Logger.getLogger(CassandraClient.class.getName());
 
     private static final int CONCURRENCY = 20;
     private static final int MAX_CONNECTIONS = 10;
@@ -62,7 +61,7 @@ public class CassandraClient {
         try {
             session = cluster.connect(KEYSPACE);
             Metadata metadata = cluster.getMetadata();
-            System.out.println(String.format("Connected to cluster '%s' on %s.", metadata.getClusterName(), metadata.getAllHosts()));
+            log.info(String.format("Connected to cluster '%s' on %s.", metadata.getClusterName(), metadata.getAllHosts()));
 
         } catch (NoHostAvailableException e) {
             log.error("No Cassandra server available");

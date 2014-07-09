@@ -1,8 +1,6 @@
 package pt.inesc.ask.dao;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-
+import  org.jboss.logging.Logger;
 import voldemort.client.ClientConfig;
 import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
@@ -20,7 +18,7 @@ import com.google.protobuf.Message;
  * @author darionascimento
  */
 public class VoldemortStore<K, V extends Message> {
-    private static final Logger log = LogManager.getLogger(VoldemortStore.class.getName());
+    private static final Logger log = Logger.getLogger(VoldemortStore.class.getName());
 
     private StoreClient<K, V> store;
     private final String storeName;

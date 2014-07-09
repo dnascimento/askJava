@@ -26,7 +26,7 @@
 		<bean class="pt.inesc.shuttle.ShuttleInterceptor"/>
 	</mvc:interceptors> 
 
-	<context:property-placeholder location="WEB-INF/application.properties"/>
+	<!-- <context:property-placeholder location="WEB-INF/application.properties"/> -->
 
 
 	<bean

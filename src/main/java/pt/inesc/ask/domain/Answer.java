@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.mortbay.log.Log;
 
 import pt.inesc.ask.proto.AskProto;
 
@@ -22,7 +23,7 @@ public class Answer {
         MessageDigest md;
         try {
             md = MessageDigest.getInstance("MD5");
-            System.out.println("New answer: " + questionTitle + author + text);
+            Log.info("New answer: " + questionTitle + author + text);
             byte[] digest = md.digest((questionTitle + author + text).getBytes("UTF-16"));
             this.id = BaseEncoding.base64().encode(digest);
         } catch (NoSuchAlgorithmException e) {
