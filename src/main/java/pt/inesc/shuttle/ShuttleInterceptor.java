@@ -1,16 +1,20 @@
 package pt.inesc.shuttle;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import  org.jboss.logging.Logger;
+import org.jboss.logging.Logger;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import voldemort.undoTracker.KeyAccess;
 import voldemort.undoTracker.RUD;
+import voldemort.utils.ByteArray;
+
+import com.google.common.collect.ArrayListMultimap;
 
 public class ShuttleInterceptor
         implements HandlerInterceptor {
@@ -41,26 +45,53 @@ public class ShuttleInterceptor
         // mapRequestRud.remove(Thread.currentThread().getId(),rud);
 
         // Unlocking algorithm
-        Set<KeyAccess> accessedKeys = rud.getAccessedKeys();
+        ArrayListMultimap<ByteArray, KeyAccess> accessedKeys = rud.getAccessedKeys();
 
         // If is redo:
         if (rud.redo) {
             // get the keys used before
-            Set<KeyAccess> originalKeys = cassandra.getKeys(rud.rid);
+            ArrayListMultimap<ByteArray, KeyAccess> originalKeys = cassandra.getKeys(rud.rid);
             log.debug("originalKeys keys" + originalKeys);
+            log.debug("accessed keys" + accessedKeys);
 
-            // subtract the accessed keys from original keys
-            originalKeys.removeAll(rud.getAccessedKeys());
-            log.debug("accessed keys" + rud.getAccessedKeys());
 
-            if (!originalKeys.isEmpty()) {
-                log.debug("Unlock keys: " + originalKeys);
-                databaseUnlocker.unlockKeys(originalKeys, rud);
+            subtrackTables(originalKeys, accessedKeys);
+
+
+            if (!accessedKeys.isEmpty()) {
+                log.debug("Unlock keys:" + accessedKeys);
+                databaseUnlocker.unlockKeys(accessedKeys, rud);
             }
         } else {
             if (!accessedKeys.isEmpty())
                 log.debug("Store keys: " + accessedKeys);
             cassandra.addKeys(accessedKeys, rud.rid);
+        }
+    }
+
+    private void subtrackTables(ArrayListMultimap<ByteArray, KeyAccess> originalTable, ArrayListMultimap<ByteArray, KeyAccess> newTable) {
+        Set<ByteArray> originalKeys = originalTable.keySet();
+        for (ByteArray key : originalKeys) {
+            List<KeyAccess> newList = newTable.get(key);
+            List<KeyAccess> originalList = newTable.get(key);
+            subtrackList(newList, originalList);
+        }
+    }
+
+
+    private void subtrackList(List<KeyAccess> newList, List<KeyAccess> originalList) {
+        // subtract the original from the originalKeys
+        for (KeyAccess oAccess : originalList) {
+            int index = newList.indexOf(oAccess);
+            if (index == -1) {
+                newList.add(oAccess);
+            } else {
+                KeyAccess newAccess = newList.get(index);
+                newAccess.times -= oAccess.times;
+                if (newAccess.times == 0) {
+                    newList.remove(index);
+                }
+            }
         }
     }
 

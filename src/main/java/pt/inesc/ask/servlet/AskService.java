@@ -12,7 +12,7 @@ import  org.jboss.logging.Logger;
 
 import pt.inesc.ask.dao.DAO;
 import pt.inesc.ask.dao.VoldemortDAO;
-import pt.inesc.ask.domain.Answer;
+import pt.inesc.ask.domain.Answer; 
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;

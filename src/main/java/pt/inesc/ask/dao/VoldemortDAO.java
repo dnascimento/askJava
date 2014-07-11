@@ -3,7 +3,7 @@ package pt.inesc.ask.dao;
 import java.util.LinkedList;
 import java.util.List;
 
-import  org.jboss.logging.Logger;
+import org.jboss.logging.Logger;
 
 import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
@@ -39,15 +39,18 @@ public class VoldemortDAO
     public Version saveNew(Question quest, RUD rud) throws AskException {
         for (String tag : quest.getTags()) {
             Versioned<AskProto.Index> versioned = index.get(tag, rud);
+            log.info("Get Tag entries: " + versioned);
             List<String> list;
             if (versioned == null) {
                 list = new LinkedList<String>();
+                // add tag to index of tags
                 newTag(tag);
             } else {
                 AskProto.Index entry = versioned.getValue();
                 list = entry.getEntryList();
             }
             if (!list.contains(quest.getId())) {
+                log.info("Question did not exist in tag, add it and put");
                 index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), rud);
             }
         }
@@ -56,14 +59,14 @@ public class VoldemortDAO
 
 
     /**
-     * Add a new tag
+     * Add a new tag to the index of tags, ignored by redo
      * 
      * @param tag
      */
     private void newTag(String tag) {
         // ignore depenencies
-        RUD rud = new RUD();
-        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, rud);
+        RUD nullRud = new RUD();
+        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, nullRud);
         List<String> list;
         if (versioned == null) {
             list = new LinkedList<String>();
@@ -74,7 +77,7 @@ public class VoldemortDAO
                 return;
             }
         }
-        index.put(TAG_LIST, AskProto.Index.newBuilder().addAllEntry(list).addEntry(tag).build(), rud);
+        index.put(TAG_LIST, AskProto.Index.newBuilder().addAllEntry(list).addEntry(tag).build(), nullRud);
     }
 
     @Override
@@ -174,6 +177,7 @@ public class VoldemortDAO
     @Override
     public List<QuestionEntry> getListQuestions(RUD rud, String tag) throws AskException {
         Versioned<AskProto.Index> indexList = index.get(tag, rud);
+        log.info("getListQuestions: " + indexList);
         if (indexList == null) {
             return new LinkedList<QuestionEntry>();
         }

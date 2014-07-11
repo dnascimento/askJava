@@ -7,12 +7,10 @@ package pt.inesc.shuttle;
  * Copyright (c) 2014 - All rights reserved
  */
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import  org.jboss.logging.Logger;
+import org.jboss.logging.Logger;
 
 import pt.inesc.ask.servlet.RootController;
 import voldemort.undoTracker.KeyAccess;
@@ -27,6 +25,7 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.io.BaseEncoding;
 
 public class CassandraClient {
@@ -75,24 +74,27 @@ public class CassandraClient {
 
     // //////////////////////////////////////
 
-    public void addKeys(Set<KeyAccess> accessedKeys, long id) {
+    public void addKeys(ArrayListMultimap<ByteArray, KeyAccess> accessedKeys, long id) {
         if (session == null)
             return;
+
         StringBuilder sb = new StringBuilder();
         sb.append("update ");
         sb.append(TABLE_NAME);
         sb.append(" set ");
         sb.append(COL_KEYS);
         sb.append(" = [");
-        Iterator<KeyAccess> i = accessedKeys.iterator();
-        while (i.hasNext()) {
-            KeyAccess s = i.next();
+        Iterator<ByteArray> it = accessedKeys.keySet().iterator();
+        while (it.hasNext()) {
+            ByteArray key = it.next();
+            // key-store:times.store:times,key-store:times.store:times
             sb.append("'");
-            sb.append(BaseEncoding.base64().encode(s.key.get()));
-            sb.append(",");
-            sb.append(s.store);
+            sb.append(BaseEncoding.base64().encode(key.get()));
+            sb.append("-");
+            String keyValue = generateKeyText(accessedKeys.get(key));
+            sb.append(keyValue);
             sb.append("'");
-            if (i.hasNext())
+            if (it.hasNext())
                 sb.append(",");
         }
         sb.append("] where id=");
@@ -101,7 +103,23 @@ public class CassandraClient {
         session.execute(sb.toString());
     }
 
-    public Set<KeyAccess> getKeys(long id) {
+    private String generateKeyText(List<KeyAccess> list) {
+        StringBuilder sb = null;
+        // key-store:times.store:times.
+        for (KeyAccess access : list) {
+            if (sb == null) {
+                sb = new StringBuilder();
+            } else {
+                sb.append(".");
+            }
+            sb.append(access.store);
+            sb.append(":");
+            sb.append(access.times);
+        }
+        return sb.toString();
+    }
+
+    public ArrayListMultimap<ByteArray, KeyAccess> getKeys(long id) {
         if (session == null)
             return null;
         StringBuilder sb = new StringBuilder();
@@ -109,17 +127,23 @@ public class CassandraClient {
         sb.append(id);
         sb.append(";");
         ResultSet result = session.execute(sb.toString());
-        for (Row row : result.all()) {
-            List<String> l = row.getList(COL_KEYS, String.class);
-            Set<KeyAccess> r = new HashSet<KeyAccess>();
-            for (String s : l) {
-                String[] splitted = s.split(",");
-                KeyAccess access = new KeyAccess(new ByteArray(BaseEncoding.base64().decode(splitted[0])), splitted[1]);
-                r.add(access);
-            }
+        ArrayListMultimap<ByteArray, KeyAccess> r = ArrayListMultimap.create();
+        Row row = result.one();
+        if (row == null) {
+            log.error("No registry of accessed keys for rid: " + id);
             return r;
         }
-        return null;
+
+        List<String> l = row.getList(COL_KEYS, String.class);
+        for (String s : l) {
+            // key-store:times.store:times,key-store:times.store:times
+            String[] splitted = s.split("-");
+            Integer times = Integer.parseInt(splitted[0]);
+            ByteArray key = new ByteArray(BaseEncoding.base64().decode(splitted[1]));
+            KeyAccess access = new KeyAccess(splitted[2], null, times);
+            r.put(key, access);
+        }
+        return r;
     }
 
     public void close() {

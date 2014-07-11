@@ -13,7 +13,7 @@ import voldemort.undoTracker.RUD;
 public class DaoCompare {
 
     public static String DATABASE_SERVER = "localhost";
-    private final static RUD rudOldServer = new RUD(System.currentTimeMillis(), 2, false);
+    private final static RUD rudOldServer = new RUD(System.currentTimeMillis(), 1, false);
     private final static RUD rudNewServer = new RUD(System.currentTimeMillis());
 
     public static void main(String[] args) throws AskException {
