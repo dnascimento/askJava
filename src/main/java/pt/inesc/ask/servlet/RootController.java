@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import pt.inesc.ask.dao.VoldemortTestDAO;
 import pt.inesc.ask.domain.AskException;
 import voldemort.undoTracker.RUD;
 
@@ -35,19 +34,20 @@ public class RootController {
 
     AskService s = new AskService();
 
-    @RequestMapping(value = "/voldemort", method = RequestMethod.GET)
-    public @ResponseBody
-    String voldemortTest() {
-        VoldemortTestDAO dao = new VoldemortTestDAO();
-        dao.put("test", "voldemort");
-        return dao.get("test");
-    }
-
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
         log.info("GET /test");
         return "hello";
     }
+
+
+    @ExceptionHandler(Throwable.class)
+    public @ResponseBody
+    String handleAnyException(Throwable ex, HttpServletRequest request) {
+        log.error("Handled exception", ex);
+        return ex.getMessage();
+    }
+
 
     @RequestMapping(value = "/tags/{tag}", method = RequestMethod.GET)
     public String categoryIndex(HttpServletRequest r, @PathVariable String tag, Model model) throws AskException {
@@ -61,13 +61,6 @@ public class RootController {
         log.info("GET / " + extractRid(r));
         model.addAttribute("tags", s.getTags().toArray());
         return "tags";
-    }
-
-    @ExceptionHandler(Throwable.class)
-    public @ResponseBody
-    String handleAnyException(Throwable ex, HttpServletRequest request) {
-        log.error("Handled exception", ex);
-        return ex.getMessage();
     }
 
     // ########## Question ################

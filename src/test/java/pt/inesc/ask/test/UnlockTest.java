@@ -1,6 +1,9 @@
 package pt.inesc.ask.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.junit.Test;
 
@@ -50,17 +53,61 @@ public class UnlockTest {
     public void listSubtraction() {
         ShuttleInterceptor i = new ShuttleInterceptor();
         ByteArray key = new ByteArray("dario".getBytes());
+        RUD reqOriginal = new RUD(1000L);
+        reqOriginal.addAccessedKey(key, "index", OpType.Put);
+        reqOriginal.addAccessedKey(key, "index", OpType.Put);
+        reqOriginal.addAccessedKey(key, "index", OpType.Put);
+        reqOriginal.addAccessedKey(key, "index", OpType.Put);
 
-        ArrayListMultimap<ByteArray, KeyAccess> originalTable = ArrayListMultimap.create();
-        originalTable.put(key, new KeyAccess("index", OpType.Put, 4));
-        originalTable.put(key, new KeyAccess("questions", OpType.Get, 2));
-        originalTable.put(key, new KeyAccess("answer", OpType.Get, 2));
+        reqOriginal.addAccessedKey(key, "questions", OpType.Get);
+        reqOriginal.addAccessedKey(key, "questions", OpType.Get);
 
-        ArrayListMultimap<ByteArray, KeyAccess> accessedKeys = ArrayListMultimap.create();
-        accessedKeys.put(key, new KeyAccess("index", OpType.Put, 1));
-        accessedKeys.put(key, new KeyAccess("questions", OpType.Get, 2));
+        reqOriginal.addAccessedKey(key, "answer", OpType.Get);
+        reqOriginal.addAccessedKey(key, "answer", OpType.Get);
+
+        ArrayListMultimap<ByteArray, KeyAccess> originalTable = reqOriginal.getAccessedKeys();
+
+        RUD reqNew = new RUD(1002L);
+        reqNew.addAccessedKey(key, "index", OpType.Put);
+        reqNew.addAccessedKey(key, "index", OpType.Put);
+
+        reqNew.addAccessedKey(key, "questions", OpType.Get);
+        reqNew.addAccessedKey(key, "questions", OpType.Get);
+
+
+        ArrayListMultimap<ByteArray, KeyAccess> accessedKeys = reqNew.getAccessedKeys();
+
+
 
         i.subtrackTables(accessedKeys, originalTable);
+
+        ArrayListMultimap<ByteArray, KeyAccess> expected = ArrayListMultimap.create();
+        expected.put(key, new KeyAccess("index", OpType.Put, 2));
+        expected.put(key, new KeyAccess("answer", OpType.Get, 2));
+
+
+        assertEquals(expected.keys(), accessedKeys.keys());
+        // same entries
+        assertEquals(expected.values().size(), accessedKeys.values().size());
+        // same times:
+
+        for (ByteArray k : expected.keySet()) {
+            List<KeyAccess> newList = expected.get(k);
+            List<KeyAccess> originalList = accessedKeys.get(k);
+            assertTrue(compareList(newList, originalList));
+        }
+    }
+
+
+
+    private boolean compareList(List<KeyAccess> newList, List<KeyAccess> originalList) {
+        for (KeyAccess oAccess : originalList) {
+            int index = newList.indexOf(oAccess);
+            KeyAccess newAccess = newList.get(index);
+            if (oAccess.times != newAccess.times)
+                return false;
+        }
+        return true;
     }
 
     @Test

@@ -33,13 +33,10 @@ public class ShuttleInterceptor
     CassandraClient cassandra = new CassandraClient();
     VoldemortUnlocker databaseUnlocker = new VoldemortUnlocker();
 
-    @Override
-    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Exception exception) throws Exception {
-        // Called after view rendering
-    }
+
 
     @Override
-    public void postHandle(HttpServletRequest req, HttpServletResponse res, Object handler, ModelAndView modelAndView) throws Exception {
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Exception exception) throws Exception {
         RUD rud = (RUD) req.getAttribute("rud");
         // mapRequestRud.remove(Thread.currentThread().getId(),rud);
 
@@ -69,7 +66,7 @@ public class ShuttleInterceptor
     }
 
     public void subtrackTables(ArrayListMultimap<ByteArray, KeyAccess> newTable, ArrayListMultimap<ByteArray, KeyAccess> originalTable) {
-        Iterable<ByteArray> originalKeys = originalTable.keys();
+        Iterable<ByteArray> originalKeys = originalTable.keySet();
         for (ByteArray key : originalKeys) {
             List<KeyAccess> newList = newTable.get(key);
             List<KeyAccess> originalList = originalTable.get(key);
@@ -86,8 +83,8 @@ public class ShuttleInterceptor
                 newList.add(oAccess);
             } else {
                 KeyAccess newAccess = newList.get(index);
-                newAccess.times -= oAccess.times;
-                if (newAccess.times == 0) {
+                newAccess.times = oAccess.times - newAccess.times;
+                if (newAccess.times <= 0) {
                     newList.remove(index);
                 }
             }
@@ -112,6 +109,12 @@ public class ShuttleInterceptor
         // mapRequestRud.put(Thread.currentThread().getId(),rud);
         req.setAttribute("rud", rud);
         return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, ModelAndView arg3) throws Exception {
+        // TODO Auto-generated method stub
+
     }
 
 
