@@ -8,17 +8,16 @@ import java.util.Map;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
-import  org.jboss.logging.Logger;
+import org.jboss.logging.Logger;
 
 import pt.inesc.ask.dao.DAO;
 import pt.inesc.ask.dao.VoldemortDAO;
-import pt.inesc.ask.domain.Answer; 
+import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.domain.QuestionEntry;
 import voldemort.undoTracker.RUD;
-
 
 public class AskService {
     private static final Logger log = Logger.getLogger(AskService.class.getName());

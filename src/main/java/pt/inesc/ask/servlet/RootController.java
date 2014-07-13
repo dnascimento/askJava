@@ -147,7 +147,7 @@ public class RootController {
     public @ResponseBody
     String deleteAnswer(HttpServletRequest r, @PathVariable String questionTitle,
 
-    @RequestBody Map<String, String> p) throws AskException, DecoderException {
+    @RequestBody Map<String, String> p) throws AskException {
         // log.info("DELETE /question/" + questionTitle + "/answer" +
         // extractRid(r));
         questionTitle = AskService.encodeTitle(questionTitle);
@@ -157,8 +157,7 @@ public class RootController {
 
     // ############ comments #########################
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.POST)
-    public String newComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
-            DecoderException {
+    public String newComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
         // log.info("POST /question/" + questionTitle + "/comment" +
         // extractRid(r));
         String author = getParameterDefault(p, "author", "author");

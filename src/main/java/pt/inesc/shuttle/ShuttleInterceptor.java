@@ -1,7 +1,6 @@
 package pt.inesc.shuttle;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,7 +54,7 @@ public class ShuttleInterceptor
             log.debug("accessed keys" + accessedKeys);
 
 
-            subtrackTables(originalKeys, accessedKeys);
+            subtrackTables(accessedKeys, originalKeys);
 
 
             if (!accessedKeys.isEmpty()) {
@@ -69,11 +68,11 @@ public class ShuttleInterceptor
         }
     }
 
-    private void subtrackTables(ArrayListMultimap<ByteArray, KeyAccess> originalTable, ArrayListMultimap<ByteArray, KeyAccess> newTable) {
-        Set<ByteArray> originalKeys = originalTable.keySet();
+    public void subtrackTables(ArrayListMultimap<ByteArray, KeyAccess> newTable, ArrayListMultimap<ByteArray, KeyAccess> originalTable) {
+        Iterable<ByteArray> originalKeys = originalTable.keys();
         for (ByteArray key : originalKeys) {
             List<KeyAccess> newList = newTable.get(key);
-            List<KeyAccess> originalList = newTable.get(key);
+            List<KeyAccess> originalList = originalTable.get(key);
             subtrackList(newList, originalList);
         }
     }
