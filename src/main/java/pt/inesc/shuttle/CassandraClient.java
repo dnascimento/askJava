@@ -61,7 +61,6 @@ public class CassandraClient {
             session = cluster.connect(KEYSPACE);
             Metadata metadata = cluster.getMetadata();
             log.info(String.format("Connected to cluster '%s' on %s.", metadata.getClusterName(), metadata.getAllHosts()));
-
         } catch (NoHostAvailableException e) {
             log.error("No Cassandra server available");
         }

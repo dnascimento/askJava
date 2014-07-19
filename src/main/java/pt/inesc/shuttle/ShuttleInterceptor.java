@@ -18,6 +18,7 @@ import com.google.common.collect.ArrayListMultimap;
 public class ShuttleInterceptor
         implements HandlerInterceptor {
     private static final Logger log = Logger.getLogger(ShuttleInterceptor.class.getName());
+    CassandraClient cassandra = new CassandraClient();
 
     public ShuttleInterceptor() {
         super();
@@ -30,7 +31,6 @@ public class ShuttleInterceptor
 
     // static ConcurrentHashMap<Long, RUD> mapRequestRud = new ConcurrentHashMap<Long,
     // RUD>();
-    CassandraClient cassandra = new CassandraClient();
     VoldemortUnlocker databaseUnlocker = new VoldemortUnlocker();
 
 
@@ -113,7 +113,6 @@ public class ShuttleInterceptor
 
     @Override
     public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, ModelAndView arg3) throws Exception {
-        // TODO Auto-generated method stub
 
     }
 
