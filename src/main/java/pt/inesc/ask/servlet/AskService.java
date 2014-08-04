@@ -82,9 +82,9 @@ public class AskService {
     }
 
     public String newAnswer(String questionTitle, String author, String text, RUD rud) throws AskException {
-        log.info("New Answer: " + questionTitle + " " + author + " " + text + " rud:" + rud);
         Question question = dao.getQuestion(questionTitle, rud);
         Answer ans = new Answer(questionTitle, author, text, false);
+        log.info("New Answer: " + questionTitle + " :author: " + author + " :text: " + text + " :rud:" + rud + " :id: " + ans.getId());
         question.addAnswer(ans.getId());
         dao.save(ans, rud);
         dao.save(question, rud);
@@ -92,7 +92,7 @@ public class AskService {
     }
 
     public void updateAnswer(String answerId, String text, RUD rud) throws AskException {
-        log.info("Update Answer: " + answerId + " " + text + " rud:" + rud);
+        log.info("Update Answer: " + answerId + " :text: " + text + " :rud:" + rud);
         Answer answer = dao.getAnswer(answerId, rud);
         if (answer == null) {
             throw new AskException("Update Answer: answer not exists:" + answerId);

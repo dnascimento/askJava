@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jboss.logging.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -123,7 +124,8 @@ public class RootController {
 
         String author = getParameterDefault(p, "author", "author");
         String encoded = AskService.encodeTitle(questionTitle);
-        s.newAnswer(encoded, author, p.get("text"), extractRid(r));
+        String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
+        s.newAnswer(encoded, author, unescapedText, extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
@@ -154,7 +156,8 @@ public class RootController {
         // log.info("POST /question/" + questionTitle + "/comment" +
         // extractRid(r));
         String author = getParameterDefault(p, "author", "author");
-        s.newComment(questionTitle, p.get("answerID"), p.get("text"), author, extractRid(r));
+        String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
+        s.newComment(questionTitle, p.get("answerID"), unescapedText, author, extractRid(r));
         return "redirect:/question/" + questionTitle;
     }
 
