@@ -24,9 +24,17 @@ public class AskService {
 
     DAO dao = new VoldemortDAO("tcp://" + RootController.DATABASE_SERVER + ":" + RootController.VOLDEMORT_PORT);
 
-    public void newQuestion(String title, String text, List<String> tags, String author, String views, String answers, RUD rud) throws AskException {
+    public void newQuestion(
+            String title,
+                String text,
+                List<String> tags,
+                String author,
+                String views,
+                String answers,
+                RUD rud,
+                String answerId) throws AskException {
         log.info("New Question: " + title + " " + text + " " + tags + " " + author + " rud:" + rud);
-        Answer ans = new Answer(title, author, text, true);
+        Answer ans = new Answer(title, author, text, true, answerId);
         Question quest = new Question(title, tags, views, answers, ans.getId());
         dao.saveNew(quest, rud);
         dao.save(ans, rud);
@@ -81,9 +89,9 @@ public class AskService {
         return c && a && q;
     }
 
-    public String newAnswer(String questionTitle, String author, String text, RUD rud) throws AskException {
+    public String newAnswer(String questionTitle, String author, String text, RUD rud, String answerId) throws AskException {
         Question question = dao.getQuestion(questionTitle, rud);
-        Answer ans = new Answer(questionTitle, author, text, false);
+        Answer ans = new Answer(questionTitle, author, text, false, answerId);
         log.info("New Answer: " + questionTitle + " :author: " + author + " :text: " + text + " :rud:" + rud + " :id: " + ans.getId());
         question.addAnswer(ans.getId());
         dao.save(ans, rud);
@@ -117,9 +125,9 @@ public class AskService {
     }
 
     public String newComment(String questionTitle, String answerID, String text, String author, RUD rud) throws AskException {
-        log.info("New Comment: " + questionTitle + " " + answerID + " " + text + " " + author + " rud:" + rud);
         Answer answer = dao.getAnswer(answerID, rud);
         Comment comment = new Comment(answerID, text, author);
+        log.info("New Comment: " + questionTitle + " :answerId: " + answerID + " :text: " + text + " :author: " + author + " :rud:" + rud);
         answer.addComment(comment.getId());
         dao.save(comment, rud);
         dao.save(answer, rud);

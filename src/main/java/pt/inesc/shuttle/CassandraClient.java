@@ -71,13 +71,12 @@ public class CassandraClient {
 
 
 
-    // //////////////////////////////////////
-
     public void addKeys(ArrayListMultimap<ByteArray, KeyAccess> accessedKeys, long id) {
         if (session == null)
             return;
 
         StringBuilder sb = new StringBuilder();
+        // in cassandra, update inserts if not exists
         sb.append("update ");
         sb.append(TABLE_NAME);
         sb.append(" set ");

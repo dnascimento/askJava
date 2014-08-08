@@ -65,7 +65,7 @@ public class VoldemortTest {
         String author = "dario";
         String text1 = "snowboard";
         String text2 = "surf";
-        Answer a = new Answer(questionTitle, author, text1, true);
+        Answer a = new Answer(questionTitle, author, text1, true, null);
         dao.save(a, t);
         Answer a2 = dao.getAnswer(a.getId(), t);
         assertEquals(a, a2);

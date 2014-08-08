@@ -44,7 +44,7 @@ public class ServiceTest {
         } catch (Exception e) {
 
         }
-        s.newQuestion(questionId, text, tags, author, "1", "1", t);
+        s.newQuestion(questionId, text, tags, author, "1", "1", t, null);
         assertNotNull(exists());
         // Test question list
         List<QuestionEntry> list = s.getListQuestions(t, tags.get(0));
@@ -96,7 +96,7 @@ public class ServiceTest {
         } catch (AskException e) {
             // clean old if exists
         }
-        s.newQuestion(questionId, text1, new ArrayList<String>(), author, "1", "1", t);
+        s.newQuestion(questionId, text1, new ArrayList<String>(), author, "1", "1", t, null);
         // Test get
         Answer a1 = getQuestionText();
         assertNotNull(a1);
@@ -106,12 +106,12 @@ public class ServiceTest {
         assertEquals(a1.getVotes(), 0);
         String a1Id = a1.getId();
         // Test add 1 answer
-        String a2Id = s.newAnswer(questionId, author, text2, t);
+        String a2Id = s.newAnswer(questionId, author, text2, t, null);
         assertNotNull(getQuestionText());
         assertNotNull(getAnswer(author, text2));
 
         // Test add +1 answer
-        String a3Id = s.newAnswer(questionId, author, text3, t);
+        String a3Id = s.newAnswer(questionId, author, text3, t, null);
         assertNotNull(getQuestionText());
         assertNotNull(getAnswer(author, text2));
         assertNotNull(getAnswer(author, text3));
@@ -181,8 +181,8 @@ public class ServiceTest {
         } catch (AskException e) {
             // clean previous questions
         }
-        s.newQuestion(questionId, "text", new ArrayList<String>(), "author", "1", "1", t);
-        String answerId = s.newAnswer(questionId, "authorAnswer", "answerText", t);
+        s.newQuestion(questionId, "text", new ArrayList<String>(), "author", "1", "1", t, null);
+        String answerId = s.newAnswer(questionId, "authorAnswer", "answerText", t, null);
         String cId1 = s.newComment(questionId, answerId, cText1, author, t);
         // Exists:
         assertNotNull(getComment(answerId, cId1));

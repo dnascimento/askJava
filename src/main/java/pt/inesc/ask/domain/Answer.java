@@ -18,16 +18,20 @@ public class Answer {
     // To display the comments
     private final LinkedList<Comment> comments = new LinkedList<Comment>();
 
-    public Answer(String questionTitle, String author, String text, Boolean isQuestion) {
+    public Answer(String questionTitle, String author, String text, Boolean isQuestion, String answerId) {
         MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest((questionTitle + author + text).getBytes("UTF-16"));
-            this.id = BaseEncoding.base64().encode(digest);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        if (answerId == null) {
+            try {
+                md = MessageDigest.getInstance("MD5");
+                byte[] digest = md.digest((questionTitle + author + text).getBytes("UTF-16"));
+                this.id = BaseEncoding.base64().encode(digest);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.id = answerId;
         }
         AskProto.Answer.Builder b = AskProto.Answer.newBuilder();
         b.setAuthor(author).setText(text).setVotes(0).setIsQuestion(isQuestion);

@@ -12,7 +12,7 @@ import pt.inesc.ask.domain.QuestionEntry;
 import voldemort.undoTracker.RUD;
 import voldemort.versioning.Version;
 
-// Data access object: access to database and convertion
+// Data access object: access to database and conversation
 public class VolatilDAO
         implements DAO {
     HashMap<String, Question> questions = new HashMap<String, Question>();
@@ -23,7 +23,7 @@ public class VolatilDAO
 
 
     public VolatilDAO() {
-        Answer a = new Answer("onde estou", "dario", "o que e isto", true);
+        Answer a = new Answer("onde estou", "dario", "o que e isto", true, null);
         tags.add("perdido");
         Question q = new Question("onde estou", tags, "1", "1", a.getId());
         Comment c = new Comment(a.getId(), "oi", "kiko");

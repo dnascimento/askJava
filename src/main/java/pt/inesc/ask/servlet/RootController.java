@@ -80,6 +80,7 @@ public class RootController {
         String[] tags = r.getParameter("tags").split(",");
 
 
+        String answerId = getParameterDefault(r, "answerId", null);
         String author = getParameterDefault(r, "author", "author");
         String views = getParameterDefault(r, "views", "1");
         String answers = getParameterDefault(r, "answers", "1");
@@ -87,7 +88,7 @@ public class RootController {
         List<String> tagList;
         tagList = (tags == null) ? new LinkedList<String>() : Arrays.asList(tags);
         String encoded = AskService.encodeTitle(title);
-        s.newQuestion(encoded, text, tagList, author, views, answers, extractRid(r));
+        s.newQuestion(encoded, text, tagList, author, views, answers, extractRid(r), answerId);
         return "redirect:/question/" + title;
     }
 
@@ -122,10 +123,11 @@ public class RootController {
         // log.info("POST /question/" + questionTitle + "/answer" +
         // extractRid(r));
 
+        String answerId = getParameterDefault(r, "answerId", null);
         String author = getParameterDefault(p, "author", "author");
         String encoded = AskService.encodeTitle(questionTitle);
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
-        s.newAnswer(encoded, author, unescapedText, extractRid(r));
+        s.newAnswer(encoded, author, unescapedText, extractRid(r), answerId);
         return "redirect:/question/" + questionTitle;
     }
 
