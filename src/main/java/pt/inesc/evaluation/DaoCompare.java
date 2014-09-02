@@ -8,14 +8,14 @@ import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.domain.QuestionEntry;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 
 public class DaoCompare {
 
     public static String DATABASE_SERVER = "localhost";
 
-    private static final RUD rudOldServer = new RUD(System.currentTimeMillis(), 1, false);
-    private static final RUD rudNewServer = new RUD(System.currentTimeMillis(), 0, false);
+    private static final SRD srdOldServer = new SRD(System.currentTimeMillis(), 1, false);
+    private static final SRD srdNewServer = new SRD(System.currentTimeMillis(), 0, false);
 
     public static void main(String[] args) throws AskException {
         compare(6666, 7666);
@@ -38,23 +38,23 @@ public class DaoCompare {
         List<String> tagsComp = new ListCompare<String>(d1Tags, d2Tags, "tags").compare();
 
         for (String tag : tagsComp) {
-            List<QuestionEntry> questionList1 = d1.getListQuestions(rudOldServer, tag);
-            List<QuestionEntry> questionList2 = d2.getListQuestions(rudNewServer, tag);
+            List<QuestionEntry> questionList1 = d1.getListQuestions(srdOldServer, tag);
+            List<QuestionEntry> questionList2 = d2.getListQuestions(srdNewServer, tag);
 
             List<QuestionEntry> questionComp = new ListCompare<QuestionEntry>(questionList1, questionList2, "questions").compare();
 
 
             for (QuestionEntry questionEntry : questionComp) {
-                Question q1 = d1.getQuestion(questionEntry.id, rudOldServer);
-                Question q2 = d2.getQuestion(questionEntry.id, rudNewServer);
+                Question q1 = d1.getQuestion(questionEntry.id, srdOldServer);
+                Question q2 = d2.getQuestion(questionEntry.id, srdNewServer);
                 List<String> p1 = new ArrayList<String>(q1.getAnswersIDs());
                 List<String> p2 = new ArrayList<String>(q2.getAnswersIDs());
 
                 List<String> commonAnswers = new ListCompare<String>(p1, p2, "answers").compare();
 
                 for (String answerId : commonAnswers) {
-                    Answer a1 = d1.getAnswer(answerId, rudOldServer);
-                    Answer a2 = d2.getAnswer(answerId, rudNewServer);
+                    Answer a1 = d1.getAnswer(answerId, srdOldServer);
+                    Answer a2 = d2.getAnswer(answerId, srdNewServer);
 
                     if (!a1.getText().equals(a2.getText())) {
                         System.out.println("Different answer with same id");

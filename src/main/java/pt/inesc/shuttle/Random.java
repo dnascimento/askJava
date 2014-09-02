@@ -1,13 +1,13 @@
 package pt.inesc.shuttle;
 
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 
 public class Random {
 
     public java.util.Random random;
 
-    public Random(RUD rud) {
-        random = new java.util.Random(rud.rid);
+    public Random(SRD srd) {
+        random = new java.util.Random(srd.rid);
     }
 
     public boolean nextBoolean() {

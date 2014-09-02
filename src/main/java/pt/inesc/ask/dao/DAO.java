@@ -7,38 +7,38 @@ import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.domain.QuestionEntry;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 import voldemort.versioning.Version;
 
 // Data access object: access to database and conversion
 public interface DAO {
 
     // Save
-    public Version save(Question quest, RUD rud);
+    public Version save(Question quest, SRD srd);
 
-    public Version save(Answer answer, RUD rud);
+    public Version save(Answer answer, SRD srd);
 
-    public Version save(Comment comment, RUD rud);
+    public Version save(Comment comment, SRD srd);
 
     // Delete
-    public boolean deleteQuestion(String questionId, RUD rud);
+    public boolean deleteQuestion(String questionId, SRD srd);
 
-    public boolean deleteAnswer(String answerId, RUD rud);
+    public boolean deleteAnswer(String answerId, SRD srd);
 
-    public boolean deleteComment(String commentId, RUD rud);
+    public boolean deleteComment(String commentId, SRD srd);
 
     // Gets
-    public Question getQuestion(String questionTitle, RUD rud) throws AskException;
+    public Question getQuestion(String questionTitle, SRD srd) throws AskException;
 
-    public Answer getAnswer(String answerId, RUD rud) throws AskException;
+    public Answer getAnswer(String answerId, SRD srd) throws AskException;
 
-    public Comment getComment(String commentId, RUD rud) throws AskException;
+    public Comment getComment(String commentId, SRD srd) throws AskException;
 
-    public List<QuestionEntry> getListQuestions(RUD rud, String tag) throws AskException;
+    public List<QuestionEntry> getListQuestions(SRD srd, String tag) throws AskException;
 
-    Version saveNew(Question quest, RUD rud) throws AskException;
+    Version saveNew(Question quest, SRD srd) throws AskException;
 
-    void cleanIndex(RUD rud);
+    void cleanIndex(SRD srd);
 
     public List<String> getTags();
 }

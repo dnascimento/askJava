@@ -11,20 +11,20 @@ import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.domain.QuestionEntry;
 import pt.inesc.ask.proto.AskProto;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 import voldemort.versioning.Version;
 import voldemort.versioning.Versioned;
 
 // Data access object: access to database and convertion
 public class VoldemortDAO
         implements DAO {
-    private static final Logger log = Logger.getLogger(VoldemortDAO.class.getName());
+    private static final Logger LOG = Logger.getLogger(VoldemortDAO.class.getName());
 
     VoldemortStore<String, AskProto.Question> questions;
     VoldemortStore<String, AskProto.Answer> answers;
     VoldemortStore<String, AskProto.Comment> comments;
     VoldemortStore<String, AskProto.Index> index;
-    String TAG_LIST = "TAG_LIST";
+    private static final String TAG_LIST = "TAG_LIST";
 
 
     public VoldemortDAO(String bootstrapUrl) {
@@ -36,10 +36,11 @@ public class VoldemortDAO
 
     // Save
     @Override
-    public Version saveNew(Question quest, RUD rud) throws AskException {
+    public Version saveNew(Question quest, SRD srd) throws AskException {
         for (String tag : quest.getTags()) {
-            Versioned<AskProto.Index> versioned = index.get(tag, rud);
-            log.info("Get Tag entries: " + versioned);
+            Versioned<AskProto.Index> versioned = index.get(tag, srd);
+            versioned.getVersion();
+            LOG.info("Get Tag entries: " + versioned);
             List<String> list;
             if (versioned == null) {
                 list = new LinkedList<String>();
@@ -50,13 +51,12 @@ public class VoldemortDAO
                 list = entry.getEntryList();
             }
             if (!list.contains(quest.getId())) {
-                log.info("Question did not exist in tag, add it and put");
-                index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), rud);
+                LOG.info("Question did not exist in tag, add it and put");
+                index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), srd);
             }
         }
-        return save(quest, rud);
+        return save(quest, srd);
     }
-
 
     /**
      * Add a new tag to the index of tags, ignored by redo
@@ -65,7 +65,7 @@ public class VoldemortDAO
      */
     private void newTag(String tag) {
         // ignore depenencies
-        RUD nullRud = new RUD();
+        SRD nullRud = new SRD();
         Versioned<AskProto.Index> versioned = index.get(TAG_LIST, nullRud);
         List<String> list;
         if (versioned == null) {
@@ -81,33 +81,33 @@ public class VoldemortDAO
     }
 
     @Override
-    public Version save(Question quest, RUD rud) {
-        return questions.put(quest.getId(), cast(quest), rud);
+    public Version save(Question quest, SRD srd) {
+        return questions.put(quest.getId(), cast(quest), srd);
     }
 
     @Override
-    public Version save(Answer answer, RUD rud) {
-        return answers.put(answer.getId(), cast(answer), rud);
+    public Version save(Answer answer, SRD srd) {
+        return answers.put(answer.getId(), cast(answer), srd);
     }
 
     @Override
-    public Version save(Comment comment, RUD rud) {
-        return comments.put(comment.getId(), cast(comment), rud);
+    public Version save(Comment comment, SRD srd) {
+        return comments.put(comment.getId(), cast(comment), srd);
     }
 
     // Delete
     @Override
-    public boolean deleteQuestion(String questionId, RUD rud) {
+    public boolean deleteQuestion(String questionId, SRD srd) {
         Question question;
         try {
-            question = getQuestion(questionId, rud);
+            question = getQuestion(questionId, srd);
         } catch (AskException e1) {
-            log.error("Delete: Question not exists");
+            LOG.error("Delete: Question not exists");
             return false;
         }
         boolean found = false;
         for (String tag : question.getTags()) {
-            Versioned<AskProto.Index> indexList = index.get(tag, rud);
+            Versioned<AskProto.Index> indexList = index.get(tag, srd);
             AskProto.Index indexMsg = indexList.getValue();
             AskProto.Index.Builder b = AskProto.Index.newBuilder();
             for (String e : indexMsg.getEntryList()) {
@@ -118,37 +118,39 @@ public class VoldemortDAO
                 }
             }
             if (!found) {
-                log.error("Question not found in index");
+                LOG.error("Question not found in index");
             }
-            index.put(tag, b.build(), rud);
+            index.put(tag, b.build(), srd);
         }
-        boolean q = questions.delete(questionId, rud);
+        boolean q = questions.delete(questionId, srd);
         if (!q) {
-            log.error("Question not exists:" + questionId);
+            LOG.error("Question not exists:" + questionId);
         }
         return q && found;
     }
 
     @Override
-    public boolean deleteAnswer(String answerId, RUD rud) {
-        boolean s = answers.delete(answerId, rud);
-        if (!s)
-            log.error("delete answer: not found " + answerId);
+    public boolean deleteAnswer(String answerId, SRD srd) {
+        boolean s = answers.delete(answerId, srd);
+        if (!s) {
+            LOG.error("delete answer: not found " + answerId);
+        }
         return s;
     }
 
     @Override
-    public boolean deleteComment(String commentId, RUD rud) {
-        boolean s = comments.delete(commentId, rud);
-        if (!s)
-            log.error("delete comment: not found " + commentId);
+    public boolean deleteComment(String commentId, SRD srd) {
+        boolean s = comments.delete(commentId, srd);
+        if (!s) {
+            LOG.error("delete comment: not found " + commentId);
+        }
         return s;
     }
 
     // Gets
     @Override
-    public Question getQuestion(String questionId, RUD rud) throws AskException {
-        Versioned<AskProto.Question> q = questions.get(questionId, rud);
+    public Question getQuestion(String questionId, SRD srd) throws AskException {
+        Versioned<AskProto.Question> q = questions.get(questionId, srd);
         if (q == null) {
             throw new AskException("Question not exists: " + questionId);
         }
@@ -156,8 +158,8 @@ public class VoldemortDAO
     }
 
     @Override
-    public Answer getAnswer(String answerId, RUD rud) throws AskException {
-        Versioned<AskProto.Answer> a = answers.get(answerId, rud);
+    public Answer getAnswer(String answerId, SRD srd) throws AskException {
+        Versioned<AskProto.Answer> a = answers.get(answerId, srd);
         if (a == null) {
             throw new AskException("Answer not exists: " + answerId);
         }
@@ -165,8 +167,8 @@ public class VoldemortDAO
     }
 
     @Override
-    public Comment getComment(String commentId, RUD rud) throws AskException {
-        Versioned<AskProto.Comment> c = comments.get(commentId, rud);
+    public Comment getComment(String commentId, SRD srd) throws AskException {
+        Versioned<AskProto.Comment> c = comments.get(commentId, srd);
         if (c == null) {
             throw new AskException("Comment not exists: " + commentId);
         }
@@ -175,15 +177,15 @@ public class VoldemortDAO
 
 
     @Override
-    public List<QuestionEntry> getListQuestions(RUD rud, String tag) throws AskException {
-        Versioned<AskProto.Index> indexList = index.get(tag, rud);
-        log.info("getListQuestions: " + indexList);
+    public List<QuestionEntry> getListQuestions(SRD srd, String tag) throws AskException {
+        Versioned<AskProto.Index> indexList = index.get(tag, srd);
+        LOG.info("getListQuestions: " + indexList);
         if (indexList == null) {
             return new LinkedList<QuestionEntry>();
         }
         AskProto.Index indexMsg = indexList.getValue();
         List<String> list = indexMsg.getEntryList();
-        LinkedList<QuestionEntry> result = new LinkedList<QuestionEntry>();
+        List<QuestionEntry> result = new LinkedList<QuestionEntry>();
         for (String str : list) {
             result.add(new QuestionEntry(str));
         }
@@ -191,8 +193,8 @@ public class VoldemortDAO
     }
 
     @Override
-    public void cleanIndex(RUD rud) {
-        index.put("index", AskProto.Index.newBuilder().build(), rud);
+    public void cleanIndex(SRD srd) {
+        index.put("index", AskProto.Index.newBuilder().build(), srd);
     }
 
     // Question
@@ -226,7 +228,7 @@ public class VoldemortDAO
 
     @Override
     public List<String> getTags() {
-        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, new RUD());
+        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, new SRD());
         List<String> list;
         if (versioned == null) {
             list = new LinkedList<String>();

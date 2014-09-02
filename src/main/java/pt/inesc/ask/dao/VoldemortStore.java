@@ -1,12 +1,13 @@
 package pt.inesc.ask.dao;
 
-import  org.jboss.logging.Logger;
+import org.jboss.logging.Logger;
+
 import voldemort.client.ClientConfig;
 import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
 import voldemort.client.StoreClientFactory;
 import voldemort.client.protocol.RequestFormatType;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 import voldemort.versioning.Version;
 import voldemort.versioning.Versioned;
 
@@ -18,7 +19,7 @@ import com.google.protobuf.Message;
  * @author darionascimento
  */
 public class VoldemortStore<K, V extends Message> {
-    private static final Logger log = Logger.getLogger(VoldemortStore.class.getName());
+    private static final Logger LOG = Logger.getLogger(VoldemortStore.class.getName());
 
     private StoreClient<K, V> store;
     private final String storeName;
@@ -35,34 +36,36 @@ public class VoldemortStore<K, V extends Message> {
         store = factory.getStoreClient(storeName);
     }
 
-    public Version put(K key, V value, RUD rud) {
+    public Version put(K key, V value, SRD srd) {
         if (store == null)
             init();
         if (key == null || value == null) {
-            log.error("Put: NULL: key" + key + " value:" + value + "t " + System.identityHashCode(this));
+            LOG.error("Put: NULL: key" + key + " value:" + value + "t " + System.identityHashCode(this));
             // TODO throw exception
         }
-        return store.put(key, value, rud);
+        return store.put(key, value, srd);
     }
 
-    public Versioned<V> get(K key, RUD rud) {
-        if (store == null)
+    public Versioned<V> get(K key, SRD srd) {
+        if (store == null) {
             init();
+        }
         if (key == null) {
-            log.error("Get: NULL: key");
+            LOG.error("Get: NULL: key");
             // TODO throw exception
         }
-        log.info("Get: " + key + " : " + rud + "t " + System.identityHashCode(this));
-        return store.get(key, rud);
+        LOG.info("Get: " + key + " : " + srd + "t " + System.identityHashCode(this));
+        return store.get(key, srd);
     }
 
-    public boolean delete(K key, RUD rud) {
-        if (store == null)
+    public boolean delete(K key, SRD srd) {
+        if (store == null) {
             init();
+        }
         if (key == null) {
-            log.error("Delete: NULL: key" + "t " + System.identityHashCode(this));
+            LOG.error("Delete: NULL: key" + "t " + System.identityHashCode(this));
             return false;
         }
-        return store.delete(key, rud);
+        return store.delete(key, srd);
     }
 }

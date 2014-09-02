@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import voldemort.undoTracker.KeyAccess;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 import voldemort.utils.ByteArray;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -29,24 +29,24 @@ public class ShuttleInterceptor
         System.setProperty("appengine.disableRestrictedCheck", "true");
     }
 
-    // static ConcurrentHashMap<Long, RUD> mapRequestRud = new ConcurrentHashMap<Long,
-    // RUD>();
+    // static ConcurrentHashMap<Long, SRD> mapRequestRud = new ConcurrentHashMap<Long,
+    // SRD>();
     VoldemortUnlocker databaseUnlocker = new VoldemortUnlocker();
 
 
 
     @Override
     public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Exception exception) throws Exception {
-        RUD rud = (RUD) req.getAttribute("rud");
-        // mapRequestRud.remove(Thread.currentThread().getId(),rud);
+        SRD srd = (SRD) req.getAttribute("srd");
+        // mapRequestRud.remove(Thread.currentThread().getId(),srd);
 
         // Unlocking algorithm
-        ArrayListMultimap<ByteArray, KeyAccess> accessedKeys = rud.getAccessedKeys();
+        ArrayListMultimap<ByteArray, KeyAccess> accessedKeys = srd.getAccessedKeys();
 
         // If is redo:
-        if (rud.redo) {
+        if (srd.redo) {
             // get the keys used before
-            ArrayListMultimap<ByteArray, KeyAccess> originalKeys = cassandra.getKeys(rud.rid);
+            ArrayListMultimap<ByteArray, KeyAccess> originalKeys = cassandra.getKeys(srd.rid);
             log.debug("originalKeys keys" + originalKeys);
             log.debug("accessed keys" + accessedKeys);
 
@@ -56,12 +56,12 @@ public class ShuttleInterceptor
 
             if (!accessedKeys.isEmpty()) {
                 log.debug("Unlock keys:" + accessedKeys);
-                databaseUnlocker.unlockKeys(accessedKeys, rud);
+                databaseUnlocker.unlockKeys(accessedKeys, srd);
             }
         } else {
             if (!accessedKeys.isEmpty())
                 log.debug("Store keys: " + accessedKeys);
-            cassandra.addKeys(accessedKeys, rud.rid);
+            cassandra.addKeys(accessedKeys, srd.rid);
         }
     }
 
@@ -93,21 +93,21 @@ public class ShuttleInterceptor
 
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
-        RUD rud;
+        SRD srd;
         try {
             long rid = Long.parseLong(req.getHeader("Id"));
             short branch = Short.parseShort(req.getHeader("B"));
             boolean restrain = (req.getHeader("R").equals("t"));
             boolean redo = (req.getHeader("Redo").equals("t"));
-            rud = new RUD(rid, branch, restrain, redo);
+            srd = new SRD(rid, branch, restrain, redo);
         } catch (NumberFormatException e) {
-            // No rud from proxy, create stub using local clock
-            // rud = new RUD(0L);
-            rud = new RUD(System.currentTimeMillis());
+            // No srd from proxy, create stub using local clock
+            // srd = new SRD(0L);
+            srd = new SRD(System.currentTimeMillis());
         }
 
-        // mapRequestRud.put(Thread.currentThread().getId(),rud);
-        req.setAttribute("rud", rud);
+        // mapRequestRud.put(Thread.currentThread().getId(),srd);
+        req.setAttribute("srd", srd);
         return true;
     }
 

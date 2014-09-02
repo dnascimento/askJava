@@ -5990,7 +5990,7 @@ function actualDisplay( name, doc ) {
 			window.getDefaultComputedStyle( elem[ 0 ] ).display : jQuery.css( elem[ 0 ], "display" );
 
 	// We don't have any data stored on the element,
-	// so use "detach" method as fast way to get rud of the element
+	// so use "detach" method as fast way to get srd of the element
 	elem.detach();
 
 	return display;

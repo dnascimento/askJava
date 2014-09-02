@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import pt.inesc.ask.domain.AskException;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 
 
 @Controller
@@ -212,8 +212,8 @@ public class RootController {
         return "upload";
     }
 
-    private RUD extractRid(HttpServletRequest r) {
-        return (RUD) r.getAttribute("rud");
+    private SRD extractRid(HttpServletRequest r) {
+        return (SRD) r.getAttribute("srd");
     }
 
     private String getParameterDefault(HttpServletRequest request, String field, String defaultValue) {

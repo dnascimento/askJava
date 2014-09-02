@@ -18,13 +18,13 @@ import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.domain.QuestionEntry;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 
 public class VoldemortTest {
     VoldemortDAO dao = new VoldemortDAO("tcp://localhost:6666");
     LinkedList<String> tags = new LinkedList<String>(Arrays.asList("novo"));
     String questionTitle = "title";
-    RUD t = new RUD(69L);
+    SRD t = new SRD(69L);
 
     @Before
     public void setUp() throws Exception {

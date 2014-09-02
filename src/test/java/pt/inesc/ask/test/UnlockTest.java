@@ -13,8 +13,8 @@ import pt.inesc.shuttle.ShuttleInterceptor;
 import pt.inesc.shuttle.VoldemortUnlocker;
 import voldemort.client.StoreClient;
 import voldemort.undoTracker.KeyAccess;
-import voldemort.undoTracker.RUD;
-import voldemort.undoTracker.RUD.OpType;
+import voldemort.undoTracker.SRD;
+import voldemort.undoTracker.SRD.OpType;
 import voldemort.utils.ByteArray;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -53,7 +53,7 @@ public class UnlockTest {
     public void listSubtraction() {
         ShuttleInterceptor i = new ShuttleInterceptor();
         ByteArray key = new ByteArray("dario".getBytes());
-        RUD reqOriginal = new RUD(1000L);
+        SRD reqOriginal = new SRD(1000L);
         reqOriginal.addAccessedKey(key, "index", OpType.Put);
         reqOriginal.addAccessedKey(key, "index", OpType.Put);
         reqOriginal.addAccessedKey(key, "index", OpType.Put);
@@ -67,7 +67,7 @@ public class UnlockTest {
 
         ArrayListMultimap<ByteArray, KeyAccess> originalTable = reqOriginal.getAccessedKeys();
 
-        RUD reqNew = new RUD(1002L);
+        SRD reqNew = new SRD(1002L);
         reqNew.addAccessedKey(key, "index", OpType.Put);
         reqNew.addAccessedKey(key, "index", OpType.Put);
 
@@ -116,7 +116,7 @@ public class UnlockTest {
         CassandraClient cassandra = new CassandraClient();
         ArrayListMultimap<ByteArray, KeyAccess> storedKeys = cassandra.getKeys(1405247788390L);
 
-        unlock.unlockKeys(storedKeys, new RUD(1405247788390L));
+        unlock.unlockKeys(storedKeys, new SRD(1405247788390L));
     }
 
 }

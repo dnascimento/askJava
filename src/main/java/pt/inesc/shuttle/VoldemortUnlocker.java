@@ -9,7 +9,7 @@ import voldemort.client.StoreClient;
 import voldemort.client.StoreClientFactory;
 import voldemort.client.protocol.RequestFormatType;
 import voldemort.undoTracker.KeyAccess;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 import voldemort.utils.ByteArray;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -44,14 +44,14 @@ public class VoldemortUnlocker {
     /**
      * @param accessedKeys Not empty set of keys to unlock
      */
-    public void unlockKeys(ArrayListMultimap<ByteArray, KeyAccess> unlockedKeys, RUD rud) {
+    public void unlockKeys(ArrayListMultimap<ByteArray, KeyAccess> unlockedKeys, SRD srd) {
         ArrayListMultimap<String, ByteArray> perStore = invertToPerStore(unlockedKeys);
         StoreClient<ByteArray, Object> client;
 
         for (String store : perStore.keySet()) {
             List<ByteArray> accesses = perStore.get(store);
             client = get(store);
-            client.unlockKeys(accesses, rud);
+            client.unlockKeys(accesses, srd);
         }
     }
 

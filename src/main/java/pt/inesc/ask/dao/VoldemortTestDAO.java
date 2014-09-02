@@ -4,7 +4,7 @@ import voldemort.client.ClientConfig;
 import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
 import voldemort.client.StoreClientFactory;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 import voldemort.versioning.Versioned;
 
 // Data access object: access to database and convertion
@@ -18,11 +18,11 @@ public class VoldemortTestDAO {
     }
 
     public void put(String key, String value) {
-        test.put(key, value, new RUD(69L));
+        test.put(key, value, new SRD(69L));
     }
 
     public String get(String key) {
-        Versioned<String> versions = test.get(key, new RUD(69L));
+        Versioned<String> versions = test.get(key, new SRD(69L));
         return versions.getValue();
     }
 

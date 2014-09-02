@@ -17,7 +17,7 @@ import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.domain.Question;
 import pt.inesc.ask.domain.QuestionEntry;
-import voldemort.undoTracker.RUD;
+import voldemort.undoTracker.SRD;
 
 public class AskService {
     private static final Logger log = Logger.getLogger(AskService.class.getName());
@@ -31,34 +31,34 @@ public class AskService {
                 String author,
                 String views,
                 String answers,
-                RUD rud,
+                SRD srd,
                 String answerId) throws AskException {
-        log.info("New Question: " + title + " " + text + " " + tags + " " + author + " rud:" + rud);
+        log.info("New Question: " + title + " " + text + " " + tags + " " + author + " srd:" + srd);
         Answer ans = new Answer(title, author, text, true, answerId);
         Question quest = new Question(title, tags, views, answers, ans.getId());
-        dao.saveNew(quest, rud);
-        dao.save(ans, rud);
+        dao.saveNew(quest, srd);
+        dao.save(ans, srd);
         log.info("New question:" + title);
 
     }
 
-    public List<QuestionEntry> getListQuestions(RUD rud, String tag) throws AskException {
-        log.info("Get Question List" + " rud:" + rud);
-        return dao.getListQuestions(rud, tag);
+    public List<QuestionEntry> getListQuestions(SRD srd, String tag) throws AskException {
+        log.info("Get Question List" + " srd:" + srd);
+        return dao.getListQuestions(srd, tag);
     }
 
-    public Map<String, Object> getQuestionData(String questionTitle, RUD rud) throws AskException {
-        log.info("Get question: " + questionTitle + " rud:" + rud);
+    public Map<String, Object> getQuestionData(String questionTitle, SRD srd) throws AskException {
+        log.info("Get question: " + questionTitle + " srd:" + srd);
         HashMap<String, Object> attributes = new HashMap<String, Object>();
-        Question question = dao.getQuestion(questionTitle, rud);
+        Question question = dao.getQuestion(questionTitle, srd);
         attributes.put("questionData", question);
         List<String> answerIds = question.getAnswersIDs();
         LinkedList<Answer> answers = new LinkedList<Answer>();
         for (String answerId : answerIds) {
-            Answer ans = dao.getAnswer(answerId, rud);
+            Answer ans = dao.getAnswer(answerId, srd);
             ans.cleanComments();
             for (String commentId : ans.getCommentsIds()) {
-                ans.addComment(dao.getComment(commentId, rud));
+                ans.addComment(dao.getComment(commentId, srd));
             }
             answers.addLast(ans);
         }
@@ -67,104 +67,104 @@ public class AskService {
         return attributes;
     }
 
-    public boolean deleteQuestion(String questionTitle, RUD rud) throws AskException {
-        log.info("Delete Question: " + questionTitle + " rud:" + rud);
+    public boolean deleteQuestion(String questionTitle, SRD srd) throws AskException {
+        log.info("Delete Question: " + questionTitle + " srd:" + srd);
         boolean c = true, a = true, q = true;
-        Question quest = dao.getQuestion(questionTitle, rud);
+        Question quest = dao.getQuestion(questionTitle, srd);
 
         // Delete all answers and comments
         for (String answerId : quest.getAnswersIDs()) {
             try {
-                Answer answer = dao.getAnswer(answerId, rud);
+                Answer answer = dao.getAnswer(answerId, srd);
                 for (String commentId : answer.getCommentsIds()) {
-                    c = c && dao.deleteComment(commentId, rud);
+                    c = c && dao.deleteComment(commentId, srd);
                 }
-                a = a && dao.deleteAnswer(answerId, rud);
+                a = a && dao.deleteAnswer(answerId, srd);
             } catch (AskException e) {
                 a = false;
                 System.err.println(e);
             }
         }
-        q = dao.deleteQuestion(quest.getId(), rud);
+        q = dao.deleteQuestion(quest.getId(), srd);
         return c && a && q;
     }
 
-    public String newAnswer(String questionTitle, String author, String text, RUD rud, String answerId) throws AskException {
-        Question question = dao.getQuestion(questionTitle, rud);
+    public String newAnswer(String questionTitle, String author, String text, SRD srd, String answerId) throws AskException {
+        Question question = dao.getQuestion(questionTitle, srd);
         Answer ans = new Answer(questionTitle, author, text, false, answerId);
-        log.info("New Answer: " + questionTitle + " :author: " + author + " :text: " + text + " :rud:" + rud + " :id: " + ans.getId());
+        log.info("New Answer: " + questionTitle + " :author: " + author + " :text: " + text + " :srd:" + srd + " :id: " + ans.getId());
         question.addAnswer(ans.getId());
-        dao.save(ans, rud);
-        dao.save(question, rud);
+        dao.save(ans, srd);
+        dao.save(question, srd);
         return ans.getId();
     }
 
-    public void updateAnswer(String answerId, String text, RUD rud) throws AskException {
-        log.info("Update Answer: " + answerId + " :text: " + text + " :rud:" + rud);
-        Answer answer = dao.getAnswer(answerId, rud);
+    public void updateAnswer(String answerId, String text, SRD srd) throws AskException {
+        log.info("Update Answer: " + answerId + " :text: " + text + " :srd:" + srd);
+        Answer answer = dao.getAnswer(answerId, srd);
         if (answer == null) {
             throw new AskException("Update Answer: answer not exists:" + answerId);
         }
         answer.setText(text);
-        dao.save(answer, rud);
+        dao.save(answer, srd);
     }
 
-    public boolean deleteAnswer(String questionTitle, String answerId, RUD rud) throws AskException {
-        log.info("Delete Answer: " + questionTitle + " " + answerId + " rud:" + rud);
-        Question question = dao.getQuestion(questionTitle, rud);
-        Answer answer = dao.getAnswer(answerId, rud);
+    public boolean deleteAnswer(String questionTitle, String answerId, SRD srd) throws AskException {
+        log.info("Delete Answer: " + questionTitle + " " + answerId + " srd:" + srd);
+        Question question = dao.getQuestion(questionTitle, srd);
+        Answer answer = dao.getAnswer(answerId, srd);
         boolean c = true, a = true;
         a = question.removeAnswer(answerId);
         // Delete all comments
         for (String commentId : answer.getCommentsIds()) {
-            c = c && dao.deleteComment(commentId, rud);
+            c = c && dao.deleteComment(commentId, srd);
         }
-        a = a && dao.deleteAnswer(answer.getId(), rud);
-        dao.save(question, rud);
+        a = a && dao.deleteAnswer(answer.getId(), srd);
+        dao.save(question, srd);
         return a && c;
     }
 
-    public String newComment(String questionTitle, String answerID, String text, String author, RUD rud) throws AskException {
-        Answer answer = dao.getAnswer(answerID, rud);
+    public String newComment(String questionTitle, String answerID, String text, String author, SRD srd) throws AskException {
+        Answer answer = dao.getAnswer(answerID, srd);
         Comment comment = new Comment(answerID, text, author);
-        log.info("New Comment: " + questionTitle + " :answerId: " + answerID + " :text: " + text + " :author: " + author + " :rud:" + rud);
+        log.info("New Comment: " + questionTitle + " :answerId: " + answerID + " :text: " + text + " :author: " + author + " :srd:" + srd);
         answer.addComment(comment.getId());
-        dao.save(comment, rud);
-        dao.save(answer, rud);
+        dao.save(comment, srd);
+        dao.save(answer, srd);
         return comment.getId();
     }
 
-    public void updateComment(String questionTitle, String answerID, String commentID, String text, RUD rud) throws AskException {
-        log.info("Update Comment" + questionTitle + " " + answerID + " " + commentID + " " + text + " rud:" + rud);
-        Comment com = dao.getComment(commentID, rud);
+    public void updateComment(String questionTitle, String answerID, String commentID, String text, SRD srd) throws AskException {
+        log.info("Update Comment" + questionTitle + " " + answerID + " " + commentID + " " + text + " srd:" + srd);
+        Comment com = dao.getComment(commentID, srd);
         com.setText(text);
-        dao.save(com, rud);
+        dao.save(com, srd);
     }
 
-    public void deleteComment(String commentID, String answerID, RUD rud) throws AskException {
-        log.info("Delete Comment: " + commentID + " " + answerID + " rud:" + rud);
-        Answer answer = dao.getAnswer(answerID, rud);
+    public void deleteComment(String commentID, String answerID, SRD srd) throws AskException {
+        log.info("Delete Comment: " + commentID + " " + answerID + " srd:" + srd);
+        Answer answer = dao.getAnswer(answerID, srd);
         Boolean exists = answer.removeComment(commentID);
         if (!exists) {
             throw new AskException("Comment not exists");
         }
-        dao.deleteComment(commentID, rud);
-        dao.save(answer, rud);
+        dao.deleteComment(commentID, srd);
+        dao.save(answer, srd);
 
     }
 
-    public void voteUp(String questionTitle, String answerId, RUD rud) throws AskException {
-        log.info("VoteUp: " + questionTitle + " " + answerId + " rud:" + rud);
-        Answer answer = dao.getAnswer(answerId, rud);
+    public void voteUp(String questionTitle, String answerId, SRD srd) throws AskException {
+        log.info("VoteUp: " + questionTitle + " " + answerId + " srd:" + srd);
+        Answer answer = dao.getAnswer(answerId, srd);
         answer.voteUp();
-        dao.save(answer, rud);
+        dao.save(answer, srd);
     }
 
-    public void voteDown(String questionTitle, String answerId, RUD rud) throws AskException {
-        log.info("VoteDown: " + questionTitle + " " + answerId + " rud:" + rud);
-        Answer answer = dao.getAnswer(answerId, rud);
+    public void voteDown(String questionTitle, String answerId, SRD srd) throws AskException {
+        log.info("VoteDown: " + questionTitle + " " + answerId + " srd:" + srd);
+        Answer answer = dao.getAnswer(answerId, srd);
         answer.voteDown();
-        dao.save(answer, rud);
+        dao.save(answer, srd);
     }
 
     public DAO getDao() {
