@@ -76,6 +76,17 @@ public class RootController {
     @RequestMapping(value = "/new-question", method = RequestMethod.POST)
     public String postNewQuestion(HttpServletRequest r, Model model) throws AskException, DecoderException {
         String title = r.getParameter("title");
+        return newQuestion(title, r);
+    }
+
+    @RequestMapping(value = "/new-question/{questionTitle}", method = RequestMethod.POST)
+    public String postNewQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException,
+            DecoderException {
+
+        return newQuestion(questionTitle, r);
+    }
+
+    private String newQuestion(String title, HttpServletRequest r) throws AskException {
         String text = r.getParameter("text");
         String[] tags = r.getParameter("tags").split(",");
 
@@ -91,6 +102,9 @@ public class RootController {
         s.newQuestion(encoded, text, tagList, author, views, answers, extractRid(r), answerId);
         return "redirect:/question/" + title;
     }
+
+
+
 
 
 
@@ -123,7 +137,7 @@ public class RootController {
         // log.info("POST /question/" + questionTitle + "/answer" +
         // extractRid(r));
 
-        String answerId = getParameterDefault(r, "answerId", null);
+        String answerId = getParameterDefault(p, "answerId", null);
         String author = getParameterDefault(p, "author", "author");
         String encoded = AskService.encodeTitle(questionTitle);
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));

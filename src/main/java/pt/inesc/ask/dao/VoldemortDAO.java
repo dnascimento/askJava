@@ -39,8 +39,6 @@ public class VoldemortDAO
     public Version saveNew(Question quest, SRD srd) throws AskException {
         for (String tag : quest.getTags()) {
             Versioned<AskProto.Index> versioned = index.get(tag, srd);
-            versioned.getVersion();
-            LOG.info("Get Tag entries: " + versioned);
             List<String> list;
             if (versioned == null) {
                 list = new LinkedList<String>();
@@ -50,6 +48,7 @@ public class VoldemortDAO
                 AskProto.Index entry = versioned.getValue();
                 list = entry.getEntryList();
             }
+            LOG.info("Get Tag entries: " + list);
             if (!list.contains(quest.getId())) {
                 LOG.info("Question did not exist in tag, add it and put");
                 index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), srd);

@@ -92,7 +92,8 @@ public class AskService {
     public String newAnswer(String questionTitle, String author, String text, SRD srd, String answerId) throws AskException {
         Question question = dao.getQuestion(questionTitle, srd);
         Answer ans = new Answer(questionTitle, author, text, false, answerId);
-        log.info("New Answer: " + questionTitle + " :author: " + author + " :text: " + text + " :srd:" + srd + " :id: " + ans.getId());
+        log.info("New Answer: " + questionTitle + " :author: " + author + " :text: " + text + " :srd:" + srd + " :id: " + ans.getId()
+                + " : providedId:" + answerId);
         question.addAnswer(ans.getId());
         dao.save(ans, srd);
         dao.save(question, srd);
