@@ -37,7 +37,7 @@ public class RootController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
-        log.info("GET /test");
+        //LOG.info("GET /test");
         return "hello";
     }
 
@@ -45,7 +45,7 @@ public class RootController {
     @ExceptionHandler(Throwable.class)
     public @ResponseBody
     String handleAnyException(Throwable ex, HttpServletRequest request) {
-        log.error("Handled exception", ex);
+        //LOG.error("Handled exception", ex);
         return ex.getMessage();
     }
 
@@ -59,7 +59,7 @@ public class RootController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest r, Model model) throws AskException {
-        log.info("GET / " + extractRid(r));
+        //LOG.info("GET / " + extractRid(r));
         model.addAttribute("tags", s.getTags().toArray());
         return "tags";
     }
@@ -68,7 +68,7 @@ public class RootController {
 
     @RequestMapping(value = "/new-question", method = RequestMethod.GET)
     public String getNewQuestion(HttpServletRequest r, Model model) {
-        log.info("GET /new-question" + extractRid(r));
+        //LOG.info("GET /new-question" + extractRid(r));
         model.addAttribute("tags", s.getTags());
         return "newQuestion";
     }
@@ -110,7 +110,7 @@ public class RootController {
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
     public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException, DecoderException {
-        log.info("GET /question/" + questionTitle);
+        //LOG.info("GET /question/" + questionTitle);
         questionTitle = AskService.encodeTitle(questionTitle);
         Map<String, Object> attributes = s.getQuestionData(questionTitle, extractRid(r));
         model.addAllAttributes(attributes);
@@ -121,7 +121,7 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.DELETE)
     public @ResponseBody
     String deleteQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException, DecoderException {
-        // log.info("DELETE /question/" + questionTitle + " " + extractRid(r));
+        // //LOG.info("DELETE /question/" + questionTitle + " " + extractRid(r));
         questionTitle = AskService.encodeTitle(questionTitle);
         s.deleteQuestion(questionTitle, extractRid(r));
         return "success";
@@ -134,7 +134,7 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.POST)
     public String newAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             DecoderException {
-        // log.info("POST /question/" + questionTitle + "/answer" +
+        // //LOG.info("POST /question/" + questionTitle + "/answer" +
         // extractRid(r));
 
         String answerId = getParameterDefault(p, "answerId", null);
@@ -148,7 +148,7 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.PUT)
     public @ResponseBody
     String updateAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        // log.info("PUT /question/" + questionTitle + "/answer" +
+        // //LOG.info("PUT /question/" + questionTitle + "/answer" +
         // extractRid(r));
         s.updateAnswer(p.get("answerID"), p.get("text"), extractRid(r));
         return "success";
@@ -159,7 +159,7 @@ public class RootController {
     String deleteAnswer(HttpServletRequest r, @PathVariable String questionTitle,
 
     @RequestBody Map<String, String> p) throws AskException {
-        // log.info("DELETE /question/" + questionTitle + "/answer" +
+        // //LOG.info("DELETE /question/" + questionTitle + "/answer" +
         // extractRid(r));
         questionTitle = AskService.encodeTitle(questionTitle);
         s.deleteAnswer(questionTitle, p.get("answerID"), extractRid(r));
@@ -169,7 +169,7 @@ public class RootController {
     // ############ comments #########################
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.POST)
     public String newComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        // log.info("POST /question/" + questionTitle + "/comment" +
+        // //LOG.info("POST /question/" + questionTitle + "/comment" +
         // extractRid(r));
         String author = getParameterDefault(p, "author", "author");
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
@@ -182,7 +182,7 @@ public class RootController {
     public @ResponseBody
     String putComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             DecoderException {
-        // log.info("PUT /question/" + questionTitle + "/comment" +
+        // //LOG.info("PUT /question/" + questionTitle + "/comment" +
         // extractRid(r));
         questionTitle = AskService.encodeTitle(questionTitle);
         s.updateComment(questionTitle, p.get("answerID"), p.get("commentID"), p.get("text"), extractRid(r));
@@ -193,7 +193,7 @@ public class RootController {
     public @ResponseBody
     String deleteComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             IOException {
-        // log.info("DELETE /question/" + questionTitle + "/comment" +
+        // //LOG.info("DELETE /question/" + questionTitle + "/comment" +
         // extractRid(r));
         s.deleteComment(p.get("commentID"), p.get("answerID"), extractRid(r));
         return "success";

@@ -47,20 +47,20 @@ public class ShuttleInterceptor
         if (srd.redo) {
             // get the keys used before
             ArrayListMultimap<ByteArray, KeyAccess> originalKeys = cassandra.getKeys(srd.rid);
-            log.debug("originalKeys keys" + originalKeys);
-            log.debug("accessed keys" + accessedKeys);
+            //LOG.debug("originalKeys keys" + originalKeys);
+            //LOG.debug("accessed keys" + accessedKeys);
 
 
             subtrackTables(accessedKeys, originalKeys);
 
 
             if (!accessedKeys.isEmpty()) {
-                log.debug("Unlock keys:" + accessedKeys);
+                //LOG.debug("Unlock keys:" + accessedKeys);
                 databaseUnlocker.unlockKeys(accessedKeys, srd);
             }
         } else {
             if (!accessedKeys.isEmpty())
-                log.debug("Store keys: " + accessedKeys);
+                //LOG.debug("Store keys: " + accessedKeys);
             cassandra.addKeys(accessedKeys, srd.rid);
         }
     }

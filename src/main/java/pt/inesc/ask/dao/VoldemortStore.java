@@ -40,7 +40,7 @@ public class VoldemortStore<K, V extends Message> {
         if (store == null)
             init();
         if (key == null || value == null) {
-            LOG.error("Put: NULL: key" + key + " value:" + value + "t " + System.identityHashCode(this));
+            //LOG.error("Put: NULL: key" + key + " value:" + value + "t " + System.identityHashCode(this));
             // TODO throw exception
         }
         return store.put(key, value, srd);
@@ -51,10 +51,10 @@ public class VoldemortStore<K, V extends Message> {
             init();
         }
         if (key == null) {
-            LOG.error("Get: NULL: key");
+            //LOG.error("Get: NULL: key");
             // TODO throw exception
         }
-        LOG.info("Get: " + key + " : " + srd + "t " + System.identityHashCode(this));
+        //LOG.info("Get: " + key + " : " + srd + "t " + System.identityHashCode(this));
         return store.get(key, srd);
     }
 
@@ -63,7 +63,7 @@ public class VoldemortStore<K, V extends Message> {
             init();
         }
         if (key == null) {
-            LOG.error("Delete: NULL: key" + "t " + System.identityHashCode(this));
+            //LOG.error("Delete: NULL: key" + "t " + System.identityHashCode(this));
             return false;
         }
         return store.delete(key, srd);

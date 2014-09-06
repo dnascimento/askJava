@@ -60,9 +60,9 @@ public class CassandraClient {
         try {
             session = cluster.connect(KEYSPACE);
             Metadata metadata = cluster.getMetadata();
-            log.info(String.format("Connected to cluster '%s' on %s.", metadata.getClusterName(), metadata.getAllHosts()));
+            //LOG.info(String.format("Connected to cluster '%s' on %s.", metadata.getClusterName(), metadata.getAllHosts()));
         } catch (NoHostAvailableException e) {
-            log.error("No Cassandra server available");
+            //LOG.error("No Cassandra server available");
         }
     }
 
@@ -128,7 +128,7 @@ public class CassandraClient {
         ArrayListMultimap<ByteArray, KeyAccess> r = ArrayListMultimap.create();
         Row row = result.one();
         if (row == null) {
-            log.error("No registry of accessed keys for rid: " + id);
+            //LOG.error("No registry of accessed keys for rid: " + id);
             return r;
         }
 

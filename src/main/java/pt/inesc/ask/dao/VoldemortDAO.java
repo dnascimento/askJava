@@ -48,9 +48,9 @@ public class VoldemortDAO
                 AskProto.Index entry = versioned.getValue();
                 list = entry.getEntryList();
             }
-            LOG.info("Get Tag entries: " + list);
+            //LOG.info("Get Tag entries: " + list);
             if (!list.contains(quest.getId())) {
-                LOG.info("Question did not exist in tag, add it and put");
+                //LOG.info("Question did not exist in tag, add it and put");
                 index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), srd);
             }
         }
@@ -101,7 +101,7 @@ public class VoldemortDAO
         try {
             question = getQuestion(questionId, srd);
         } catch (AskException e1) {
-            LOG.error("Delete: Question not exists");
+            //LOG.error("Delete: Question not exists");
             return false;
         }
         boolean found = false;
@@ -117,13 +117,13 @@ public class VoldemortDAO
                 }
             }
             if (!found) {
-                LOG.error("Question not found in index");
+                //LOG.error("Question not found in index");
             }
             index.put(tag, b.build(), srd);
         }
         boolean q = questions.delete(questionId, srd);
         if (!q) {
-            LOG.error("Question not exists:" + questionId);
+            //LOG.error("Question not exists:" + questionId);
         }
         return q && found;
     }
@@ -132,7 +132,7 @@ public class VoldemortDAO
     public boolean deleteAnswer(String answerId, SRD srd) {
         boolean s = answers.delete(answerId, srd);
         if (!s) {
-            LOG.error("delete answer: not found " + answerId);
+            //LOG.error("delete answer: not found " + answerId);
         }
         return s;
     }
@@ -141,7 +141,7 @@ public class VoldemortDAO
     public boolean deleteComment(String commentId, SRD srd) {
         boolean s = comments.delete(commentId, srd);
         if (!s) {
-            LOG.error("delete comment: not found " + commentId);
+            //LOG.error("delete comment: not found " + commentId);
         }
         return s;
     }
@@ -178,7 +178,7 @@ public class VoldemortDAO
     @Override
     public List<QuestionEntry> getListQuestions(SRD srd, String tag) throws AskException {
         Versioned<AskProto.Index> indexList = index.get(tag, srd);
-        LOG.info("getListQuestions: " + indexList);
+        //LOG.info("getListQuestions: " + indexList);
         if (indexList == null) {
             return new LinkedList<QuestionEntry>();
         }
