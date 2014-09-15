@@ -37,7 +37,6 @@ public class RootController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
-        //LOG.info("GET /test");
         return "hello";
     }
 
@@ -45,7 +44,7 @@ public class RootController {
     @ExceptionHandler(Throwable.class)
     public @ResponseBody
     String handleAnyException(Throwable ex, HttpServletRequest request) {
-        //LOG.error("Handled exception", ex);
+        // LOG.error("Handled exception", ex);
         return ex.getMessage();
     }
 
@@ -59,7 +58,7 @@ public class RootController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest r, Model model) throws AskException {
-        //LOG.info("GET / " + extractRid(r));
+        // LOG.info("GET / " + extractRid(r));
         model.addAttribute("tags", s.getTags().toArray());
         return "tags";
     }
@@ -68,7 +67,7 @@ public class RootController {
 
     @RequestMapping(value = "/new-question", method = RequestMethod.GET)
     public String getNewQuestion(HttpServletRequest r, Model model) {
-        //LOG.info("GET /new-question" + extractRid(r));
+        // LOG.info("GET /new-question" + extractRid(r));
         model.addAttribute("tags", s.getTags());
         return "newQuestion";
     }
@@ -110,7 +109,7 @@ public class RootController {
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
     public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException, DecoderException {
-        //LOG.info("GET /question/" + questionTitle);
+        // LOG.info("GET /question/" + questionTitle);
         questionTitle = AskService.encodeTitle(questionTitle);
         Map<String, Object> attributes = s.getQuestionData(questionTitle, extractRid(r));
         model.addAllAttributes(attributes);
