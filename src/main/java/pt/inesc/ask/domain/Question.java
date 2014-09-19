@@ -1,5 +1,6 @@
 package pt.inesc.ask.domain;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import pt.inesc.ask.proto.AskProto;
@@ -68,18 +69,24 @@ public class Question {
 
     public boolean removeAnswer(String answerId) {
         Builder b = AskProto.Question.newBuilder();
-        b.setTitle(data.getTitle()).addAllTags(data.getTagsList());
+        b.setTitle(data.getTitle()).addAllTags(data.getTagsList()).setViews(data.getViews());
+
         boolean found = false;
-        for (String a : data.getAnswerIdsList()) {
-            if (!a.equals(answerId))
-                b.addAnswerIds(a);
-            else
-                found = true;
+        b.addAllAnswerIds(new LinkedList<String>());
+        if (data.getAnswerIdsList() != null) {
+            for (String e : data.getAnswerIdsList()) {
+                if (e == answerId) {
+                    found = true;
+                } else {
+                    b.addAnswerIds(e);
+                }
+            }
         }
+        b.setAnswers(data.getAnswers());
+
         data = b.build();
         return found;
     }
-
 
     @Override
     public boolean equals(Object obj) {

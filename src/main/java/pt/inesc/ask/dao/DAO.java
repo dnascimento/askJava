@@ -23,9 +23,9 @@ public interface DAO {
     // Delete
     public boolean deleteQuestion(String questionId, SRD srd);
 
-    public boolean deleteAnswer(String answerId, SRD srd);
+    public boolean deleteAnswer(String answerId, SRD srd) throws AskException;
 
-    public boolean deleteComment(String commentId, SRD srd);
+    public boolean deleteComment(String commentId, SRD srd) throws AskException;
 
     // Gets
     public Question getQuestion(String questionTitle, SRD srd) throws AskException;

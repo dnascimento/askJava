@@ -12,9 +12,9 @@ import voldemort.undoTracker.SRD;
 
 public class DaoCompare {
 
-    public static String DATABASE_SERVER = "localhost";
+    private static final String DATABASE_SERVER = "localhost";
 
-    private static final SRD srdOldServer = new SRD(System.currentTimeMillis(), 1, false);
+    private static final SRD srdOldServer = new SRD(System.currentTimeMillis(), 0, false);
     private static final SRD srdNewServer = new SRD(System.currentTimeMillis(), 0, false);
 
     public static void main(String[] args) throws AskException {

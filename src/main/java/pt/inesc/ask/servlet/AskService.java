@@ -38,12 +38,15 @@ public class AskService {
         Question quest = new Question(title, tags, views, answers, ans.getId());
         dao.saveNew(quest, srd);
         dao.save(ans, srd);
-        LOG.info("New question:" + title);
+        if (author.equals("1196")) {
+            System.out.println("Question-RID: " + srd.rid);
+        }
+
 
     }
 
     public List<QuestionEntry> getListQuestions(SRD srd, String tag) throws AskException {
-        LOG.info("Get Question List" + " srd:" + srd);
+        // LOG.info("Get Question List" + " srd:" + srd);
         return dao.getListQuestions(srd, tag);
     }
 
@@ -77,8 +80,10 @@ public class AskService {
             try {
                 Answer answer = dao.getAnswer(answerId, srd);
                 for (String commentId : answer.getCommentsIds()) {
+                    LOG.info("Delete comment: " + commentId + " of question: " + questionTitle + " using srd:" + srd);
                     c = c && dao.deleteComment(commentId, srd);
                 }
+                LOG.info("Delete answer: " + answerId + " of question: " + questionTitle + " using srd:" + srd);
                 a = a && dao.deleteAnswer(answerId, srd);
             } catch (AskException e) {
                 a = false;
@@ -97,6 +102,9 @@ public class AskService {
         question.addAnswer(ans.getId());
         dao.save(ans, srd);
         dao.save(question, srd);
+        if (author.equals("1196")) {
+            System.out.println("Answer-RID: " + srd.rid);
+        }
         return ans.getId();
     }
 
@@ -112,12 +120,14 @@ public class AskService {
 
     public boolean deleteAnswer(String questionTitle, String answerId, SRD srd) throws AskException {
         LOG.info("Delete Answer: " + questionTitle + " " + answerId + " srd:" + srd);
+
         Question question = dao.getQuestion(questionTitle, srd);
         Answer answer = dao.getAnswer(answerId, srd);
         boolean c = true, a = true;
         a = question.removeAnswer(answerId);
         // Delete all comments
         for (String commentId : answer.getCommentsIds()) {
+            LOG.info("Delete comment: " + commentId + " of question: " + questionTitle + " using srd:" + srd);
             c = c && dao.deleteComment(commentId, srd);
         }
         a = a && dao.deleteAnswer(answer.getId(), srd);
@@ -180,7 +190,7 @@ public class AskService {
         try {
             return new URLCodec().encode(title);
         } catch (EncoderException e) {
-            // LOG.error(e);
+            LOG.error(e);
             return title;
         }
     }
@@ -189,7 +199,7 @@ public class AskService {
         try {
             return new URLCodec().decode(title);
         } catch (DecoderException e) {
-            // LOG.error(e);
+            LOG.error(e);
             return title;
         }
     }

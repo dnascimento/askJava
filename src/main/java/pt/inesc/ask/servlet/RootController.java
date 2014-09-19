@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jboss.logging.Logger;
+import org.mortbay.log.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +31,10 @@ public class RootController {
     public static final String DATABASE_SERVER = "localhost";
     public static final String VOLDEMORT_PORT = "6666";
 
+    public static final String UPLOAD = "upload";
+    public static final String SUCCESS = "success";
+    public static final String REDIRECT_TO_QUESTIONS = "redirect:/question/";
+
     private static final Logger log = Logger.getLogger(RootController.class.getName());
 
 
@@ -44,8 +49,8 @@ public class RootController {
     @ExceptionHandler(Throwable.class)
     public @ResponseBody
     String handleAnyException(Throwable ex, HttpServletRequest request) {
-        // LOG.error("Handled exception", ex);
-        return ex.getMessage();
+        log.error("ERROR: ", ex);
+        return "ERROR:" + ex.getMessage();
     }
 
 
@@ -98,10 +103,12 @@ public class RootController {
         List<String> tagList;
         tagList = (tags == null) ? new LinkedList<String>() : Arrays.asList(tags);
         String encoded = AskService.encodeTitle(title);
-        s.newQuestion(encoded, text, tagList, author, views, answers, extractRid(r), answerId);
-        return "redirect:/question/" + title;
-    }
+        SRD srd = extractRid(r);
+        Log.info("New question: author: " + author + " ; rid: " + srd.rid);
 
+        s.newQuestion(encoded, text, tagList, author, views, answers, srd, answerId);
+        return REDIRECT_TO_QUESTIONS + title;
+    }
 
 
 
@@ -123,7 +130,7 @@ public class RootController {
         // //LOG.info("DELETE /question/" + questionTitle + " " + extractRid(r));
         questionTitle = AskService.encodeTitle(questionTitle);
         s.deleteQuestion(questionTitle, extractRid(r));
-        return "success";
+        return SUCCESS;
     }
 
 
@@ -135,13 +142,16 @@ public class RootController {
             DecoderException {
         // //LOG.info("POST /question/" + questionTitle + "/answer" +
         // extractRid(r));
-
         String answerId = getParameterDefault(p, "answerId", null);
         String author = getParameterDefault(p, "author", "author");
         String encoded = AskService.encodeTitle(questionTitle);
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
-        s.newAnswer(encoded, author, unescapedText, extractRid(r), answerId);
-        return "redirect:/question/" + questionTitle;
+
+        SRD srd = extractRid(r);
+        Log.info("New answer: author: " + author + " ; rid: " + srd.rid);
+
+        s.newAnswer(encoded, author, unescapedText, srd, answerId);
+        return REDIRECT_TO_QUESTIONS + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.PUT)
@@ -150,19 +160,24 @@ public class RootController {
         // //LOG.info("PUT /question/" + questionTitle + "/answer" +
         // extractRid(r));
         s.updateAnswer(p.get("answerID"), p.get("text"), extractRid(r));
-        return "success";
+        return SUCCESS;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.DELETE)
     public @ResponseBody
-    String deleteAnswer(HttpServletRequest r, @PathVariable String questionTitle,
-
-    @RequestBody Map<String, String> p) throws AskException {
-        // //LOG.info("DELETE /question/" + questionTitle + "/answer" +
-        // extractRid(r));
+    String deleteAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
         questionTitle = AskService.encodeTitle(questionTitle);
         s.deleteAnswer(questionTitle, p.get("answerID"), extractRid(r));
-        return "success";
+        return SUCCESS;
+    }
+
+    @RequestMapping(value = "/question/{questionTitle}/answer/{answerID}", method = RequestMethod.DELETE)
+    public @ResponseBody
+    String deleteAnswer(HttpServletRequest r, @PathVariable String questionTitle, @PathVariable String answerID) throws AskException {
+        questionTitle = AskService.encodeTitle(questionTitle);
+        answerID = decodeParameter(answerID);
+        s.deleteAnswer(questionTitle, answerID, extractRid(r));
+        return SUCCESS;
     }
 
     // ############ comments #########################
@@ -172,8 +187,12 @@ public class RootController {
         // extractRid(r));
         String author = getParameterDefault(p, "author", "author");
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
-        s.newComment(questionTitle, p.get("answerID"), unescapedText, author, extractRid(r));
-        return "redirect:/question/" + questionTitle;
+
+        SRD srd = extractRid(r);
+        Log.info("New comment: author: " + author + " ; rid: " + srd.rid);
+
+        s.newComment(questionTitle, p.get("answerID"), unescapedText, author, srd);
+        return REDIRECT_TO_QUESTIONS + questionTitle;
     }
 
 
@@ -185,44 +204,59 @@ public class RootController {
         // extractRid(r));
         questionTitle = AskService.encodeTitle(questionTitle);
         s.updateComment(questionTitle, p.get("answerID"), p.get("commentID"), p.get("text"), extractRid(r));
-        return "success";
+        return SUCCESS;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.DELETE)
     public @ResponseBody
     String deleteComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             IOException {
-        // //LOG.info("DELETE /question/" + questionTitle + "/comment" +
-        // extractRid(r));
         s.deleteComment(p.get("commentID"), p.get("answerID"), extractRid(r));
-        return "success";
+        return SUCCESS;
     }
+
+
+
+    @RequestMapping(value = "/question/{questionTitle}/comment/{answerID}/{commentID}", method = RequestMethod.DELETE)
+    public @ResponseBody
+    String deleteComment(
+            HttpServletRequest r,
+                @PathVariable String questionTitle,
+                @PathVariable String answerID,
+                @PathVariable String commentID,
+                @RequestBody Map<String, String> p) throws AskException, IOException {
+        answerID = decodeParameter(answerID);
+        commentID = decodeParameter(commentID);
+        s.deleteComment(commentID, answerID, extractRid(r));
+        return SUCCESS;
+    }
+
+
 
     // ######## Vote ##########
     @RequestMapping(value = "/question/{questionTitle}/up", method = RequestMethod.POST)
     public String voteUp(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
         questionTitle = AskService.encodeTitle(questionTitle);
         s.voteUp(questionTitle, p.get("answerID"), extractRid(r));
-        return "redirect:/question/" + questionTitle;
+        return REDIRECT_TO_QUESTIONS + questionTitle;
     }
 
     @RequestMapping(value = "/question/{questionTitle}/down", method = RequestMethod.POST)
     public String voteDown(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
         questionTitle = AskService.encodeTitle(questionTitle);
         s.voteDown(questionTitle, p.get("answerID"), extractRid(r));
-        return "redirect:/question/" + questionTitle;
+        return REDIRECT_TO_QUESTIONS + questionTitle;
     }
 
     // ######## Upload ################
     @RequestMapping(value = "/upload", method = RequestMethod.GET)
     public String upload(Model model) {
-        return "upload";
+        return UPLOAD;
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String uploadPost(Model model) {
-        // TODO
-        return "upload";
+        return UPLOAD;
     }
 
     private SRD extractRid(HttpServletRequest r) {
@@ -248,4 +282,9 @@ public class RootController {
         }
     }
 
+
+
+    private String decodeParameter(String text) {
+        return text.replace("%2B", "+").replace("%2F", "/").replace("%3D", "=");
+    }
 }

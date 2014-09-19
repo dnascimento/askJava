@@ -25,6 +25,7 @@ public class VoldemortDAO
     VoldemortStore<String, AskProto.Comment> comments;
     VoldemortStore<String, AskProto.Index> index;
     private static final String TAG_LIST = "TAG_LIST";
+    SRD nullRud = new SRD();
 
 
     public VoldemortDAO(String bootstrapUrl) {
@@ -34,11 +35,13 @@ public class VoldemortDAO
         index = new VoldemortStore<String, AskProto.Index>("index", bootstrapUrl);
     }
 
-    // Save
+    /*
+     * Add a new question to the tag (the dependency is ignored)
+     */
     @Override
     public Version saveNew(Question quest, SRD srd) throws AskException {
         for (String tag : quest.getTags()) {
-            Versioned<AskProto.Index> versioned = index.get(tag, srd);
+            Versioned<AskProto.Index> versioned = index.get(tag, nullRud);
             List<String> list;
             if (versioned == null) {
                 list = new LinkedList<String>();
@@ -48,10 +51,10 @@ public class VoldemortDAO
                 AskProto.Index entry = versioned.getValue();
                 list = entry.getEntryList();
             }
-            //LOG.info("Get Tag entries: " + list);
+            // LOG.info("Get Tag entries: " + list);
             if (!list.contains(quest.getId())) {
-                //LOG.info("Question did not exist in tag, add it and put");
-                index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), srd);
+                // LOG.info("Question did not exist in tag, add it and put");
+                index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), nullRud);
             }
         }
         return save(quest, srd);
@@ -64,7 +67,6 @@ public class VoldemortDAO
      */
     private void newTag(String tag) {
         // ignore depenencies
-        SRD nullRud = new SRD();
         Versioned<AskProto.Index> versioned = index.get(TAG_LIST, nullRud);
         List<String> list;
         if (versioned == null) {
@@ -101,12 +103,12 @@ public class VoldemortDAO
         try {
             question = getQuestion(questionId, srd);
         } catch (AskException e1) {
-            //LOG.error("Delete: Question not exists");
+            // LOG.error("Delete: Question not exists");
             return false;
         }
         boolean found = false;
         for (String tag : question.getTags()) {
-            Versioned<AskProto.Index> indexList = index.get(tag, srd);
+            Versioned<AskProto.Index> indexList = index.get(tag, nullRud);
             AskProto.Index indexMsg = indexList.getValue();
             AskProto.Index.Builder b = AskProto.Index.newBuilder();
             for (String e : indexMsg.getEntryList()) {
@@ -117,31 +119,31 @@ public class VoldemortDAO
                 }
             }
             if (!found) {
-                //LOG.error("Question not found in index");
+                // LOG.error("Question not found in index");
             }
-            index.put(tag, b.build(), srd);
+            index.put(tag, b.build(), nullRud);
         }
         boolean q = questions.delete(questionId, srd);
         if (!q) {
-            //LOG.error("Question not exists:" + questionId);
+            // LOG.error("Question not exists:" + questionId);
         }
         return q && found;
     }
 
     @Override
-    public boolean deleteAnswer(String answerId, SRD srd) {
+    public boolean deleteAnswer(String answerId, SRD srd) throws AskException {
         boolean s = answers.delete(answerId, srd);
         if (!s) {
-            //LOG.error("delete answer: not found " + answerId);
+            throw new AskException("delete answer: not found " + answerId);
         }
         return s;
     }
 
     @Override
-    public boolean deleteComment(String commentId, SRD srd) {
+    public boolean deleteComment(String commentId, SRD srd) throws AskException {
         boolean s = comments.delete(commentId, srd);
         if (!s) {
-            //LOG.error("delete comment: not found " + commentId);
+            throw new AskException("delete comment: not found " + commentId);
         }
         return s;
     }
@@ -177,8 +179,8 @@ public class VoldemortDAO
 
     @Override
     public List<QuestionEntry> getListQuestions(SRD srd, String tag) throws AskException {
-        Versioned<AskProto.Index> indexList = index.get(tag, srd);
-        //LOG.info("getListQuestions: " + indexList);
+        Versioned<AskProto.Index> indexList = index.get(tag, nullRud);
+        // LOG.info("getListQuestions: " + indexList);
         if (indexList == null) {
             return new LinkedList<QuestionEntry>();
         }
@@ -193,7 +195,7 @@ public class VoldemortDAO
 
     @Override
     public void cleanIndex(SRD srd) {
-        index.put("index", AskProto.Index.newBuilder().build(), srd);
+        index.put("index", AskProto.Index.newBuilder().build(), nullRud);
     }
 
     // Question
@@ -227,7 +229,7 @@ public class VoldemortDAO
 
     @Override
     public List<String> getTags() {
-        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, new SRD());
+        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, nullRud);
         List<String> list;
         if (versioned == null) {
             list = new LinkedList<String>();
