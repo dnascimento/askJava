@@ -42,7 +42,7 @@ public class RootController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
-        // System.out.println("Request");
+        // // System.out.println("Request");
         return "hello";
     }
 
@@ -50,7 +50,7 @@ public class RootController {
     @ExceptionHandler(Throwable.class)
     public @ResponseBody
     String handleAnyException(Throwable ex, HttpServletRequest request) {
-        System.out.println("ERROR: " + ex.getMessage());
+        // System.out.println("ERROR: " + ex.getMessage());
         // ex.printStackTrace();
         return "ERROR:" + ex.getMessage();
     }
@@ -73,7 +73,7 @@ public class RootController {
 
     @RequestMapping(value = "/new-question", method = RequestMethod.GET)
     public String getNewQuestion(HttpServletRequest r, Model model) {
-        // LOG.info("GET /new-question" + extractRid(r));
+        // System.out.println("GET /new-question" + extractRid(r));
         model.addAttribute("tags", s.getTags());
         return "newQuestion";
     }
@@ -113,7 +113,7 @@ public class RootController {
         tagList = (tags == null) ? new LinkedList<String>() : Arrays.asList(tags);
         String encoded = AskService.encodeTitle(title);
         SRD srd = extractRid(r);
-        // log.info("New question: author: " + author + " ; rid: " + srd.rid);
+        // System.out.println("New question: author: " + author + " ; rid: " + srd.rid);
 
         s.newQuestion(encoded, text, tagList, author, views, answers, srd, answerId);
         return REDIRECT_TO_QUESTIONS + title;
@@ -125,7 +125,7 @@ public class RootController {
 
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.GET)
     public String getQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException, DecoderException {
-        // LOG.info("GET /question/" + questionTitle);
+        // System.out.println("GET /question/" + questionTitle);
         questionTitle = AskService.encodeTitle(questionTitle);
         Map<String, Object> attributes = s.getQuestionData(questionTitle, extractRid(r));
         model.addAllAttributes(attributes);
@@ -136,7 +136,7 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}", method = RequestMethod.DELETE)
     public @ResponseBody
     String deleteQuestion(HttpServletRequest r, @PathVariable String questionTitle, Model model) throws AskException, DecoderException {
-        // //LOG.info("DELETE /question/" + questionTitle + " " + extractRid(r));
+        // System.out.println("DELETE /question/" + questionTitle + " " + extractRid(r));
         questionTitle = AskService.encodeTitle(questionTitle);
         s.deleteQuestion(questionTitle, extractRid(r));
         return SUCCESS;
@@ -149,7 +149,7 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.POST)
     public String newAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             DecoderException {
-        // //LOG.info("POST /question/" + questionTitle + "/answer" +
+        // System.out.println("POST /question/" + questionTitle + "/answer" +
         // extractRid(r));
         String answerId = getParameterDefault(p, "answerId", null);
         String author = getParameterDefault(p, "author", "author");
@@ -157,7 +157,7 @@ public class RootController {
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
 
         SRD srd = extractRid(r);
-        // log.info("New answer: author: " + author + " ; rid: " + srd.rid);
+        // System.out.println("New answer: author: " + author + " ; rid: " + srd.rid);
 
         s.newAnswer(encoded, author, unescapedText, srd, answerId);
         return REDIRECT_TO_QUESTIONS + questionTitle;
@@ -166,7 +166,7 @@ public class RootController {
     @RequestMapping(value = "/question/{questionTitle}/answer", method = RequestMethod.PUT)
     public @ResponseBody
     String updateAnswer(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        // //LOG.info("PUT /question/" + questionTitle + "/answer" +
+        // System.out.println("PUT /question/" + questionTitle + "/answer" +
         // extractRid(r));
         s.updateAnswer(p.get("answerID"), p.get("text"), extractRid(r));
         return SUCCESS;
@@ -192,24 +192,23 @@ public class RootController {
     // ############ comments #########################
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.POST)
     public String newComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException {
-        // //LOG.info("POST /question/" + questionTitle + "/comment" +
+        // System.out.println("POST /question/" + questionTitle + "/comment" +
         // extractRid(r));
         String author = getParameterDefault(p, "author", "author");
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
 
         SRD srd = extractRid(r);
-        // log.info("New comment: author: " + author + " ; rid: " + srd.rid);
+        // System.out.println("New comment: author: " + author + " ; rid: " + srd.rid);
 
         s.newComment(questionTitle, p.get("answerID"), unescapedText, author, srd);
         return REDIRECT_TO_QUESTIONS + questionTitle;
     }
 
-
     @RequestMapping(value = "/question/{questionTitle}/comment", method = RequestMethod.PUT)
     public @ResponseBody
     String putComment(HttpServletRequest r, @PathVariable String questionTitle, @RequestBody Map<String, String> p) throws AskException,
             DecoderException {
-        // //LOG.info("PUT /question/" + questionTitle + "/comment" +
+        // System.out.println("PUT /question/" + questionTitle + "/comment" +
         // extractRid(r));
         questionTitle = AskService.encodeTitle(questionTitle);
         s.updateComment(questionTitle, p.get("answerID"), p.get("commentID"), p.get("text"), extractRid(r));
