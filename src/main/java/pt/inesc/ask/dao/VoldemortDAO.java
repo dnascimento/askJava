@@ -23,7 +23,7 @@ public class VoldemortDAO
     VoldemortStore<String, AskProto.Question> questions;
     VoldemortStore<String, AskProto.Answer> answers;
     VoldemortStore<String, AskProto.Comment> comments;
-    VoldemortStore<String, AskProto.Index> index;
+    // VoldemortStore<String, AskProto.Index> index;
     private static final String TAG_LIST = "TAG_LIST";
     SRD nullRud = new SRD();
 
@@ -33,7 +33,7 @@ public class VoldemortDAO
         questions = new VoldemortStore<String, AskProto.Question>("questionStore", bootstrapUrl);
         answers = new VoldemortStore<String, AskProto.Answer>("answerStore", bootstrapUrl);
         comments = new VoldemortStore<String, AskProto.Comment>("commentStore", bootstrapUrl);
-        index = new VoldemortStore<String, AskProto.Index>("index", bootstrapUrl);
+        // index = new VoldemortStore<String, AskProto.Index>("index", bootstrapUrl);
     }
 
     /*
@@ -42,25 +42,27 @@ public class VoldemortDAO
     @Override
     public Version saveNew(Question quest, SRD srd) {
         for (String tag : quest.getTags()) {
-            Versioned<AskProto.Index> versioned = index.get(tag, nullRud);
-            List<String> list;
-            if (versioned == null) {
-                list = new LinkedList<String>();
-                // add tag to index of tags
-                newTag(tag);
-            } else {
-                AskProto.Index entry = versioned.getValue();
-                list = entry.getEntryList();
-            }
+            // Versioned<AskProto.Index> versioned = index.get(tag, nullRud);
+            // List<String> list;
+            // if (versioned == null) {
+            // list = new LinkedList<String>();
+            // add tag to index of tags
+            // newTag(tag);
+            // } else {
+            // AskProto.Index entry = versioned.getValue();
+            // list = entry.getEntryList();
+            // }
             // LOG.info("Get Tag entries: " + list);
-            if (!list.contains(quest.getId())) {
-                // LOG.info("Question did not exist in tag, add it and put");
-                try {
-                    index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), nullRud);
-                } catch (Exception e) {
-                    System.out.println("Index store: " + e.getMessage());
-                }
-            }
+            // if (!list.contains(quest.getId())) {
+            // // LOG.info("Question did not exist in tag, add it and put");
+            // try {
+            // index.put(tag,
+            // AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(),
+            // nullRud);
+            // } catch (Exception e) {
+            // System.out.println("Index store: " + e.getMessage());
+            // }
+            // }
         }
         return save(quest, srd);
     }
@@ -72,23 +74,26 @@ public class VoldemortDAO
      */
     private void newTag(String tag) {
         // ignore depenencies
-        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, nullRud);
-        List<String> list;
-        if (versioned == null) {
-            list = new LinkedList<String>();
-        } else {
-            AskProto.Index entry = versioned.getValue();
-            list = entry.getEntryList();
-            if (list.contains(tag)) {
-                return;
-            }
-        }
-        index.put(TAG_LIST, AskProto.Index.newBuilder().addAllEntry(list).addEntry(tag).build(), nullRud);
+        // TODO problem: ObselentException
+        // Versioned<AskProto.Index> versioned = index.get(TAG_LIST, nullRud);
+        // List<String> list;
+        // if (versioned == null) {
+        // list = new LinkedList<String>();
+        // } else {
+        // AskProto.Index entry = versioned.getValue();
+        // list = entry.getEntryList();
+        // if (list.contains(tag)) {
+        // return;
+        // }
+        // }
+        //
+        // versioned.setObject(AskProto.Index.newBuilder().addAllEntry(list).addEntry(tag).build());
+        //
+        // index.put(TAG_LIST, versioned, nullRud);
     }
 
     @Override
     public Version save(Question quest, SRD srd) {
-        // Q
         return questions.put(quest.getId(), cast(quest), srd);
     }
 
@@ -114,22 +119,22 @@ public class VoldemortDAO
             return false;
         }
         boolean found = false;
-        for (String tag : question.getTags()) {
-            Versioned<AskProto.Index> indexList = index.get(tag, nullRud);
-            AskProto.Index indexMsg = indexList.getValue();
-            AskProto.Index.Builder b = AskProto.Index.newBuilder();
-            for (String e : indexMsg.getEntryList()) {
-                if (!e.equals(questionId)) {
-                    b.addEntry(e);
-                } else {
-                    found = true;
-                }
-            }
-            if (!found) {
-                // LOG.error("Question not found in index");
-            }
-            index.put(tag, b.build(), nullRud);
-        }
+        // for (String tag : question.getTags()) {
+        // Versioned<AskProto.Index> indexList = index.get(tag, nullRud);
+        // AskProto.Index indexMsg = indexList.getValue();
+        // AskProto.Index.Builder b = AskProto.Index.newBuilder();
+        // for (String e : indexMsg.getEntryList()) {
+        // if (!e.equals(questionId)) {
+        // b.addEntry(e);
+        // } else {
+        // found = true;
+        // }
+        // }
+        // if (!found) {
+        // // LOG.error("Question not found in index");
+        // }
+        // index.put(tag, b.build(), nullRud);
+        // }
         boolean q = questions.delete(questionId, srd);
         if (!q) {
             // LOG.error("Question not exists:" + questionId);
@@ -186,23 +191,23 @@ public class VoldemortDAO
 
     @Override
     public List<QuestionEntry> getListQuestions(SRD srd, String tag) throws AskException {
-        Versioned<AskProto.Index> indexList = index.get(tag, nullRud);
-        // LOG.info("getListQuestions: " + indexList);
-        if (indexList == null) {
-            return new LinkedList<QuestionEntry>();
-        }
-        AskProto.Index indexMsg = indexList.getValue();
-        List<String> list = indexMsg.getEntryList();
+        // Versioned<AskProto.Index> indexList = index.get(tag, nullRud);
+        // // LOG.info("getListQuestions: " + indexList);
+        // if (indexList == null) {
+        // return new LinkedList<QuestionEntry>();
+        // }
+        // AskProto.Index indexMsg = indexList.getValue();
+        // List<String> list = indexMsg.getEntryList();
         List<QuestionEntry> result = new LinkedList<QuestionEntry>();
-        for (String str : list) {
-            result.add(new QuestionEntry(str));
-        }
+        // for (String str : list) {
+        // result.add(new QuestionEntry(str));
+        // }
         return result;
     }
 
     @Override
     public void cleanIndex(SRD srd) {
-        index.put("index", AskProto.Index.newBuilder().build(), nullRud);
+        // index.put("index", AskProto.Index.newBuilder().build(), nullRud);
     }
 
     // Question
@@ -236,14 +241,14 @@ public class VoldemortDAO
 
     @Override
     public List<String> getTags() {
-        Versioned<AskProto.Index> versioned = index.get(TAG_LIST, nullRud);
+        // Versioned<AskProto.Index> versioned = index.get(TAG_LIST, nullRud);
         List<String> list;
-        if (versioned == null) {
-            list = new LinkedList<String>();
-        } else {
-            AskProto.Index entry = versioned.getValue();
-            list = entry.getEntryList();
-        }
+        // if (versioned == null) {
+        list = new LinkedList<String>();
+        // } else {
+        // AskProto.Index entry = versioned.getValue();
+        // list = entry.getEntryList();
+        // }
         return list;
     }
 }

@@ -30,7 +30,6 @@ public class RootController {
 
     public static final String DATABASE_SERVER = "database";
     public static final String VOLDEMORT_PORT = "6666";
-
     public static final String UPLOAD = "upload";
     public static final String SUCCESS = "success";
     public static final String REDIRECT_TO_QUESTIONS = "redirect:/question/";

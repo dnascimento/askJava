@@ -76,4 +76,15 @@ public class VoldemortStore<K, V extends Message> {
         }
         return store.delete(key, srd);
     }
+
+    public Version put(K key, Versioned<V> versioned, SRD srd) {
+        if (store == null) {
+            init();
+        }
+        if (key == null) {
+            // LOG.error("Delete: NULL: key" + "t " + System.identityHashCode(this));
+            // TODO throw exception
+        }
+        return store.put(key, versioned, srd);
+    }
 }
