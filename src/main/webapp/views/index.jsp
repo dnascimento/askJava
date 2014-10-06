@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="pt.inesc.ask.domain.Question"%>
+<%@page session="false"%>
 
 <jsp:include page="header.jsp">
 <jsp:param name="title" value="Welcome"/>
@@ -15,5 +16,6 @@
 		</li>
 	</c:forEach>
 </ul>
-<jsp:include page="footer.jsp"/>
-
+	</div>
+</body>
+</html>

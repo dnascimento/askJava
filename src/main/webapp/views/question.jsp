@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page session="false"%>
 
 <c:import url="header.jsp">
 	<c:param name="title" value="${questionData.title}"/>
@@ -31,5 +32,6 @@
 		<button>Answer</button>
 	</div>
 </div>
-<c:import url="footer.jsp"/>
-
+	</div>
+</body>
+</html>

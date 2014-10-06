@@ -3331,6 +3331,688 @@ public final class AskProto {
     // @@protoc_insertion_point(class_scope:pt.inesc.ask.proto.Index)
   }
 
+  public interface StringMapEntryOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // repeated string key = 1;
+    /**
+     * <code>repeated string key = 1;</code>
+     */
+    java.util.List<java.lang.String>
+    getKeyList();
+    /**
+     * <code>repeated string key = 1;</code>
+     */
+    int getKeyCount();
+    /**
+     * <code>repeated string key = 1;</code>
+     */
+    java.lang.String getKey(int index);
+    /**
+     * <code>repeated string key = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getKeyBytes(int index);
+
+    // repeated string value = 2;
+    /**
+     * <code>repeated string value = 2;</code>
+     */
+    java.util.List<java.lang.String>
+    getValueList();
+    /**
+     * <code>repeated string value = 2;</code>
+     */
+    int getValueCount();
+    /**
+     * <code>repeated string value = 2;</code>
+     */
+    java.lang.String getValue(int index);
+    /**
+     * <code>repeated string value = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getValueBytes(int index);
+  }
+  /**
+   * Protobuf type {@code pt.inesc.ask.proto.StringMapEntry}
+   */
+  public static final class StringMapEntry extends
+      com.google.protobuf.GeneratedMessage
+      implements StringMapEntryOrBuilder {
+    // Use StringMapEntry.newBuilder() to construct.
+    private StringMapEntry(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private StringMapEntry(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final StringMapEntry defaultInstance;
+    public static StringMapEntry getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public StringMapEntry getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private StringMapEntry(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                key_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              key_.add(input.readBytes());
+              break;
+            }
+            case 18: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+                value_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000002;
+              }
+              value_.add(input.readBytes());
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          key_ = new com.google.protobuf.UnmodifiableLazyStringList(key_);
+        }
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+          value_ = new com.google.protobuf.UnmodifiableLazyStringList(value_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pt.inesc.ask.proto.AskProto.internal_static_pt_inesc_ask_proto_StringMapEntry_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pt.inesc.ask.proto.AskProto.internal_static_pt_inesc_ask_proto_StringMapEntry_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pt.inesc.ask.proto.AskProto.StringMapEntry.class, pt.inesc.ask.proto.AskProto.StringMapEntry.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<StringMapEntry> PARSER =
+        new com.google.protobuf.AbstractParser<StringMapEntry>() {
+      public StringMapEntry parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new StringMapEntry(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<StringMapEntry> getParserForType() {
+      return PARSER;
+    }
+
+    // repeated string key = 1;
+    public static final int KEY_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList key_;
+    /**
+     * <code>repeated string key = 1;</code>
+     */
+    public java.util.List<java.lang.String>
+        getKeyList() {
+      return key_;
+    }
+    /**
+     * <code>repeated string key = 1;</code>
+     */
+    public int getKeyCount() {
+      return key_.size();
+    }
+    /**
+     * <code>repeated string key = 1;</code>
+     */
+    public java.lang.String getKey(int index) {
+      return key_.get(index);
+    }
+    /**
+     * <code>repeated string key = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getKeyBytes(int index) {
+      return key_.getByteString(index);
+    }
+
+    // repeated string value = 2;
+    public static final int VALUE_FIELD_NUMBER = 2;
+    private com.google.protobuf.LazyStringList value_;
+    /**
+     * <code>repeated string value = 2;</code>
+     */
+    public java.util.List<java.lang.String>
+        getValueList() {
+      return value_;
+    }
+    /**
+     * <code>repeated string value = 2;</code>
+     */
+    public int getValueCount() {
+      return value_.size();
+    }
+    /**
+     * <code>repeated string value = 2;</code>
+     */
+    public java.lang.String getValue(int index) {
+      return value_.get(index);
+    }
+    /**
+     * <code>repeated string value = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getValueBytes(int index) {
+      return value_.getByteString(index);
+    }
+
+    private void initFields() {
+      key_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      value_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < key_.size(); i++) {
+        output.writeBytes(1, key_.getByteString(i));
+      }
+      for (int i = 0; i < value_.size(); i++) {
+        output.writeBytes(2, value_.getByteString(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < key_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(key_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getKeyList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < value_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(value_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getValueList().size();
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static pt.inesc.ask.proto.AskProto.StringMapEntry parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(pt.inesc.ask.proto.AskProto.StringMapEntry prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pt.inesc.ask.proto.StringMapEntry}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements pt.inesc.ask.proto.AskProto.StringMapEntryOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pt.inesc.ask.proto.AskProto.internal_static_pt_inesc_ask_proto_StringMapEntry_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pt.inesc.ask.proto.AskProto.internal_static_pt_inesc_ask_proto_StringMapEntry_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pt.inesc.ask.proto.AskProto.StringMapEntry.class, pt.inesc.ask.proto.AskProto.StringMapEntry.Builder.class);
+      }
+
+      // Construct using pt.inesc.ask.proto.AskProto.StringMapEntry.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        key_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        value_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pt.inesc.ask.proto.AskProto.internal_static_pt_inesc_ask_proto_StringMapEntry_descriptor;
+      }
+
+      public pt.inesc.ask.proto.AskProto.StringMapEntry getDefaultInstanceForType() {
+        return pt.inesc.ask.proto.AskProto.StringMapEntry.getDefaultInstance();
+      }
+
+      public pt.inesc.ask.proto.AskProto.StringMapEntry build() {
+        pt.inesc.ask.proto.AskProto.StringMapEntry result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public pt.inesc.ask.proto.AskProto.StringMapEntry buildPartial() {
+        pt.inesc.ask.proto.AskProto.StringMapEntry result = new pt.inesc.ask.proto.AskProto.StringMapEntry(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          key_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              key_);
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.key_ = key_;
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+          value_ = new com.google.protobuf.UnmodifiableLazyStringList(
+              value_);
+          bitField0_ = (bitField0_ & ~0x00000002);
+        }
+        result.value_ = value_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pt.inesc.ask.proto.AskProto.StringMapEntry) {
+          return mergeFrom((pt.inesc.ask.proto.AskProto.StringMapEntry)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pt.inesc.ask.proto.AskProto.StringMapEntry other) {
+        if (other == pt.inesc.ask.proto.AskProto.StringMapEntry.getDefaultInstance()) return this;
+        if (!other.key_.isEmpty()) {
+          if (key_.isEmpty()) {
+            key_ = other.key_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureKeyIsMutable();
+            key_.addAll(other.key_);
+          }
+          onChanged();
+        }
+        if (!other.value_.isEmpty()) {
+          if (value_.isEmpty()) {
+            value_ = other.value_;
+            bitField0_ = (bitField0_ & ~0x00000002);
+          } else {
+            ensureValueIsMutable();
+            value_.addAll(other.value_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        pt.inesc.ask.proto.AskProto.StringMapEntry parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (pt.inesc.ask.proto.AskProto.StringMapEntry) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // repeated string key = 1;
+      private com.google.protobuf.LazyStringList key_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureKeyIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          key_ = new com.google.protobuf.LazyStringArrayList(key_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public java.util.List<java.lang.String>
+          getKeyList() {
+        return java.util.Collections.unmodifiableList(key_);
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public int getKeyCount() {
+        return key_.size();
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public java.lang.String getKey(int index) {
+        return key_.get(index);
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getKeyBytes(int index) {
+        return key_.getByteString(index);
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public Builder setKey(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureKeyIsMutable();
+        key_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public Builder addKey(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureKeyIsMutable();
+        key_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public Builder addAllKey(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureKeyIsMutable();
+        super.addAll(values, key_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public Builder clearKey() {
+        key_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string key = 1;</code>
+       */
+      public Builder addKeyBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureKeyIsMutable();
+        key_.add(value);
+        onChanged();
+        return this;
+      }
+
+      // repeated string value = 2;
+      private com.google.protobuf.LazyStringList value_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureValueIsMutable() {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+          value_ = new com.google.protobuf.LazyStringArrayList(value_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public java.util.List<java.lang.String>
+          getValueList() {
+        return java.util.Collections.unmodifiableList(value_);
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public int getValueCount() {
+        return value_.size();
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public java.lang.String getValue(int index) {
+        return value_.get(index);
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getValueBytes(int index) {
+        return value_.getByteString(index);
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public Builder setValue(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureValueIsMutable();
+        value_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public Builder addValue(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureValueIsMutable();
+        value_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public Builder addAllValue(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureValueIsMutable();
+        super.addAll(values, value_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public Builder clearValue() {
+        value_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string value = 2;</code>
+       */
+      public Builder addValueBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureValueIsMutable();
+        value_.add(value);
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pt.inesc.ask.proto.StringMapEntry)
+    }
+
+    static {
+      defaultInstance = new StringMapEntry(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:pt.inesc.ask.proto.StringMapEntry)
+  }
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_pt_inesc_ask_proto_Question_descriptor;
   private static
@@ -3351,6 +4033,11 @@ public final class AskProto {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pt_inesc_ask_proto_Index_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_pt_inesc_ask_proto_StringMapEntry_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pt_inesc_ask_proto_StringMapEntry_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3367,8 +4054,9 @@ public final class AskProto {
       "wer\022\016\n\006author\030\001 \002(\t\022\014\n\004text\030\002 \002(\t\022\022\n\nisQ" +
       "uestion\030\003 \002(\010\022\r\n\005votes\030\004 \002(\005\022\022\n\ncommentI" +
       "ds\030\005 \003(\t\"\'\n\007Comment\022\014\n\004text\030\001 \002(\t\022\016\n\006aut" +
-      "hor\030\002 \002(\t\"\026\n\005Index\022\r\n\005entry\030\001 \003(\tB\026\n\022pt." +
-      "inesc.ask.protoH\001"
+      "hor\030\002 \002(\t\"\026\n\005Index\022\r\n\005entry\030\001 \003(\t\",\n\016Str" +
+      "ingMapEntry\022\013\n\003key\030\001 \003(\t\022\r\n\005value\030\002 \003(\tB" +
+      "\026\n\022pt.inesc.ask.protoH\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -3399,6 +4087,12 @@ public final class AskProto {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_pt_inesc_ask_proto_Index_descriptor,
               new java.lang.String[] { "Entry", });
+          internal_static_pt_inesc_ask_proto_StringMapEntry_descriptor =
+            getDescriptor().getMessageTypes().get(4);
+          internal_static_pt_inesc_ask_proto_StringMapEntry_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_pt_inesc_ask_proto_StringMapEntry_descriptor,
+              new java.lang.String[] { "Key", "Value", });
           return null;
         }
       };

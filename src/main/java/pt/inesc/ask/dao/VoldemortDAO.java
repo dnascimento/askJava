@@ -29,6 +29,7 @@ public class VoldemortDAO
 
 
     public VoldemortDAO(String bootstrapUrl) {
+        System.out.println("NEW VOLDEMORT DATABASE ACCESS");
         questions = new VoldemortStore<String, AskProto.Question>("questionStore", bootstrapUrl);
         answers = new VoldemortStore<String, AskProto.Answer>("answerStore", bootstrapUrl);
         comments = new VoldemortStore<String, AskProto.Comment>("commentStore", bootstrapUrl);
@@ -39,7 +40,7 @@ public class VoldemortDAO
      * Add a new question to the tag (the dependency is ignored)
      */
     @Override
-    public Version saveNew(Question quest, SRD srd) throws AskException {
+    public Version saveNew(Question quest, SRD srd) {
         for (String tag : quest.getTags()) {
             Versioned<AskProto.Index> versioned = index.get(tag, nullRud);
             List<String> list;
@@ -54,7 +55,11 @@ public class VoldemortDAO
             // LOG.info("Get Tag entries: " + list);
             if (!list.contains(quest.getId())) {
                 // LOG.info("Question did not exist in tag, add it and put");
-                index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), nullRud);
+                try {
+                    index.put(tag, AskProto.Index.newBuilder().addAllEntry(list).addEntry(quest.getId()).build(), nullRud);
+                } catch (Exception e) {
+                    System.out.println("Index store: " + e.getMessage());
+                }
             }
         }
         return save(quest, srd);
@@ -83,11 +88,13 @@ public class VoldemortDAO
 
     @Override
     public Version save(Question quest, SRD srd) {
+        // Q
         return questions.put(quest.getId(), cast(quest), srd);
     }
 
     @Override
     public Version save(Answer answer, SRD srd) {
+        // TODO error se a answer já existe
         return answers.put(answer.getId(), cast(answer), srd);
     }
 

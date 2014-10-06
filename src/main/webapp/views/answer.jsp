@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="pt.inesc.ask.domain.Answer" %>
+<%@ page import="pt.inesc.ask.domain.Answer" session="false" %>
 
 <div class="answerArea" answer-id="${answer.id}">
 	<div class="vote">
@@ -39,4 +39,6 @@
 	</div>
 </div>
 
-<c:import url="footer.jsp"/>
+	</div>
+</body>
+</html>

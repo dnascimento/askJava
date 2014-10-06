@@ -9,9 +9,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.DecoderException;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.jboss.logging.Logger;
-import org.mortbay.log.Log;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,7 +28,7 @@ import voldemort.undoTracker.SRD;
 @Controller
 public class RootController {
 
-    public static final String DATABASE_SERVER = "localhost";
+    public static final String DATABASE_SERVER = "database";
     public static final String VOLDEMORT_PORT = "6666";
 
     public static final String UPLOAD = "upload";
@@ -42,6 +42,7 @@ public class RootController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
+        // System.out.println("Request");
         return "hello";
     }
 
@@ -49,7 +50,8 @@ public class RootController {
     @ExceptionHandler(Throwable.class)
     public @ResponseBody
     String handleAnyException(Throwable ex, HttpServletRequest request) {
-        log.error("ERROR: ", ex);
+        System.out.println("ERROR: " + ex.getMessage());
+        // ex.printStackTrace();
         return "ERROR:" + ex.getMessage();
     }
 
@@ -63,7 +65,6 @@ public class RootController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(HttpServletRequest r, Model model) throws AskException {
-        // LOG.info("GET / " + extractRid(r));
         model.addAttribute("tags", s.getTags().toArray());
         return "tags";
     }
@@ -75,6 +76,14 @@ public class RootController {
         // LOG.info("GET /new-question" + extractRid(r));
         model.addAttribute("tags", s.getTags());
         return "newQuestion";
+    }
+
+    @RequestMapping(value = "/randomQuestion", method = RequestMethod.POST)
+    public String randomQuestion(HttpServletRequest r, Model model) throws AskException, DecoderException {
+        SRD srd = extractRid(r);
+        String rand = RandomStringUtils.random(100);
+        s.newQuestion(rand, rand, Arrays.asList(rand), rand, "0", "1", srd, null);
+        return REDIRECT_TO_QUESTIONS + rand;
     }
 
     @RequestMapping(value = "/new-question", method = RequestMethod.POST)
@@ -104,7 +113,7 @@ public class RootController {
         tagList = (tags == null) ? new LinkedList<String>() : Arrays.asList(tags);
         String encoded = AskService.encodeTitle(title);
         SRD srd = extractRid(r);
-        Log.info("New question: author: " + author + " ; rid: " + srd.rid);
+        // log.info("New question: author: " + author + " ; rid: " + srd.rid);
 
         s.newQuestion(encoded, text, tagList, author, views, answers, srd, answerId);
         return REDIRECT_TO_QUESTIONS + title;
@@ -148,7 +157,7 @@ public class RootController {
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
 
         SRD srd = extractRid(r);
-        Log.info("New answer: author: " + author + " ; rid: " + srd.rid);
+        // log.info("New answer: author: " + author + " ; rid: " + srd.rid);
 
         s.newAnswer(encoded, author, unescapedText, srd, answerId);
         return REDIRECT_TO_QUESTIONS + questionTitle;
@@ -189,7 +198,7 @@ public class RootController {
         String unescapedText = StringEscapeUtils.unescapeHtml(p.get("text"));
 
         SRD srd = extractRid(r);
-        Log.info("New comment: author: " + author + " ; rid: " + srd.rid);
+        // log.info("New comment: author: " + author + " ; rid: " + srd.rid);
 
         s.newComment(questionTitle, p.get("answerID"), unescapedText, author, srd);
         return REDIRECT_TO_QUESTIONS + questionTitle;

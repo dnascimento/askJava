@@ -2,8 +2,6 @@ package pt.inesc.ask.dao;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.logging.Logger;
-
 import voldemort.client.ClientConfig;
 import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
@@ -21,7 +19,6 @@ import com.google.protobuf.Message;
  * @author darionascimento
  */
 public class VoldemortStore<K, V extends Message> {
-    private static final Logger LOG = Logger.getLogger(VoldemortStore.class.getName());
 
     private StoreClient<K, V> store;
     private final String storeName;
@@ -63,7 +60,7 @@ public class VoldemortStore<K, V extends Message> {
             init();
         }
         if (key == null) {
-            LOG.error("Get: NULL: key");
+            // LOG.error("Get: NULL: key");
         }
         // LOG.info("Get: " + key + " : " + srd + "t " + System.identityHashCode(this));
         return store.get(key, srd);

@@ -24,6 +24,7 @@
 		<version.org.jboss.spec.javax.servlet.api>1.0.0.Final</version.org.jboss.spec.javax.servlet.api>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.0.2.RELEASE</spring.version>
+		<yourkit.home>/Applications/yourkit.app</yourkit.home>
 	</properties>
 
 	<!-- local repo for voldemort -->
@@ -221,6 +222,7 @@
 						</lifecycleMappingMetadata>
 					</configuration>
 				</plugin>
+				
 			</plugins>
 		</pluginManagement>
 	</build>

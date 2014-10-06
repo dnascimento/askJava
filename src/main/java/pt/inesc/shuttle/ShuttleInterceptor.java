@@ -18,7 +18,7 @@ import com.google.common.collect.ArrayListMultimap;
 public class ShuttleInterceptor
         implements HandlerInterceptor {
     private static final Logger log = Logger.getLogger(ShuttleInterceptor.class.getName());
-    CassandraClient cassandra = new CassandraClient();
+    static CassandraClient cassandra = new CassandraClient();
 
     public ShuttleInterceptor() {
         super();
@@ -47,21 +47,21 @@ public class ShuttleInterceptor
         if (srd.redo) {
             // get the keys used before
             ArrayListMultimap<ByteArray, KeyAccess> originalKeys = cassandra.getKeys(srd.rid);
-            //LOG.debug("originalKeys keys" + originalKeys);
-            //LOG.debug("accessed keys" + accessedKeys);
+            // LOG.debug("originalKeys keys" + originalKeys);
+            // LOG.debug("accessed keys" + accessedKeys);
 
 
             subtrackTables(accessedKeys, originalKeys);
 
 
             if (!accessedKeys.isEmpty()) {
-                //LOG.debug("Unlock keys:" + accessedKeys);
+                // LOG.debug("Unlock keys:" + accessedKeys);
                 databaseUnlocker.unlockKeys(accessedKeys, srd);
             }
         } else {
             if (!accessedKeys.isEmpty())
-                //LOG.debug("Store keys: " + accessedKeys);
-            cassandra.addKeys(accessedKeys, srd.rid);
+                // LOG.debug("Store keys: " + accessedKeys);
+                cassandra.addKeys(accessedKeys, srd.rid);
         }
     }
 
@@ -94,15 +94,19 @@ public class ShuttleInterceptor
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
         SRD srd;
-        try {
-            long rid = Long.parseLong(req.getHeader("Id"));
-            short branch = Short.parseShort(req.getHeader("B"));
-            boolean restrain = (req.getHeader("R").equals("t"));
-            boolean redo = (req.getHeader("Redo").equals("t"));
-            srd = new SRD(rid, branch, restrain, redo);
-        } catch (NumberFormatException e) {
-            // No srd from proxy, create stub using local clock
-            // srd = new SRD(0L);
+        String id = req.getHeader("Id");
+        if (id != null) {
+            try {
+                long rid = Long.valueOf(id);
+                short branch = Short.valueOf(req.getHeader("B"));
+                boolean restrain = (req.getHeader("R").equals("t"));
+                boolean redo = (req.getHeader("Redo").equals("t"));
+                srd = new SRD(rid, branch, restrain, redo);
+            } catch (NumberFormatException e) {
+                // No srd from proxy, create stub using local clock
+                srd = new SRD(System.currentTimeMillis());
+            }
+        } else {
             srd = new SRD(System.currentTimeMillis());
         }
 
