@@ -10,7 +10,7 @@ import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 
 import pt.inesc.ask.dao.DAO;
-import pt.inesc.ask.dao.VoldemortDAO;
+import pt.inesc.ask.dao.VoldemortSingleStoreDao;
 import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
@@ -21,7 +21,7 @@ import voldemort.undoTracker.SRD;
 public class AskService {
     // private static final Logger LOG = Logger.getLogger(AskService.class.getName());
 
-    static DAO dao = new VoldemortDAO("tcp://" + RootController.DATABASE_SERVER + ":" + RootController.VOLDEMORT_PORT);
+    static DAO dao = new VoldemortSingleStoreDao("tcp://" + RootController.DATABASE_SERVER + ":" + RootController.VOLDEMORT_PORT);
 
     public void newQuestion(
             String title,

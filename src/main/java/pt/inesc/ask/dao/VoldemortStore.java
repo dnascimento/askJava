@@ -45,6 +45,7 @@ public class VoldemortStore<K, V extends Message> {
     }
 
     public Version put(K key, V value, SRD srd) {
+        System.out.println("put");
         if (store == null)
             init();
         if (key == null || value == null) {
@@ -56,6 +57,7 @@ public class VoldemortStore<K, V extends Message> {
     }
 
     public Versioned<V> get(K key, SRD srd) {
+        System.out.println("get");
         if (store == null) {
             init();
         }
