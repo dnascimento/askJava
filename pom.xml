@@ -119,6 +119,36 @@
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
 		</dependency>
+		
+		<!-- voldemort -->
+		<dependency>
+  		<groupId>com.voldemort</groupId>
+  		<artifactId>azkaban-common</artifactId>
+  		<version>0.05</version>
+    </dependency>
+
+  		<dependency>
+  			<groupId>com.voldemort</groupId>
+  			<artifactId>catalina-ant</artifactId>
+  			<version>6.0</version>
+  		</dependency>
+
+      <dependency>
+        <groupId>com.voldemort</groupId>
+        <artifactId>libthirft</artifactId>
+        <version>0.5.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.voldemort</groupId>
+        <artifactId>tehuti</artifactId>
+        <version>0.5</version>
+      </dependency>
+      <dependency>
+        <groupId>com.voldemort</groupId>
+        <artifactId>tusk</artifactId>
+        <version>0.0.2</version>
+      </dependency>
+		<!-- end voldemort -->
 
 		
 		<dependency>

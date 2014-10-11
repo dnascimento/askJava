@@ -40,7 +40,7 @@ public class VoldemortDAO
      * Add a new question to the tag (the dependency is ignored)
      */
     @Override
-    public Version saveNew(Question quest, SRD srd) {
+    public Version saveNew(Question quest, SRD srd) throws AskException {
         for (String tag : quest.getTags()) {
             // Versioned<AskProto.Index> versioned = index.get(tag, nullRud);
             // List<String> list;
@@ -93,32 +93,33 @@ public class VoldemortDAO
     }
 
     @Override
-    public Version save(Question quest, SRD srd) {
+    public Version save(Question quest, SRD srd) throws AskException {
         return questions.put(quest.getId(), cast(quest), srd);
     }
 
     @Override
-    public Version save(Answer answer, SRD srd) {
+    public Version save(Answer answer, SRD srd) throws AskException {
         // TODO error se a answer já existe
         return answers.put(answer.getId(), cast(answer), srd);
     }
 
     @Override
-    public Version save(Comment comment, SRD srd) {
+    public Version save(Comment comment, SRD srd) throws AskException {
         return comments.put(comment.getId(), cast(comment), srd);
     }
 
     // Delete
     @Override
-    public boolean deleteQuestion(String questionId, SRD srd) {
+    public boolean deleteQuestion(String questionId, SRD srd) throws AskException {
         Question question;
         try {
             question = getQuestion(questionId, srd);
         } catch (AskException e1) {
-            // LOG.error("Delete: Question not exists");
+            LOG.error("Delete: Question not exists", e1);
             return false;
         }
-        boolean found = false;
+        boolean found = true;
+        // boolean found = false;
         // for (String tag : question.getTags()) {
         // Versioned<AskProto.Index> indexList = index.get(tag, nullRud);
         // AskProto.Index indexMsg = indexList.getValue();

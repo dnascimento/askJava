@@ -2,6 +2,7 @@ package pt.inesc.ask.dao;
 
 import java.util.concurrent.TimeUnit;
 
+import pt.inesc.ask.domain.AskException;
 import voldemort.client.ClientConfig;
 import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
@@ -44,48 +45,45 @@ public class VoldemortStore<K, V extends Message> {
         store = factory.getStoreClient(storeName);
     }
 
-    public Version put(K key, V value, SRD srd) {
-        System.out.println("put");
+    public Version put(K key, V value, SRD srd) throws AskException {
+        // System.out.println("put " + key);
         if (store == null)
             init();
         if (key == null || value == null) {
-            // LOG.error("Put: NULL: key" + key + " value:" + value + "t " +
-            // System.identityHashCode(this));
-            // TODO throw exception
+            throw new AskException("Put: NULL: key" + key + " value:" + value);
         }
         return store.put(key, value, srd);
     }
 
-    public Versioned<V> get(K key, SRD srd) {
-        System.out.println("get");
+    public Versioned<V> get(K key, SRD srd) throws AskException {
+        // System.out.println("get " + key);
         if (store == null) {
             init();
         }
         if (key == null) {
-            // LOG.error("Get: NULL: key");
+            throw new AskException("Get: NULL: key");
         }
-        // LOG.info("Get: " + key + " : " + srd + "t " + System.identityHashCode(this));
+        // LOG.info("Get: " + key + " : " + srd + "t ");
         return store.get(key, srd);
     }
 
-    public boolean delete(K key, SRD srd) {
+    public boolean delete(K key, SRD srd) throws AskException {
         if (store == null) {
             init();
         }
         if (key == null) {
-            // LOG.error("Delete: NULL: key" + "t " + System.identityHashCode(this));
-            return false;
+            throw new AskException("Delete: NULL: key");
         }
         return store.delete(key, srd);
     }
 
-    public Version put(K key, Versioned<V> versioned, SRD srd) {
+    public Version put(K key, Versioned<V> versioned, SRD srd) throws AskException {
+        // System.out.println("put");
         if (store == null) {
             init();
         }
         if (key == null) {
-            // LOG.error("Delete: NULL: key" + "t " + System.identityHashCode(this));
-            // TODO throw exception
+            throw new AskException("Put: NULL: key");
         }
         return store.put(key, versioned, srd);
     }

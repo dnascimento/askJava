@@ -14,14 +14,14 @@ import voldemort.versioning.Version;
 public interface DAO {
 
     // Save
-    public Version save(Question quest, SRD srd);
+    public Version save(Question quest, SRD srd) throws AskException;
 
-    public Version save(Answer answer, SRD srd);
+    public Version save(Answer answer, SRD srd) throws AskException;
 
-    public Version save(Comment comment, SRD srd);
+    public Version save(Comment comment, SRD srd) throws AskException;
 
     // Delete
-    public boolean deleteQuestion(String questionId, SRD srd);
+    public boolean deleteQuestion(String questionId, SRD srd) throws AskException;
 
     public boolean deleteAnswer(String answerId, SRD srd) throws AskException;
 

@@ -1,6 +1,7 @@
 package pt.inesc.shuttle;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,17 +30,36 @@ public class ShuttleInterceptor
         System.setProperty("appengine.disableRestrictedCheck", "true");
     }
 
-    // static ConcurrentHashMap<Long, SRD> mapRequestRud = new ConcurrentHashMap<Long,
-    // SRD>();
+    static ConcurrentHashMap<Long, SRD> mapRequestRud = new ConcurrentHashMap<Long, SRD>();
     VoldemortUnlocker databaseUnlocker = new VoldemortUnlocker();
 
+    @Override
+    public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
+        SRD srd;
+        String id = req.getHeader("Id");
+        if (id != null) {
+            try {
+                long rid = Long.valueOf(id);
+                short branch = Short.valueOf(req.getHeader("B"));
+                boolean restrain = (req.getHeader("R").equals("t"));
+                boolean redo = (req.getHeader("Redo").equals("t"));
+                srd = new SRD(rid, branch, restrain, redo);
+            } catch (NumberFormatException e) {
+                // No srd from proxy, create stub using local clock
+                srd = new SRD(System.currentTimeMillis());
+            }
+        } else {
+            srd = new SRD(System.currentTimeMillis());
+        }
 
+        mapRequestRud.put(Thread.currentThread().getId(), srd);
+        req.setAttribute("srd", srd);
+        return true;
+    }
 
     @Override
     public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Exception exception) throws Exception {
         SRD srd = (SRD) req.getAttribute("srd");
-        // mapRequestRud.remove(Thread.currentThread().getId(),srd);
-
         // Unlocking algorithm
         ArrayListMultimap<ByteArray, KeyAccess> accessedKeys = srd.getAccessedKeys();
 
@@ -59,9 +79,10 @@ public class ShuttleInterceptor
                 databaseUnlocker.unlockKeys(accessedKeys, srd);
             }
         } else {
-            if (!accessedKeys.isEmpty())
+            if (!accessedKeys.isEmpty()) {
                 // LOG.debug("Store keys: " + accessedKeys);
                 cassandra.addKeys(accessedKeys, srd.rid);
+            }
         }
     }
 
@@ -91,34 +112,11 @@ public class ShuttleInterceptor
         }
     }
 
-    @Override
-    public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
-        SRD srd;
-        String id = req.getHeader("Id");
-        if (id != null) {
-            try {
-                long rid = Long.valueOf(id);
-                short branch = Short.valueOf(req.getHeader("B"));
-                boolean restrain = (req.getHeader("R").equals("t"));
-                boolean redo = (req.getHeader("Redo").equals("t"));
-                srd = new SRD(rid, branch, restrain, redo);
-            } catch (NumberFormatException e) {
-                // No srd from proxy, create stub using local clock
-                srd = new SRD(System.currentTimeMillis());
-            }
-        } else {
-            srd = new SRD(System.currentTimeMillis());
-        }
 
-        // mapRequestRud.put(Thread.currentThread().getId(),srd);
-        req.setAttribute("srd", srd);
-        return true;
-    }
 
     @Override
-    public void postHandle(HttpServletRequest arg0, HttpServletResponse arg1, Object arg2, ModelAndView arg3) throws Exception {
-
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object obj, ModelAndView arg3) throws Exception {
+        SRD srd = mapRequestRud.remove(Thread.currentThread().getId());
+        response.addHeader("Id", Long.toString(srd.rid));
     }
-
-
 }

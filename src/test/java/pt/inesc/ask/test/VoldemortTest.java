@@ -109,16 +109,16 @@ public class VoldemortTest {
         }
     }
 
-    @Test
-    public void testIndex() throws AskException {
-        Question q = new Question(questionTitle, tags, "1", "1", "dario");
-        dao.saveNew(q, t);
-        for (String tag : tags) {
-            List<QuestionEntry> list = dao.getListQuestions(t, tag);
-            assertTrue(questionExists(list, q.getTitle()));
-        }
-        dao.deleteQuestion(q.getId(), t);
-    }
+    // @Test
+    // public void testIndex() throws AskException {
+    // Question q = new Question(questionTitle, tags, "1", "1", "dario");
+    // dao.saveNew(q, t);
+    // for (String tag : tags) {
+    // List<QuestionEntry> list = dao.getListQuestions(t, tag);
+    // assertTrue(questionExists(list, q.getTitle()));
+    // }
+    // dao.deleteQuestion(q.getId(), t);
+    // }
 
     private boolean questionExists(List<QuestionEntry> list, String questionTitle) {
         for (QuestionEntry e : list) {

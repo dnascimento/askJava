@@ -6,6 +6,7 @@ import java.util.Random;
 import org.apache.commons.lang.RandomStringUtils;
 
 import pt.inesc.ask.dao.VoldemortStore;
+import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
 import pt.inesc.ask.proto.AskProto;
 import voldemort.undoTracker.SRD;
@@ -109,7 +110,7 @@ public class StressTest extends
         System.out.println("Rate (req/seg)" + ((double) nRequests / duration * 1000));
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AskException {
         System.out.println("Starting stress test");
         // create all keys to access
         HashSet<String> uniqueKey = new HashSet<String>(N_KEYS);

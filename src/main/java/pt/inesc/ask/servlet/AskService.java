@@ -10,7 +10,7 @@ import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 
 import pt.inesc.ask.dao.DAO;
-import pt.inesc.ask.dao.VoldemortSingleStoreDao;
+import pt.inesc.ask.dao.VoldemortDAO;
 import pt.inesc.ask.domain.Answer;
 import pt.inesc.ask.domain.AskException;
 import pt.inesc.ask.domain.Comment;
@@ -21,7 +21,7 @@ import voldemort.undoTracker.SRD;
 public class AskService {
     // private static final Logger LOG = Logger.getLogger(AskService.class.getName());
 
-    static DAO dao = new VoldemortSingleStoreDao("tcp://" + RootController.DATABASE_SERVER + ":" + RootController.VOLDEMORT_PORT);
+    static DAO dao = new VoldemortDAO("tcp://" + RootController.DATABASE_SERVER + ":" + RootController.VOLDEMORT_PORT);
 
     public void newQuestion(
             String title,
@@ -99,9 +99,9 @@ public class AskService {
     public String newAnswer(String questionTitle, String author, String text, SRD srd, String answerId) throws AskException {
         Question question = dao.getQuestion(questionTitle, srd);
         Answer ans = new Answer(questionTitle, author, text, false, answerId);
-        // LOG.info("New Answer: " + questionTitle + " :author: " + author + " :text: " +
-        // text + " :srd:" + srd + " :id: " + ans.getId()
-        // + " : providedId:" + answerId);
+        // System.out.println("New Answer: " + questionTitle + " :author: " + author +
+        // " :text: " + text + " :srd:" + srd + " :id: "
+        // + ans.getId() + " : providedId:" + answerId);
         question.addAnswer(ans.getId());
         dao.save(ans, srd);
         dao.save(question, srd);
@@ -142,8 +142,9 @@ public class AskService {
     public String newComment(String questionTitle, String answerID, String text, String author, SRD srd) throws AskException {
         Answer answer = dao.getAnswer(answerID, srd);
         Comment comment = new Comment(answerID, text, author);
-        // LOG.info("New Comment: " + questionTitle + " :answerId: " + answerID +
-        // " :text: " + text + " :author: " + author + " :srd:" + srd);
+        // System.out.println("New Comment: " + questionTitle + " :answerId: " + answerID
+        // + " :text: " + text + " :author: " + author
+        // + " :srd:" + srd);
         answer.addComment(comment.getId());
         dao.save(comment, srd);
         dao.save(answer, srd);
@@ -171,14 +172,16 @@ public class AskService {
     }
 
     public void voteUp(String questionTitle, String answerId, SRD srd) throws AskException {
-        // LOG.info("VoteUp: " + questionTitle + " " + answerId + " srd:" + srd);
+        // System.out.println("VoteUp: " + questionTitle + " " + answerId + " srd:" +
+        // srd);
         Answer answer = dao.getAnswer(answerId, srd);
         answer.voteUp();
         dao.save(answer, srd);
     }
 
     public void voteDown(String questionTitle, String answerId, SRD srd) throws AskException {
-        // LOG.info("VoteDown: " + questionTitle + " " + answerId + " srd:" + srd);
+        // System.out.println("VoteDown: " + questionTitle + " " + answerId + " srd:" +
+        // srd);
         Answer answer = dao.getAnswer(answerId, srd);
         answer.voteDown();
         dao.save(answer, srd);
