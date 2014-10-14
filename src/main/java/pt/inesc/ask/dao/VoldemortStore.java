@@ -7,6 +7,7 @@ import voldemort.client.ClientConfig;
 import voldemort.client.SocketStoreClientFactory;
 import voldemort.client.StoreClient;
 import voldemort.client.StoreClientFactory;
+import voldemort.client.TimeoutConfig;
 import voldemort.client.protocol.RequestFormatType;
 import voldemort.undoTracker.SRD;
 import voldemort.versioning.Version;
@@ -37,12 +38,18 @@ public class VoldemortStore<K, V extends Message> {
                                   .setEnableJmx(true)
                                   .setSocketKeepAlive(true)
                                   .setMaxBootstrapRetries(20)
-                                  .setConnectionTimeout(20000, TimeUnit.MILLISECONDS)
-                                  .setFailureDetectorAsyncRecoveryInterval(200)
-                                  .setFailureDetectorThresholdCountMinimum(20)
+                                  .setConnectionTimeout(200000000, TimeUnit.MILLISECONDS)
+                                  .setFailureDetectorAsyncRecoveryInterval(2000000)
+                                  .setFailureDetectorThresholdCountMinimum(2000000)
                                   .setFailureDetectorRequestLengthThreshold(10000)
-                                  .setSocketTimeout(20000, TimeUnit.MILLISECONDS));
+                                  .setRoutingTimeout(2000000, TimeUnit.MILLISECONDS)
+                                  // operation timeout
+                                  .setTimeoutConfig(new TimeoutConfig(50000000))
+                                  .setSocketTimeout(2000000, TimeUnit.MILLISECONDS));
+
         store = factory.getStoreClient(storeName);
+
+
     }
 
     public Version put(K key, V value, SRD srd) throws AskException {

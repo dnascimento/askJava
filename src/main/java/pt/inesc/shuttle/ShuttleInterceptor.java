@@ -49,6 +49,7 @@ public class ShuttleInterceptor
                 srd = new SRD(System.currentTimeMillis());
             }
         } else {
+            System.out.println("Cannot read the request ID");
             srd = new SRD(System.currentTimeMillis());
         }
 

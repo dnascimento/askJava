@@ -41,7 +41,6 @@ public class RootController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String sayHelloToOpenshift() {
-        // // System.out.println("Request");
         return "hello";
     }
 
@@ -113,7 +112,7 @@ public class RootController {
         tagList = (tags == null) ? new LinkedList<String>() : Arrays.asList(tags);
         String encoded = AskService.encodeTitle(title);
         SRD srd = extractRid(r);
-        // System.out.println("New question: author: " + author + " ; rid: " + srd.rid);
+        System.out.println("New question, srd: " + srd);
 
         s.newQuestion(encoded, text, tagList, author, views, answers, srd, answerId);
         return REDIRECT_TO_QUESTIONS + title;
